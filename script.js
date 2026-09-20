@@ -9,21 +9,15 @@ function getProgress() {
 
     let completedModules = 0;
 
-    for (
-        let i = 1;
-        i <= TOTAL_MODULES;
-        i++
-    ) {
+    for (let i = 1; i <= TOTAL_MODULES; i++) {
 
-        const completed =
-            localStorage.getItem(
-                `n1-module-${i}-complete`
-            );
+        const completed = localStorage.getItem(
+            `n1-module-${i}-complete`
+        );
 
         if (completed === "true") {
             completedModules++;
         }
-
     }
 
     return Math.round(
@@ -38,27 +32,19 @@ function getProgress() {
 
 function updateProgress() {
 
-    const progress =
-        getProgress();
-
+    const progress = getProgress();
 
     const progressFill =
-        document.querySelector(
-            ".progress-fill"
-        );
-
+        document.querySelector(".progress-fill");
 
     const progressText =
-        document.querySelector(
-            ".progress-text"
-        );
+        document.querySelector(".progress-text");
 
 
     if (progressFill) {
 
         progressFill.style.width =
             `${progress}%`;
-
     }
 
 
@@ -66,52 +52,40 @@ function updateProgress() {
 
         progressText.textContent =
             `Progression : ${progress} %`;
-
     }
 
 
     updateModuleMenu();
-
 }
 
 
 /* ============================= */
-/* METTRE À JOUR LE MENU */
+/* MENU DES MODULES */
 /* ============================= */
 
 function updateModuleMenu() {
 
     const modules =
-        document.querySelectorAll(
-            ".course-menu li"
-        );
+        document.querySelectorAll(".course-menu li");
 
 
-    modules.forEach(
-        (module, index) => {
+    modules.forEach((module, index) => {
 
-            const moduleNumber =
-                index + 1;
+        const moduleNumber = index + 1;
 
-
-            const completed =
-                localStorage.getItem(
-                    `n1-module-${moduleNumber}-complete`
-                );
+        const completed =
+            localStorage.getItem(
+                `n1-module-${moduleNumber}-complete`
+            );
 
 
-            if (
-                completed === "true"
-            ) {
+        if (completed === "true") {
 
-                module.textContent =
-                    `✓ Module ${moduleNumber}`;
-
-            }
+            module.classList.add("completed");
 
         }
-    );
 
+    });
 }
 
 
@@ -119,9 +93,7 @@ function updateModuleMenu() {
 /* TERMINER UN MODULE */
 /* ============================= */
 
-function completeModule(
-    moduleNumber
-) {
+function completeModule(moduleNumber) {
 
     localStorage.setItem(
         `n1-module-${moduleNumber}-complete`,
@@ -135,52 +107,67 @@ function completeModule(
     alert(
         `Bravo ! Le Module ${moduleNumber} est terminé.`
     );
-
 }
 
+
 /* ============================= */
-/* VERROUILLAGE DES MODULES */
+/* VÉRIFIER L'ACCÈS AU MODULE */
 /* ============================= */
 
 function checkModuleAccess() {
 
-    const page =
+    const currentPage =
         window.location.pathname;
 
-    const match =
-        page.match(/n1-module-(\d+)\.html/);
 
+    const match =
+        currentPage.match(
+            /n1-module-(\d+)\.html$/
+        );
+
+
+    // Ce n'est pas une page de module
     if (!match) {
         return;
     }
 
+
     const moduleNumber =
-        parseInt(match[1]);
+        parseInt(match[1], 10);
+
 
     // Le Module 1 est toujours accessible
     if (moduleNumber === 1) {
         return;
     }
 
-    // Vérifier que le module précédent est terminé
+
+    // Vérifier le module précédent
     const previousModule =
         moduleNumber - 1;
 
-    const completed =
+
+    const previousCompleted =
         localStorage.getItem(
             `n1-module-${previousModule}-complete`
         );
 
-    if (completed !== "true") {
+
+    // Si le module précédent n'est pas terminé
+    if (previousCompleted !== "true") {
 
         alert(
-            `Vous devez terminer le Module ${previousModule} avant d'accéder à ce module.`
+            `🔒 Vous devez terminer le Module ${previousModule} avant d'accéder au Module ${moduleNumber}.`
         );
+
 
         window.location.href =
             `n1-module-${previousModule}.html`;
+
     }
+
 }
+
 
 /* ============================= */
 /* INITIALISATION */
