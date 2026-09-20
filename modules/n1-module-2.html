@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Module 2 — Comprendre l'IA générative
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="../style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <nav>
+
+        <div class="logo">
+            Académie IA Générative
+        </div>
+
+        <ul class="nav-links">
+
+            <li>
+                <a href="../index.html">
+                    Accueil
+                </a>
+            </li>
+
+            <li>
+                <a href="../formations/n1.html">
+                    Formation N1
+                </a>
+            </li>
+
+        </ul>
+
+    </nav>
+
+</header>
+
+
+
+<main class="course-container">
+
+
+    <aside class="course-sidebar">
+
+        <h3>
+            N1 — Fondamentaux
+        </h3>
+
+        <p class="progress-text">
+            Progression : 20 %
+        </p>
+
+        <div class="progress-bar">
+
+            <div
+                class="progress-fill"
+                style="width: 20%;"
+            ></div>
+
+        </div>
+
+
+        <ul class="course-menu">
+
+            <li>
+                ✓ Module 1 — Bienvenue
+            </li>
+
+            <li class="active">
+                ● Module 2 — Comprendre l'IA
+            </li>
+
+            <li>
+                ○ Module 3 — Modèles génératifs
+            </li>
+
+            <li>
+                ○ Module 4 — Premiers prompts
+            </li>
+
+            <li>
+                ○ Module 5 — Atelier pratique
+            </li>
+
+        </ul>
+
+    </aside>
+
+
+
+    <section class="course-content">
+
+
+        <div class="lesson-header">
+
+            <p>
+                MODULE 2
+            </p>
+
+            <h1>
+                Comprendre l'IA générative
+            </h1>
+
+            <p>
+                Les concepts fondamentaux
+            </p>
+
+        </div>
+
+
+
+        <article class="lesson-card">
+
+            <h2>
+                📖 Qu'est-ce que l'IA générative ?
+            </h2>
+
+            <p>
+                L'intelligence artificielle générative
+                désigne des systèmes capables de produire
+                du contenu à partir d'une instruction
+                fournie par un utilisateur.
+            </p>
+
+            <p>
+                Ce contenu peut prendre différentes formes :
+                texte, image, audio, vidéo ou code.
+            </p>
+
+            <p>
+                Les modèles génératifs apprennent à partir
+                de grandes quantités de données afin de
+                produire de nouvelles réponses à partir
+                des demandes qui leur sont adressées.
+            </p>
+
+        </article>
+
+
+
+        <article class="lesson-card">
+
+            <h2>
+                🧠 Les principaux types de contenu
+            </h2>
+
+            <ul>
+
+                <li>
+                    Texte
+                </li>
+
+                <li>
+                    Images
+                </li>
+
+                <li>
+                    Audio
+                </li>
+
+                <li>
+                    Vidéo
+                </li>
+
+                <li>
+                    Code
+                </li>
+
+            </ul>
+
+        </article>
+
+
+
+        <article class="lesson-card">
+
+            <h2>
+                🎥 Vidéo du module
+            </h2>
+
+            <div class="video-placeholder">
+
+                <span>
+                    ▶
+                </span>
+
+                <p>
+                    La vidéo du Module 2 sera ajoutée ici.
+                </p>
+
+            </div>
+
+        </article>
+
+
+
+        <article class="lesson-card">
+
+            <h2>
+                📝 Question de réflexion
+            </h2>
+
+            <p>
+                Donnez un exemple d'utilisation de l'IA
+                générative dans votre activité quotidienne,
+                professionnelle ou éducative.
+            </p>
+
+            <br>
+
+            <textarea
+                class="answer-box"
+                placeholder="Écrivez votre réponse ici..."
+            ></textarea>
+
+        </article>
+
+
+
+        <article class="lesson-card completion-card">
+
+            <h2>
+                🎓 Module terminé ?
+            </h2>
+
+            <p>
+                Validez le module lorsque vous avez
+                terminé les différentes activités.
+            </p>
+
+            <br>
+
+            <button
+                class="complete-btn"
+                onclick="completeModule2()"
+            >
+                ✓ Marquer le module comme terminé
+            </button>
+
+        </article>
+
+
+
+        <div class="lesson-navigation">
+
+            <a
+                href="n1-module-1.html"
+                class="nav-button"
+            >
+                ← Module précédent
+            </a>
+
+
+            <a
+                href="#"
+                class="nav-button"
+            >
+                Module suivant →
+            </a>
+
+        </div>
+
+
+    </section>
+
+</main>
+
+
+
+<footer>
+
+    <p>
+        © 2026 — Académie IA Générative
+    </p>
+
+</footer>
+
+
+
+<script src="../script.js"></script>
+
+<script>
+
+function completeModule2() {
+
+    localStorage.setItem(
+        "n1-module-2-complete",
+        "true"
+    );
+
+    localStorage.setItem(
+        "n1-progress",
+        "40"
+    );
+
+    alert(
+        "Bravo ! Le Module 2 est terminé."
+    );
+
+    window.location.reload();
+
+}
+
+</script>
+
+
+</body>
+
+</html>
