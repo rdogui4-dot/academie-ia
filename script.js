@@ -138,6 +138,49 @@ function completeModule(
 
 }
 
+/* ============================= */
+/* VERROUILLAGE DES MODULES */
+/* ============================= */
+
+function checkModuleAccess() {
+
+    const page =
+        window.location.pathname;
+
+    const match =
+        page.match(/n1-module-(\d+)\.html/);
+
+    if (!match) {
+        return;
+    }
+
+    const moduleNumber =
+        parseInt(match[1]);
+
+    // Le Module 1 est toujours accessible
+    if (moduleNumber === 1) {
+        return;
+    }
+
+    // Vérifier que le module précédent est terminé
+    const previousModule =
+        moduleNumber - 1;
+
+    const completed =
+        localStorage.getItem(
+            `n1-module-${previousModule}-complete`
+        );
+
+    if (completed !== "true") {
+
+        alert(
+            `Vous devez terminer le Module ${previousModule} avant d'accéder à ce module.`
+        );
+
+        window.location.href =
+            `n1-module-${previousModule}.html`;
+    }
+}
 
 /* ============================= */
 /* INITIALISATION */
@@ -145,5 +188,11 @@ function completeModule(
 
 document.addEventListener(
     "DOMContentLoaded",
-    updateProgress
+    function () {
+
+        updateProgress();
+
+        checkModuleAccess();
+
+    }
 );
