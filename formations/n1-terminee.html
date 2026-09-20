@@ -192,6 +192,21 @@
                         "n1-quiz-passed"
                     );
 
+const certificateLink =
+    document.getElementById(
+        "certificateLink"
+    );
+
+if (
+    quizPassed === "true" &&
+    certificateLink
+) {
+
+    certificateLink.style.display =
+        "inline-block";
+
+}
+                
                 const quizScore =
                     localStorage.getItem(
                         "n1-quiz-score"
