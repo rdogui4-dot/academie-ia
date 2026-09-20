@@ -158,13 +158,43 @@ function checkModuleAccess() {
         window.location.pathname;
 
 
+    /* ============================= */
+    /* VÉRIFIER L'ACCÈS AU QUIZ */
+    /* ============================= */
+
+    if (currentPage.endsWith("quiz-n1.html")) {
+
+        const allModulesCompleted =
+            getProgress() === 100;
+
+
+        if (!allModulesCompleted) {
+
+            alert(
+                "🔒 Vous devez terminer les 5 modules avant d'accéder au quiz final."
+            );
+
+
+            window.location.href =
+                "n1-module-1.html";
+
+            return;
+        }
+
+        return;
+    }
+
+
+    /* ============================= */
+    /* VÉRIFIER L'ACCÈS AUX MODULES */
+    /* ============================= */
+
     const match =
         currentPage.match(
             /n1-module-(\d+)\.html$/
         );
 
 
-    // Ce n'est pas une page de module
     if (!match) {
         return;
     }
@@ -174,13 +204,11 @@ function checkModuleAccess() {
         parseInt(match[1], 10);
 
 
-    // Le Module 1 est toujours accessible
     if (moduleNumber === 1) {
         return;
     }
 
 
-    // Vérifier le module précédent
     const previousModule =
         moduleNumber - 1;
 
@@ -191,7 +219,6 @@ function checkModuleAccess() {
         );
 
 
-    // Si le module précédent n'est pas terminé
     if (previousCompleted !== "true") {
 
         alert(
@@ -201,7 +228,6 @@ function checkModuleAccess() {
 
         window.location.href =
             `n1-module-${previousModule}.html`;
-
     }
 
 }
