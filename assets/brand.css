@@ -1,0 +1,196 @@
+:root {
+    --brand-purple: #4B0082;
+    --brand-blue: #0066FF;
+    --brand-green: #4CAF50;
+    --brand-ink: #111827;
+    --brand-muted: #6B7280;
+    --brand-bg: #F6F8FC;
+    --brand-surface: #FFFFFF;
+    --brand-border: #E5E7EB;
+    --brand-radius: 18px;
+    --brand-shadow: 0 10px 30px rgba(17,24,39,.08);
+}
+
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    color: var(--brand-ink);
+    background: var(--brand-bg);
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgba(255,255,255,.94);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(229,231,235,.85);
+}
+
+.site-header h1 {
+    width: 210px;
+    height: 58px;
+    margin: 0;
+    padding: 0;
+    font-size: 0;
+    line-height: 0;
+    background: url("logo.svg") no-repeat center / contain;
+    flex: 0 0 auto;
+}
+
+.site-header .container {
+    min-height: 78px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--brand-ink);
+}
+
+.brand img { display: block; }
+.brand-icon { width: 42px; height: 42px; }
+.brand-wordmark { width: 210px; max-width: 42vw; }
+
+.site-header nav {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.site-header nav a {
+    color: #374151;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.site-header nav a:hover { color: var(--brand-blue); }
+
+.course-container {
+    max-width: 1320px;
+    margin: 32px auto;
+    padding: 0 22px;
+    gap: 28px;
+}
+
+.course-sidebar,
+.course-content,
+.lesson-card,
+.lesson-header {
+    border: 1px solid var(--brand-border);
+    border-radius: var(--brand-radius);
+    background: var(--brand-surface);
+    box-shadow: var(--brand-shadow);
+}
+
+.course-sidebar {
+    padding: 22px;
+    position: sticky;
+    top: 102px;
+}
+
+.course-sidebar h2 {
+    margin-top: 0;
+    color: var(--brand-purple);
+}
+
+.lesson-header {
+    padding: 30px;
+    margin-bottom: 22px;
+    background:
+      radial-gradient(circle at top right, rgba(0,102,255,.08), transparent 38%),
+      linear-gradient(180deg, #fff, #fbfcff);
+}
+
+.lesson-header > span {
+    display: inline-flex;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(75,0,130,.08);
+    color: var(--brand-purple);
+    font-size: .78rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+}
+
+.lesson-card { padding: 26px; margin-bottom: 18px; }
+
+.progress-bar {
+    height: 10px;
+    border-radius: 999px;
+    overflow: hidden;
+    background: #E5E7EB;
+}
+
+.progress-fill {
+    background: linear-gradient(90deg, var(--brand-purple), var(--brand-blue), var(--brand-green));
+    border-radius: inherit;
+}
+
+.complete-btn {
+    border: 0;
+    border-radius: 12px;
+    padding: 12px 18px;
+    background: linear-gradient(135deg, var(--brand-purple), var(--brand-blue));
+    color: #fff;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.complete-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(0,102,255,.22);
+}
+
+/* Composant réutilisable : watermark */
+.watermarked {
+    position: relative;
+    overflow: hidden;
+}
+
+.watermarked > *:not(.brand-watermark) {
+    position: relative;
+    z-index: 1;
+}
+
+.brand-watermark {
+    position: absolute;
+    z-index: 0;
+    inset: 50% auto auto 50%;
+    width: 58%;
+    transform: translate(-50%, -50%) rotate(-14deg);
+    opacity: .055;
+    pointer-events: none;
+    user-select: none;
+}
+
+.brand-watermark img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+@media (max-width: 820px) {
+    .site-header .container { min-height: 68px; }
+    .site-header h1 { width: 175px; height: 50px; }
+    .brand-wordmark { width: 175px; }
+    .course-container { margin-top: 20px; padding: 0 14px; }
+    .course-sidebar { position: static; }
+}
+
+@media print {
+    .site-header { display: none !important; }
+    body { background: #fff; }
+    .brand-watermark { opacity: .045; }
+}
