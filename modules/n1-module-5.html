@@ -19,6 +19,21 @@
 
 </head>
 
+<script>
+function finishModule5() {
+
+    completeModule(5);
+
+    setTimeout(function () {
+
+        window.location.href =
+            "quiz-n1.html";
+
+    }, 500);
+
+}
+</script>
+    
 <body>
 
 
@@ -258,13 +273,10 @@
 
 
         <button
-            class="complete-btn"
-            onclick="completeModule(5)"
-        >
-
-            ✓ Marquer le module comme terminé
-
-        </button>
+    class="complete-btn"
+    onclick="finishModule5()">
+    Terminer le Module 5
+</button>
 
 
 
@@ -279,7 +291,7 @@
 
 
             <a
-                href="../formations/n1-terminee.html"
+                href="../formations/n1.html"
                 class="nav-btn"
             >
                 Terminer la formation →
