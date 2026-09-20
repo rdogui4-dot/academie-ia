@@ -73,19 +73,57 @@ function updateModuleMenu() {
 
         const moduleNumber = index + 1;
 
+
         const completed =
             localStorage.getItem(
                 `n1-module-${moduleNumber}-complete`
             );
 
 
+        const previousCompleted =
+            moduleNumber === 1 ||
+            localStorage.getItem(
+                `n1-module-${moduleNumber - 1}-complete`
+            ) === "true";
+
+
+        /* MODULE TERMINÉ */
+
         if (completed === "true") {
+
+            module.textContent =
+                `✓ Module ${moduleNumber}`;
 
             module.classList.add("completed");
 
+            module.classList.remove("locked");
+
+            return;
         }
 
+
+        /* MODULE ACCESSIBLE */
+
+        if (previousCompleted) {
+
+            module.textContent =
+                `🔓 Module ${moduleNumber}`;
+
+            module.classList.remove("locked");
+
+            return;
+        }
+
+
+        /* MODULE VERROUILLÉ */
+
+        module.textContent =
+            `🔒 Module ${moduleNumber}`;
+
+        module.classList.add("locked");
+
     });
+
 }
 
 
