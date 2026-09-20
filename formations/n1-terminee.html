@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Formation N1 terminée — Académie IA Générative</title>
+
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+
+    <div class="course-container">
+
+        <!-- ============================= -->
+        <!-- SIDEBAR -->
+        <!-- ============================= -->
+
+        <aside class="course-sidebar">
+
+            <h2>Fondamentaux de l'IA générative</h2>
+
+            <div class="progress-bar">
+                <div
+                    class="progress-fill"
+                    style="width: 100%;">
+                </div>
+            </div>
+
+            <p class="progress-text">
+                Progression : 100 %
+            </p>
+
+            <ul class="course-menu">
+
+                <li class="completed">
+                    ✓ Module 1
+                </li>
+
+                <li class="completed">
+                    ✓ Module 2
+                </li>
+
+                <li class="completed">
+                    ✓ Module 3
+                </li>
+
+                <li class="completed">
+                    ✓ Module 4
+                </li>
+
+                <li class="completed">
+                    ✓ Module 5
+                </li>
+
+                <li class="completed">
+                    ✓ Quiz final
+                </li>
+
+            </ul>
+
+        </aside>
+
+
+        <!-- ============================= -->
+        <!-- CONTENU PRINCIPAL -->
+        <!-- ============================= -->
+
+        <main class="course-content">
+
+            <div class="lesson-header">
+
+                <p>Académie IA Générative</p>
+
+                <h1>
+                    🎉 Félicitations !
+                </h1>
+
+            </div>
+
+
+            <section class="lesson-card">
+
+                <h2>
+                    Formation terminée
+                </h2>
+
+                <p>
+                    Vous avez terminé avec succès la formation
+                    <strong>Fondamentaux de l'IA générative</strong>.
+                </p>
+
+                <hr>
+
+
+                <h3>Votre parcours</h3>
+
+                <p>
+                    ✓ 5 modules terminés
+                </p>
+
+                <p>
+                    ✓ Quiz final réussi
+                </p>
+
+                <p>
+                    ✓ Progression : <strong>100 %</strong>
+                </p>
+
+
+                <div class="completion-message">
+
+                    <h2>
+                        Bravo pour votre réussite !
+                    </h2>
+
+                    <p>
+                        Vous avez acquis les connaissances fondamentales
+                        nécessaires pour comprendre l'IA générative et
+                        commencer à l'utiliser efficacement.
+                    </p>
+
+                </div>
+
+
+                <!-- ============================= -->
+                <!-- SCORE DU QUIZ -->
+                <!-- ============================= -->
+
+                <div id="quiz-result">
+
+                    <h3>
+                        Résultat du quiz
+                    </h3>
+
+                    <p id="quiz-score">
+                        Vérification de votre résultat...
+                    </p>
+
+                </div>
+
+
+                <!-- ============================= -->
+                <!-- CERTIFICAT -->
+                <!-- ============================= -->
+
+                <div class="certificate-section">
+
+                    <h3>
+                        Votre certificat
+                    </h3>
+
+                    <p>
+                        Votre certificat de réussite sera disponible
+                        à l'étape suivante.
+                    </p>
+
+                    <a
+    href="certificat-n1.html"
+    id="certificateLink"
+    class="complete-btn"
+    style="display:none;"
+>
+    📜 Voir mon certificat
+</a>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- ============================= -->
+    <!-- JAVASCRIPT -->
+    <!-- ============================= -->
+
+    <script src="../script.js"></script>
+
+    <script>
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                const quizPassed =
+                    localStorage.getItem(
+                        "n1-quiz-passed"
+                    );
+
+const certificateLink =
+    document.getElementById(
+        "certificateLink"
+    );
+
+if (
+    quizPassed === "true" &&
+    certificateLink
+) {
+
+    certificateLink.style.display =
+        "inline-block";
+
+}
+                
+                const quizScore =
+                    localStorage.getItem(
+                        "n1-quiz-score"
+                    );
+
+                const scoreElement =
+                    document.getElementById(
+                        "quiz-score"
+                    );
+
+
+                if (quizPassed === "true") {
+
+                    if (quizScore) {
+
+                        scoreElement.textContent =
+                            `Quiz réussi — Score : ${quizScore}%`;
+
+                    } else {
+
+                        scoreElement.textContent =
+                            "Quiz réussi";
+
+                    }
+
+                } else {
+
+                    scoreElement.textContent =
+                        "Quiz non validé.";
+
+                }
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>
