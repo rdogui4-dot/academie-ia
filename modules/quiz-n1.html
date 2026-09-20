@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -18,6 +17,55 @@
         href="../style.css"
     >
 
+    <style>
+
+        /* ============================= */
+        /* QUESTIONS INCOMPLÈTES */
+        /* ============================= */
+
+        .question-incomplete {
+            border: 2px solid #dc2626;
+            border-radius: 8px;
+            padding: 20px;
+            background: #fff7f7;
+        }
+
+
+        /* ============================= */
+        /* MESSAGE QUESTION INCOMPLÈTE */
+        /* ============================= */
+
+        .question-warning {
+            display: block;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            background: #fee2e2;
+            color: #991b1b;
+            font-weight: 600;
+        }
+
+
+        /* ============================= */
+        /* RÉSULTAT */
+        /* ============================= */
+
+        #quizResult {
+            margin-top: 30px;
+        }
+
+
+        /* ============================= */
+        /* BOUTON DÉSACTIVÉ */
+        /* ============================= */
+
+        .complete-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+    </style>
+
 </head>
 
 
@@ -28,7 +76,9 @@
 
     <div class="container">
 
-        <h1>Académie IA Générative</h1>
+        <h1>
+            Académie IA Générative
+        </h1>
 
         <nav>
 
@@ -47,6 +97,7 @@
 </header>
 
 
+
 <main class="course-container">
 
 
@@ -56,7 +107,9 @@
 
     <aside class="course-sidebar">
 
-        <h2>Fondamentaux IA</h2>
+        <h2>
+            Fondamentaux IA
+        </h2>
 
 
         <div class="progress-container">
@@ -123,12 +176,20 @@
         <!-- FORMULAIRE -->
         <!-- ============================= -->
 
-        <form id="quizForm">
+        <form
+            id="quizForm"
+            novalidate
+        >
 
 
+            <!-- ============================= -->
             <!-- QUESTION 1 -->
+            <!-- ============================= -->
 
-            <div class="lesson-card">
+            <div
+                class="lesson-card quiz-question"
+                id="question-1"
+            >
 
                 <h3>
                     1. Qu'est-ce qu'une IA générative ?
@@ -169,9 +230,14 @@
 
 
 
+            <!-- ============================= -->
             <!-- QUESTION 2 -->
+            <!-- ============================= -->
 
-            <div class="lesson-card">
+            <div
+                class="lesson-card quiz-question"
+                id="question-2"
+            >
 
                 <h3>
                     2. Que signifie LLM ?
@@ -212,9 +278,14 @@
 
 
 
+            <!-- ============================= -->
             <!-- QUESTION 3 -->
+            <!-- ============================= -->
 
-            <div class="lesson-card">
+            <div
+                class="lesson-card quiz-question"
+                id="question-3"
+            >
 
                 <h3>
                     3. Que peut produire une IA générative ?
@@ -255,9 +326,14 @@
 
 
 
+            <!-- ============================= -->
             <!-- QUESTION 4 -->
+            <!-- ============================= -->
 
-            <div class="lesson-card">
+            <div
+                class="lesson-card quiz-question"
+                id="question-4"
+            >
 
                 <h3>
                     4. Pourquoi faut-il vérifier les réponses d'une IA ?
@@ -298,9 +374,14 @@
 
 
 
+            <!-- ============================= -->
             <!-- QUESTION 5 -->
+            <!-- ============================= -->
 
-            <div class="lesson-card">
+            <div
+                class="lesson-card quiz-question"
+                id="question-5"
+            >
 
                 <h3>
                     5. Quelle est une bonne pratique avec l'IA ?
@@ -341,9 +422,14 @@
 
 
 
+            <!-- ============================= -->
             <!-- QUESTION 6 -->
+            <!-- ============================= -->
 
-            <div class="lesson-card">
+            <div
+                class="lesson-card quiz-question"
+                id="question-6"
+            >
 
                 <h3>
                     6. Quelle est la première étape pour utiliser l'IA efficacement ?
@@ -384,9 +470,14 @@
 
 
 
+            <!-- ============================= -->
             <!-- QUESTION 7 -->
+            <!-- ============================= -->
 
-            <div class="lesson-card">
+            <div
+                class="lesson-card quiz-question"
+                id="question-7"
+            >
 
                 <h3>
                     7. Qu'est-ce qu'une hallucination d'IA ?
@@ -427,9 +518,14 @@
 
 
 
+            <!-- ============================= -->
             <!-- QUESTION 8 -->
+            <!-- ============================= -->
 
-            <div class="lesson-card">
+            <div
+                class="lesson-card quiz-question"
+                id="question-8"
+            >
 
                 <h3>
                     8. Quel rôle doit conserver l'utilisateur ?
@@ -470,9 +566,14 @@
 
 
 
+            <!-- ============================= -->
             <!-- QUESTION 9 -->
+            <!-- ============================= -->
 
-            <div class="lesson-card">
+            <div
+                class="lesson-card quiz-question"
+                id="question-9"
+            >
 
                 <h3>
                     9. Que faut-il éviter avec les données confidentielles ?
@@ -513,9 +614,14 @@
 
 
 
+            <!-- ============================= -->
             <!-- QUESTION 10 -->
+            <!-- ============================= -->
 
-            <div class="lesson-card">
+            <div
+                class="lesson-card quiz-question"
+                id="question-10"
+            >
 
                 <h3>
                     10. Quel est l'objectif principal de l'IA générative ?
@@ -562,6 +668,7 @@
 
             <button
                 type="button"
+                id="correctionButton"
                 class="complete-btn"
                 onclick="corrigerQuiz()"
             >
@@ -595,9 +702,9 @@
 
 <script>
 
-/* ============================= */
+/* ===================================== */
 /* RÉPONSES CORRECTES */
-/* ============================= */
+/* ===================================== */
 
 const correctAnswers = {
 
@@ -615,24 +722,116 @@ const correctAnswers = {
 };
 
 
+/* ===================================== */
+/* NOMBRE TOTAL DE QUESTIONS */
+/* ===================================== */
 
-/* ============================= */
-/* CORRIGER LE QUIZ */
-/* ============================= */
-
-function corrigerQuiz() {
-
-    let score = 0;
-    let unanswered = [];
+const TOTAL_QUESTIONS = 10;
 
 
-    /* ============================= */
-    /* VÉRIFIER LES RÉPONSES MANQUANTES */
-    /* ============================= */
+/* ===================================== */
+/* INITIALISATION */
+/* ===================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        initialiserQuiz();
+
+    }
+);
+
+
+/* ===================================== */
+/* INITIALISER LE QUIZ */
+/* ===================================== */
+
+function initialiserQuiz() {
 
     for (
         let i = 1;
-        i <= 10;
+        i <= TOTAL_QUESTIONS;
+        i++
+    ) {
+
+        const radios =
+            document.querySelectorAll(
+                `input[name="q${i}"]`
+            );
+
+
+        radios.forEach(
+            function (radio) {
+
+                radio.addEventListener(
+                    "change",
+                    function () {
+
+                        retirerAlerteQuestion(i);
+
+                    }
+                );
+
+            }
+        );
+
+    }
+
+
+    /* ============================= */
+    /* SI QUIZ DÉJÀ RÉUSSI */
+    /* ============================= */
+
+    const quizPassed =
+        localStorage.getItem(
+            "n1-quiz-passed"
+        );
+
+
+    const savedScore =
+        localStorage.getItem(
+            "n1-quiz-score"
+        );
+
+
+    if (
+        quizPassed === "true" &&
+        savedScore !== null
+    ) {
+
+        afficherQuizDejaReussi(
+            savedScore
+        );
+
+    }
+
+}
+
+
+/* ===================================== */
+/* CORRIGER LE QUIZ */
+/* ===================================== */
+
+function corrigerQuiz() {
+
+    const unanswered = [];
+
+
+    /* ================================= */
+    /* SUPPRIMER LES ANCIENNES ALERTES */
+    /* ================================= */
+
+    supprimerToutesLesAlertes();
+
+
+    /* ================================= */
+    /* VÉRIFIER LES QUESTIONS */
+/* ================================= */
+
+    for (
+        let i = 1;
+        i <= TOTAL_QUESTIONS;
         i++
     ) {
 
@@ -641,65 +840,61 @@ function corrigerQuiz() {
                 `input[name="q${i}"]:checked`
             );
 
+
         if (!answer) {
 
             unanswered.push(i);
+
+            afficherAlerteQuestion(i);
 
         }
 
     }
 
 
-    /* ============================= */
+    /* ================================= */
     /* BLOQUER LA CORRECTION */
-    /* ============================= */
+/* ================================= */
 
-    if (unanswered.length > 0) {
+    if (
+        unanswered.length > 0
+    ) {
 
-        const result =
+        afficherMessageIncomplet(
+            unanswered
+        );
+
+        const firstMissing =
             document.getElementById(
-                "quizResult"
+                `question-${unanswered[0]}`
             );
 
-        result.style.display =
-            "block";
 
-        result.innerHTML = `
+        if (firstMissing) {
 
-            <h2>
-                ⚠️ Réponses incomplètes
-            </h2>
+            firstMissing.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
 
-            <p>
-                Vous devez répondre à toutes les questions
-                avant de corriger le quiz.
-            </p>
+        }
 
-            <p>
-                Questions sans réponse :
-                <strong>
-                    ${unanswered.join(", ")}
-                </strong>
-            </p>
-
-        `;
-
-        result.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
 
         return;
+
     }
 
 
-    /* ============================= */
+    /* ================================= */
     /* CALCUL DU SCORE */
-    /* ============================= */
+/* ================================= */
+
+    let score = 0;
+
 
     for (
         let i = 1;
-        i <= 10;
+        i <= TOTAL_QUESTIONS;
         i++
     ) {
 
@@ -708,8 +903,8 @@ function corrigerQuiz() {
                 `input[name="q${i}"]:checked`
             );
 
+
         if (
-            answer &&
             answer.value ===
             correctAnswers[`q${i}`]
         ) {
@@ -721,17 +916,22 @@ function corrigerQuiz() {
     }
 
 
-    /* ============================= */
-    /* POURCENTAGE */
-    /* ============================= */
+    /* ================================= */
+    /* CALCUL POURCENTAGE */
+/* ================================= */
 
     const percentage =
-        score * 10;
+        Math.round(
+            (
+                score /
+                TOTAL_QUESTIONS
+            ) * 100
+        );
 
 
-    /* ============================= */
-    /* ZONE RÉSULTAT */
-    /* ============================= */
+    /* ================================= */
+    /* RÉCUPÉRER LA ZONE RÉSULTAT */
+/* ================================= */
 
     const result =
         document.getElementById(
@@ -743,11 +943,25 @@ function corrigerQuiz() {
         "block";
 
 
-    /* ============================= */
+    /* ================================= */
     /* QUIZ RÉUSSI */
-    /* ============================= */
+/* ================================= */
 
-    if (percentage >= 70) {
+    if (
+        percentage >= 70
+    ) {
+
+        localStorage.setItem(
+            "n1-quiz-passed",
+            "true"
+        );
+
+
+        localStorage.setItem(
+            "n1-quiz-score",
+            percentage
+        );
+
 
         result.innerHTML = `
 
@@ -758,7 +972,7 @@ function corrigerQuiz() {
             <p>
                 Score :
                 <strong>
-                    ${score}/10
+                    ${score}/${TOTAL_QUESTIONS}
                 </strong>
             </p>
 
@@ -788,39 +1002,57 @@ function corrigerQuiz() {
         `;
 
 
-        /* ============================= */
-        /* ENREGISTRER LA RÉUSSITE */
-        /* ============================= */
+        /* ================================= */
+        /* DÉSACTIVER LE BOUTON CORRECTION */
+        /* ================================= */
 
-        localStorage.setItem(
-            "n1-quiz-passed",
-            "true"
+        const correctionButton =
+            document.getElementById(
+                "correctionButton"
+            );
+
+
+        correctionButton.style.display =
+            "none";
+
+
+        /* ================================= */
+        /* BLOQUER LES RÉPONSES */
+        /* ================================= */
+
+        const allInputs =
+            document.querySelectorAll(
+                "#quizForm input"
+            );
+
+
+        allInputs.forEach(
+            function (input) {
+
+                input.disabled =
+                    true;
+
+            }
         );
-
-
-        localStorage.setItem(
-            "n1-quiz-score",
-            percentage
-        );
-
-
-        /* ============================= */
-        /* MASQUER LE BOUTON CORRECTION */
-        /* ============================= */
-
-        document.querySelector(
-            "#quizForm .complete-btn"
-        ).style.display = "none";
-
 
     }
 
 
-    /* ============================= */
+    /* ================================= */
     /* QUIZ ÉCHOUÉ */
-    /* ============================= */
+/* ================================= */
 
     else {
+
+        localStorage.removeItem(
+            "n1-quiz-passed"
+        );
+
+
+        localStorage.removeItem(
+            "n1-quiz-score"
+        );
+
 
         result.innerHTML = `
 
@@ -831,7 +1063,7 @@ function corrigerQuiz() {
             <p>
                 Score :
                 <strong>
-                    ${score}/10
+                    ${score}/${TOTAL_QUESTIONS}
                 </strong>
             </p>
 
@@ -860,26 +1092,12 @@ function corrigerQuiz() {
 
         `;
 
-
-        /* ============================= */
-        /* SUPPRIMER L'ANCIEN RÉSULTAT */
-        /* ============================= */
-
-        localStorage.removeItem(
-            "n1-quiz-passed"
-        );
-
-
-        localStorage.removeItem(
-            "n1-quiz-score"
-        );
-
     }
 
 
-    /* ============================= */
+    /* ================================= */
     /* AFFICHER LE RÉSULTAT */
-    /* ============================= */
+/* ================================= */
 
     result.scrollIntoView({
         behavior: "smooth",
@@ -889,16 +1107,194 @@ function corrigerQuiz() {
 }
 
 
+/* ===================================== */
+/* MESSAGE RÉPONSES MANQUANTES */
+/* ===================================== */
 
-/* ============================= */
+function afficherMessageIncomplet(
+    unanswered
+) {
+
+    const result =
+        document.getElementById(
+            "quizResult"
+        );
+
+
+    result.style.display =
+        "block";
+
+
+    result.innerHTML = `
+
+        <h2>
+            ⚠️ Quiz incomplet
+        </h2>
+
+        <p>
+            Vous devez répondre à toutes les
+            questions avant de corriger le quiz.
+        </p>
+
+        <p>
+            ${unanswered.length === 1
+                ? "Question sans réponse :"
+                : "Questions sans réponse :"
+            }
+        </p>
+
+        <p>
+            <strong>
+                ${unanswered
+                    .map(
+                        function (number) {
+                            return `Question ${number}`;
+                        }
+                    )
+                    .join(", ")
+                }
+            </strong>
+        </p>
+
+        <p>
+            Les questions concernées sont
+            signalées en rouge.
+        </p>
+
+    `;
+
+
+    result.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+
+}
+
+
+/* ===================================== */
+/* AFFICHER ALERTE SUR UNE QUESTION */
+/* ===================================== */
+
+function afficherAlerteQuestion(
+    questionNumber
+) {
+
+    const question =
+        document.getElementById(
+            `question-${questionNumber}`
+        );
+
+
+    if (!question) {
+        return;
+    }
+
+
+    question.classList.add(
+        "question-incomplete"
+    );
+
+
+    const warning =
+        document.createElement(
+            "div"
+        );
+
+
+    warning.className =
+        "question-warning";
+
+
+    warning.textContent =
+        "⚠️ Veuillez sélectionner une réponse.";
+
+
+    warning.dataset.warning =
+        "true";
+
+
+    question.appendChild(
+        warning
+    );
+
+}
+
+
+/* ===================================== */
+/* RETIRER ALERTE D'UNE QUESTION */
+/* ===================================== */
+
+function retirerAlerteQuestion(
+    questionNumber
+) {
+
+    const question =
+        document.getElementById(
+            `question-${questionNumber}`
+        );
+
+
+    if (!question) {
+        return;
+    }
+
+
+    question.classList.remove(
+        "question-incomplete"
+    );
+
+
+    const warning =
+        question.querySelector(
+            '[data-warning="true"]'
+        );
+
+
+    if (warning) {
+
+        warning.remove();
+
+    }
+
+}
+
+
+/* ===================================== */
+/* SUPPRIMER TOUTES LES ALERTES */
+/* ===================================== */
+
+function supprimerToutesLesAlertes() {
+
+    for (
+        let i = 1;
+        i <= TOTAL_QUESTIONS;
+        i++
+    ) {
+
+        retirerAlerteQuestion(i);
+
+    }
+
+}
+
+
+/* ===================================== */
 /* REPRENDRE LE QUIZ */
-/* ============================= */
+/* ===================================== */
 
 function reprendreQuiz() {
 
-    document
-        .getElementById("quizForm")
-        .reset();
+    const form =
+        document.getElementById(
+            "quizForm"
+        );
+
+
+    form.reset();
+
+
+    supprimerToutesLesAlertes();
 
 
     const result =
@@ -916,8 +1312,8 @@ function reprendreQuiz() {
 
 
     const correctionButton =
-        document.querySelector(
-            "#quizForm .complete-btn"
+        document.getElementById(
+            "correctionButton"
         );
 
 
@@ -925,10 +1321,116 @@ function reprendreQuiz() {
         "inline-block";
 
 
+    correctionButton.disabled =
+        false;
+
+
+    localStorage.removeItem(
+        "n1-quiz-passed"
+    );
+
+
+    localStorage.removeItem(
+        "n1-quiz-score"
+    );
+
+
+    const allInputs =
+        document.querySelectorAll(
+            "#quizForm input"
+        );
+
+
+    allInputs.forEach(
+        function (input) {
+
+            input.disabled =
+                false;
+
+        }
+    );
+
+
     window.scrollTo({
         top: 0,
         behavior: "smooth"
     });
+
+}
+
+
+/* ===================================== */
+/* QUIZ DÉJÀ RÉUSSI */
+/* ===================================== */
+
+function afficherQuizDejaReussi(
+    score
+) {
+
+    const result =
+        document.getElementById(
+            "quizResult"
+        );
+
+
+    result.style.display =
+        "block";
+
+
+    result.innerHTML = `
+
+        <h2>
+            ✅ Quiz déjà validé
+        </h2>
+
+        <p>
+            Votre meilleur résultat enregistré :
+            <strong>
+                ${score}%
+            </strong>
+        </p>
+
+        <p>
+            Vous avez déjà réussi l'évaluation
+            finale de la formation N1.
+        </p>
+
+        <br>
+
+        <a
+            href="../formations/n1-terminee.html"
+            class="complete-btn"
+        >
+            🎓 Terminer la formation
+        </a>
+
+    `;
+
+
+    const correctionButton =
+        document.getElementById(
+            "correctionButton"
+        );
+
+
+    correctionButton.style.display =
+        "none";
+
+
+    const allInputs =
+        document.querySelectorAll(
+            "#quizForm input"
+        );
+
+
+    allInputs.forEach(
+        function (input) {
+
+            input.disabled =
+                true;
+
+        }
+    );
 
 }
 
