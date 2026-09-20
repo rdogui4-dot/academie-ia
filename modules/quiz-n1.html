@@ -695,6 +695,37 @@ document
         "n1-quiz-score"
     );
 }
+    localStorage.setItem(
+        "n1-quiz-score",
+        percentage
+    );
+
+} else {
+
+    result.innerHTML = `
+        <h2>📚 Quiz à revoir</h2>
+
+        <p>
+            Score : <strong>${score}/10</strong>
+        </p>
+
+        <p>
+            Résultat : <strong>${percentage}%</strong>
+        </p>
+
+        <p>
+            Vous devez obtenir au moins 70 % pour réussir.
+        </p>
+    `;
+
+    localStorage.removeItem(
+        "n1-quiz-passed"
+    );
+
+    localStorage.removeItem(
+        "n1-quiz-score"
+    );
+}
             } else {
 
                 result.innerHTML = `
