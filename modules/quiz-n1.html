@@ -639,37 +639,62 @@ document
 
             if (percentage >= 70) {
 
-                result.innerHTML = `
+    result.innerHTML = `
+        <h2>🎉 Quiz réussi !</h2>
 
-                    <h3>
-                        🎉 Quiz réussi !
-                    </h3>
+        <p>
+            Score : <strong>${score}/10</strong>
+        </p>
 
-                    <p>
-                        Votre score :
-                        <strong>
-                            ${score}/10
-                        </strong>
-                        (${percentage}%)
-                    </p>
+        <p>
+            Résultat : <strong>${percentage}%</strong>
+        </p>
 
-                    <p>
-                        Félicitations ! Vous avez atteint
-                        le score minimum de 70 %.
-                    </p>
+        <br>
 
-                    <p>
-                        La prochaine étape sera la validation
-                        officielle de votre formation.
-                    </p>
+        <a
+            href="../formations/n1-terminee.html"
+            class="complete-btn">
+            🎓 Terminer la formation
+        </a>
+    `;
 
-                `;
+    localStorage.setItem(
+        "n1-quiz-passed",
+        "true"
+    );
 
-                localStorage.setItem(
-                    "n1-quiz-passed",
-                    "true"
-                );
+    localStorage.setItem(
+        "n1-quiz-score",
+        percentage
+    );
 
+} else {
+
+    result.innerHTML = `
+        <h2>📚 Quiz à revoir</h2>
+
+        <p>
+            Score : <strong>${score}/10</strong>
+        </p>
+
+        <p>
+            Résultat : <strong>${percentage}%</strong>
+        </p>
+
+        <p>
+            Vous devez obtenir au moins 70 % pour réussir.
+        </p>
+    `;
+
+    localStorage.removeItem(
+        "n1-quiz-passed"
+    );
+
+    localStorage.removeItem(
+        "n1-quiz-score"
+    );
+}
             } else {
 
                 result.innerHTML = `
