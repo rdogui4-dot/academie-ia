@@ -623,6 +623,74 @@ const correctAnswers = {
 function corrigerQuiz() {
 
     let score = 0;
+    let unanswered = [];
+
+
+    /* ============================= */
+    /* VÉRIFIER LES RÉPONSES MANQUANTES */
+    /* ============================= */
+
+    for (
+        let i = 1;
+        i <= 10;
+        i++
+    ) {
+
+        const answer =
+            document.querySelector(
+                `input[name="q${i}"]:checked`
+            );
+
+        if (!answer) {
+
+            unanswered.push(i);
+
+        }
+
+    }
+
+
+    /* ============================= */
+    /* BLOQUER LA CORRECTION */
+    /* ============================= */
+
+    if (unanswered.length > 0) {
+
+        const result =
+            document.getElementById(
+                "quizResult"
+            );
+
+        result.style.display =
+            "block";
+
+        result.innerHTML = `
+
+            <h2>
+                ⚠️ Réponses incomplètes
+            </h2>
+
+            <p>
+                Vous devez répondre à toutes les questions
+                avant de corriger le quiz.
+            </p>
+
+            <p>
+                Questions sans réponse :
+                <strong>
+                    ${unanswered.join(", ")}
+                </strong>
+            </p>
+
+        `;
+
+        result.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+        return;
+    }
 
 
     /* ============================= */
@@ -639,7 +707,6 @@ function corrigerQuiz() {
             document.querySelector(
                 `input[name="q${i}"]:checked`
             );
-
 
         if (
             answer &&
