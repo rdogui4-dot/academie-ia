@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -46,13 +47,17 @@
 </header>
 
 
-
 <main class="course-container">
 
+
+    <!-- ============================= -->
+    <!-- SIDEBAR -->
+    <!-- ============================= -->
 
     <aside class="course-sidebar">
 
         <h2>Fondamentaux IA</h2>
+
 
         <div class="progress-container">
 
@@ -60,9 +65,11 @@
 
                 <div
                     class="progress-fill"
-                ></div>
+                    style="width: 100%;">
+                </div>
 
             </div>
+
 
             <p class="progress-text">
                 Progression : 100 %
@@ -73,17 +80,22 @@
 
         <ul class="course-menu">
 
-            <li>Module 1</li>
-            <li>Module 2</li>
-            <li>Module 3</li>
-            <li>Module 4</li>
-            <li>Module 5</li>
+            <li>✓ Module 1</li>
+            <li>✓ Module 2</li>
+            <li>✓ Module 3</li>
+            <li>✓ Module 4</li>
+            <li>✓ Module 5</li>
+            <li>📝 Quiz final</li>
 
         </ul>
 
     </aside>
 
 
+
+    <!-- ============================= -->
+    <!-- CONTENU -->
+    <!-- ============================= -->
 
     <section class="course-content">
 
@@ -106,6 +118,10 @@
         </div>
 
 
+
+        <!-- ============================= -->
+        <!-- FORMULAIRE -->
+        <!-- ============================= -->
 
         <form id="quizForm">
 
@@ -540,14 +556,26 @@
 
 
 
-            <button type="button" class="complete-btn" onclick="corrigerQuiz()">
-    Corriger le quiz
-</button>
+            <!-- ============================= -->
+            <!-- BOUTON CORRECTION -->
+            <!-- ============================= -->
+
+            <button
+                type="button"
+                class="complete-btn"
+                onclick="corrigerQuiz()"
+            >
+                Corriger le quiz
+            </button>
 
 
         </form>
 
 
+
+        <!-- ============================= -->
+        <!-- RÉSULTAT -->
+        <!-- ============================= -->
 
         <div
             id="quizResult"
@@ -567,6 +595,10 @@
 
 <script>
 
+/* ============================= */
+/* RÉPONSES CORRECTES */
+/* ============================= */
+
 const correctAnswers = {
 
     q1: "a",
@@ -583,115 +615,256 @@ const correctAnswers = {
 };
 
 
-document
-    .getElementById("quizForm")
-    .addEventListener(
-        "submit",
-        function(event) {
 
-            event.preventDefault();
+/* ============================= */
+/* CORRIGER LE QUIZ */
+/* ============================= */
 
+function corrigerQuiz() {
 
-            let score = 0;
+    let score = 0;
 
 
-            for (
-                let i = 1;
-                i <= 10;
-                i++
-            ) {
+    /* ============================= */
+    /* CALCUL DU SCORE */
+    /* ============================= */
 
-                const answer =
-                    document.querySelector(
-                        `input[name="q${i}"]:checked`
-                    );
+    for (
+        let i = 1;
+        i <= 10;
+        i++
+    ) {
 
-
-                if (
-                    answer &&
-                    answer.value ===
-                    correctAnswers[`q${i}`]
-                ) {
-
-                    score++;
-
-                }
-
-            }
+        const answer =
+            document.querySelector(
+                `input[name="q${i}"]:checked`
+            );
 
 
-            const percentage =
-                score * 10;
+        if (
+            answer &&
+            answer.value ===
+            correctAnswers[`q${i}`]
+        ) {
+
+            score++;
+
+        }
+
+    }
 
 
-            const result =
-                document.getElementById(
-                    "quizResult"
-                );
+    /* ============================= */
+    /* POURCENTAGE */
+    /* ============================= */
+
+    const percentage =
+        score * 10;
 
 
-            result.style.display =
-                "block";
+    /* ============================= */
+    /* ZONE RÉSULTAT */
+    /* ============================= */
+
+    const result =
+        document.getElementById(
+            "quizResult"
+        );
 
 
-            if (percentage >= 70) {
+    result.style.display =
+        "block";
 
-    result.innerHTML = `
-        <h2>🎉 Quiz réussi !</h2>
 
-        <p>
-            Score : <strong>${score}/10</strong>
-        </p>
+    /* ============================= */
+    /* QUIZ RÉUSSI */
+    /* ============================= */
 
-        <p>
-            Résultat : <strong>${percentage}%</strong>
-        </p>
+    if (percentage >= 70) {
 
-        <br>
+        result.innerHTML = `
 
-        <a
-            href="../formations/n1-terminee.html"
-            class="complete-btn">
-            🎓 Terminer la formation
-        </a>
-    `;
+            <h2>
+                🎉 Quiz réussi !
+            </h2>
 
-    localStorage.setItem(
-        "n1-quiz-passed",
-        "true"
-    );
+            <p>
+                Score :
+                <strong>
+                    ${score}/10
+                </strong>
+            </p>
 
-    localStorage.setItem(
-        "n1-quiz-score",
-        percentage
-    );
+            <p>
+                Résultat :
+                <strong>
+                    ${percentage}%
+                </strong>
+            </p>
 
-} else {
+            <br>
 
-    result.innerHTML = `
-        <h2>📚 Quiz à revoir</h2>
+            <p>
+                Félicitations ! Vous avez validé
+                l'évaluation finale de la formation N1.
+            </p>
 
-        <p>
-            Score : <strong>${score}/10</strong>
-        </p>
+            <br>
 
-        <p>
-            Résultat : <strong>${percentage}%</strong>
-        </p>
+            <a
+                href="../formations/n1-terminee.html"
+                class="complete-btn"
+            >
+                🎓 Terminer la formation
+            </a>
 
-        <p>
-            Vous devez obtenir au moins 70 % pour réussir.
-        </p>
-    `;
+        `;
 
-    localStorage.removeItem(
-        "n1-quiz-passed"
-    );
 
-    localStorage.removeItem(
-        "n1-quiz-score"
-    );
+        /* ============================= */
+        /* ENREGISTRER LA RÉUSSITE */
+        /* ============================= */
+
+        localStorage.setItem(
+            "n1-quiz-passed",
+            "true"
+        );
+
+
+        localStorage.setItem(
+            "n1-quiz-score",
+            percentage
+        );
+
+
+        /* ============================= */
+        /* MASQUER LE BOUTON CORRECTION */
+        /* ============================= */
+
+        document.querySelector(
+            "#quizForm .complete-btn"
+        ).style.display = "none";
+
+
+    }
+
+
+    /* ============================= */
+    /* QUIZ ÉCHOUÉ */
+    /* ============================= */
+
+    else {
+
+        result.innerHTML = `
+
+            <h2>
+                📚 Quiz à revoir
+            </h2>
+
+            <p>
+                Score :
+                <strong>
+                    ${score}/10
+                </strong>
+            </p>
+
+            <p>
+                Résultat :
+                <strong>
+                    ${percentage}%
+                </strong>
+            </p>
+
+            <p>
+                Vous devez obtenir au moins
+                <strong>70 %</strong>
+                pour réussir.
+            </p>
+
+            <br>
+
+            <button
+                type="button"
+                class="complete-btn"
+                onclick="reprendreQuiz()"
+            >
+                🔄 Reprendre le quiz
+            </button>
+
+        `;
+
+
+        /* ============================= */
+        /* SUPPRIMER L'ANCIEN RÉSULTAT */
+        /* ============================= */
+
+        localStorage.removeItem(
+            "n1-quiz-passed"
+        );
+
+
+        localStorage.removeItem(
+            "n1-quiz-score"
+        );
+
+    }
+
+
+    /* ============================= */
+    /* AFFICHER LE RÉSULTAT */
+    /* ============================= */
+
+    result.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
 }
+
+
+
+/* ============================= */
+/* REPRENDRE LE QUIZ */
+/* ============================= */
+
+function reprendreQuiz() {
+
+    document
+        .getElementById("quizForm")
+        .reset();
+
+
+    const result =
+        document.getElementById(
+            "quizResult"
+        );
+
+
+    result.style.display =
+        "none";
+
+
+    result.innerHTML =
+        "";
+
+
+    const correctionButton =
+        document.querySelector(
+            "#quizForm .complete-btn"
+        );
+
+
+    correctionButton.style.display =
+        "inline-block";
+
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+}
+
 </script>
 
 
