@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Vérification d'un certificat — Académie IA Générative">
+<title>Vérification du certificat — Académie IA Générative</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+.verify-page{max-width:760px;margin:70px auto;padding:0 20px 60px}.verify-card{background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:42px;box-shadow:0 18px 50px rgba(15,23,42,.10);text-align:center}.verify-icon{width:80px;height:80px;margin:0 auto 20px;border-radius:50%;display:grid;place-items:center;background:rgba(76,175,80,.12);font-size:38px}.verify-card h2{margin-bottom:10px;color:#111827}.verify-status{display:inline-flex;padding:7px 12px;border-radius:999px;background:#f0fdf4;color:#166534;font-weight:800;font-size:13px}.verify-id{margin:25px 0 10px;font-size:24px;font-weight:800;letter-spacing:.03em;color:#4B0082;word-break:break-word}.verify-note{margin-top:18px;color:#64748b;line-height:1.7}.verify-warning{margin-top:25px;padding:14px 16px;border-radius:12px;background:#fff7ed;color:#9a3412;font-size:13px;line-height:1.6}.verify-actions{margin-top:28px}.verify-actions a{display:inline-flex}.invalid .verify-icon{background:#fee2e2}.invalid .verify-status{background:#fef2f2;color:#991b1b}
+</style>
+</head>
+<body>
+<header class="site-header"><div class="container"><h1>Académie IA Générative</h1><nav><a href="../index.html">Accueil</a><a href="n1.html">Formation N1</a></nav></div></header>
+<main class="verify-page">
+<section class="verify-card" id="verificationCard">
+<div class="verify-icon" id="verifyIcon">✅</div>
+<div class="verify-status" id="verifyStatus">Identifiant reçu</div>
+<h2>Vérification du certificat</h2>
+<p class="verify-id" id="verifyId">—</p>
+<p class="verify-note" id="verifyNote">Chargement des informations de vérification…</p>
+<div class="verify-warning">Cette page confirme actuellement la réception et le format de l'identifiant. La validation publique contre un registre central de certificats sera ajoutée lors de la connexion du système à Google Sheets/Supabase.</div>
+<div class="verify-actions"><a href="certificat-n1.html" class="complete-btn">← Retour au certificat</a></div>
+</section>
+</main>
+<script>
+const params=new URLSearchParams(window.location.search);const id=(params.get('id')||'').trim();const card=document.getElementById('verificationCard');const status=document.getElementById('verifyStatus');const verifyId=document.getElementById('verifyId');const note=document.getElementById('verifyNote');const icon=document.getElementById('verifyIcon');
+const valid=/^AIG-N1-20\d{2}-[A-F0-9]{12}$/i.test(id);
+if(valid){verifyId.textContent=id.toUpperCase();note.textContent='Identifiant de certificat correctement formé pour la formation N1 — Fondamentaux de l’IA générative.';}else{card.classList.add('invalid');icon.textContent='⚠️';status.textContent='Identifiant invalide';verifyId.textContent=id||'Aucun identifiant fourni';note.textContent='Le QR code ou le lien ne contient pas un identifiant de certificat N1 valide.';}
+</script>
+</body>
+</html>
