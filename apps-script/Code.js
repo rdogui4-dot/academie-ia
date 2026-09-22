@@ -1,19 +1,47 @@
+/******************************************************
+ * ACADÉMIE IA GÉNÉRATIVE
+ * Google Apps Script
+ *
+ * Fonctions :
+ * - Traitement Google Forms
+ * - Génération ID inscription
+ * - Génération fiche PDF
+ * - Envoi e-mail de confirmation
+ * - Registre officiel des certificats
+ * - Vérification publique des certificats
+ ******************************************************/
+
+
+/* =====================================================
+   CONFIGURATION DU REGISTRE DES CERTIFICATS
+   ===================================================== */
+
+const CERTIFICATS_SPREADSHEET_ID =
+  "1DqmQzhg2pZwnq4MPxwO26eqqKUyhRcnyiljNn1gA66U";
+
+const CERTIFICATS_SHEET_NAME =
+  "Certificats";
+
+
+/* =====================================================
+   1. TRAITEMENT DU FORMULAIRE
+   ===================================================== */
+
 function onFormSubmit(e) {
 
-  // --------------------------------------------------
-  // 1. Récupération de la feuille et de la ligne
-  // --------------------------------------------------
+  if (!e || !e.range) {
+    throw new Error("Événement de formulaire invalide.");
+  }
 
   const sheet = e.range.getSheet();
   const row = e.range.getRow();
 
-  // Réponses nommées du formulaire
-  const responses = e.namedValues;
+  const responses = e.namedValues || {};
 
 
-  // --------------------------------------------------
-  // 2. Récupération des informations
-  // --------------------------------------------------
+  /* --------------------------------------------------
+     Récupération des informations
+     -------------------------------------------------- */
 
   const nomPrenom =
     getAnswer(responses, "Nom et prénom");
@@ -28,13 +56,15 @@ function onFormSubmit(e) {
     getAnswer(responses, "NIVEAU ACTUEL");
 
 
-  // --------------------------------------------------
-  // 3. Création de l'ID
-  // --------------------------------------------------
+  /* --------------------------------------------------
+     Création de l'ID d'inscription
+     -------------------------------------------------- */
 
-  const annee = new Date().getFullYear();
+  const annee =
+    new Date().getFullYear();
 
-  const numero = row - 1;
+  const numero =
+    row - 1;
 
   const idInscription =
     "INS-" +
@@ -43,56 +73,32 @@ function onFormSubmit(e) {
     String(numero).padStart(4, "0");
 
 
-  // --------------------------------------------------
-  // 4. Recherche / création des colonnes
-  // --------------------------------------------------
+  /* --------------------------------------------------
+     Colonnes automatiques
+     -------------------------------------------------- */
 
-  let lastColumn = sheet.getLastColumn();
+  const idColumn =
+    getOrCreateColumn(
+      sheet,
+      "ID INSCRIPTION"
+    );
 
-  let headers = sheet
-    .getRange(1, 1, 1, lastColumn)
-    .getValues()[0];
+  const statutColumn =
+    getOrCreateColumn(
+      sheet,
+      "STATUT"
+    );
 
-
-  // ID INSCRIPTION
-  let idColumn =
-    headers.indexOf("ID INSCRIPTION") + 1;
-
-  if (idColumn === 0) {
-    idColumn = ++lastColumn;
-    sheet
-      .getRange(1, idColumn)
-      .setValue("ID INSCRIPTION");
-  }
-
-
-  // STATUT
-  let statutColumn =
-    headers.indexOf("STATUT") + 1;
-
-  if (statutColumn === 0) {
-    statutColumn = ++lastColumn;
-    sheet
-      .getRange(1, statutColumn)
-      .setValue("STATUT");
-  }
+  const dateColumn =
+    getOrCreateColumn(
+      sheet,
+      "DATE DE TRAITEMENT"
+    );
 
 
-  // DATE DE TRAITEMENT
-  let dateColumn =
-    headers.indexOf("DATE DE TRAITEMENT") + 1;
-
-  if (dateColumn === 0) {
-    dateColumn = ++lastColumn;
-    sheet
-      .getRange(1, dateColumn)
-      .setValue("DATE DE TRAITEMENT");
-  }
-
-
-  // --------------------------------------------------
-  // 5. Enregistrement automatique
-  // --------------------------------------------------
+  /* --------------------------------------------------
+     Enregistrement dans la feuille
+     -------------------------------------------------- */
 
   sheet
     .getRange(row, idColumn)
@@ -103,60 +109,69 @@ function onFormSubmit(e) {
     .setValue("NOUVEAU");
 
   sheet
-  .getRange(row, idColumn)
-  .setValue(idInscription);
-
-sheet
-  .getRange(row, statutColumn)
-  .setValue("NOUVEAU");
-
-sheet
-  .getRange(row, dateColumn)
-  .setValue(new Date());
+    .getRange(row, dateColumn)
+    .setValue(new Date());
 
 
-// Génération automatique de la fiche PDF
-const pdfUrl = genererFichePDF(
-  nomPrenom,
-  email,
-  formation,
-  niveau,
-  idInscription,
-  "NOUVEAU"
-);
+  /* --------------------------------------------------
+     Génération automatique de la fiche PDF
+     -------------------------------------------------- */
 
-// Récupération du fichier PDF depuis son URL
-const pdfIdMatch =
-  String(pdfUrl).match(/[-\w]{25,}/);
-
-if (!pdfIdMatch) {
-  throw new Error(
-    "Impossible de récupérer l'identifiant du fichier PDF."
-  );
-}
-
-const pdfFile =
-  DriveApp.getFileById(pdfIdMatch[0]);
-
-const pdfAttachment =
-  pdfFile.getAs(MimeType.PDF);
-
-// Ajout du lien PDF
-const pdfColumn =
-  getOrCreateColumn(sheet, "FICHE PDF");
-
-sheet
-  .getRange(row, pdfColumn)
-  .setFormula(
-    '=HYPERLINK("' +
-    pdfUrl +
-    '";"📄 OUVRIR LA FICHE")'
-  );
+  const pdfUrl =
+    genererFichePDF(
+      nomPrenom,
+      email,
+      formation,
+      niveau,
+      idInscription,
+      "NOUVEAU"
+    );
 
 
-  // --------------------------------------------------
-  // 6. Envoi de l'e-mail
-  // --------------------------------------------------
+  /* --------------------------------------------------
+     Récupération du fichier PDF
+     -------------------------------------------------- */
+
+  const pdfIdMatch =
+    String(pdfUrl).match(/[-\w]{25,}/);
+
+  if (!pdfIdMatch) {
+    throw new Error(
+      "Impossible de récupérer l'identifiant du fichier PDF."
+    );
+  }
+
+  const pdfFile =
+    DriveApp.getFileById(
+      pdfIdMatch[0]
+    );
+
+  const pdfAttachment =
+    pdfFile.getAs(MimeType.PDF);
+
+
+  /* --------------------------------------------------
+     Ajout du lien PDF dans la feuille
+     -------------------------------------------------- */
+
+  const pdfColumn =
+    getOrCreateColumn(
+      sheet,
+      "FICHE PDF"
+    );
+
+  sheet
+    .getRange(row, pdfColumn)
+    .setFormula(
+      '=HYPERLINK("' +
+      pdfUrl +
+      '";"📄 OUVRIR LA FICHE")'
+    );
+
+
+  /* --------------------------------------------------
+     Envoi de l'e-mail
+     -------------------------------------------------- */
 
   if (email) {
 
@@ -164,176 +179,215 @@ sheet
       "Confirmation de votre inscription - Académie IA Générative";
 
     const htmlMessage =
-  "<!DOCTYPE html>" +
-  "<html>" +
-  "<body style='margin:0;padding:0;background:#f4f7fb;font-family:Arial,Helvetica,sans-serif;'>" +
+      "<!DOCTYPE html>" +
+      "<html>" +
+      "<body style='margin:0;padding:0;background:#f4f7fb;font-family:Arial,Helvetica,sans-serif;'>" +
 
-  "<div style='max-width:600px;margin:30px auto;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 15px rgba(0,0,0,0.08);'>" +
+      "<div style='max-width:600px;margin:30px auto;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 15px rgba(0,0,0,0.08);'>" +
 
-  // EN-TÊTE
-  "<div style='background:#1e3a8a;padding:25px;text-align:center;color:white;'>" +
+      /* EN-TÊTE */
+      "<div style='background:#1e3a8a;padding:25px;text-align:center;color:white;'>" +
 
-"<img src='https://i.postimg.cc/mgg7cm4b/Logo-Academie-IA.png' " +
-"alt='Académie IA Générative' " +
-"style='display:block;margin:0 auto 15px auto;width:180px;max-width:80%;height:auto;'>" +
+      "<img src='https://i.postimg.cc/mgg7cm4b/Logo-Academie-IA.png' " +
+      "alt='Académie IA Générative' " +
+      "style='display:block;margin:0 auto 15px auto;width:180px;max-width:80%;height:auto;'>" +
 
-"<h1 style='margin:0;font-size:24px;'>" +
-"Académie IA Générative" +
-"</h1>" +
+      "<h1 style='margin:0;font-size:24px;'>" +
+      "Académie IA Générative" +
+      "</h1>" +
 
-  "<p style='margin:10px 0 0;font-size:16px;'>" +
-  "Confirmation d'inscription" +
-  "</p>" +
+      "<p style='margin:10px 0 0;font-size:16px;'>" +
+      "Confirmation d'inscription" +
+      "</p>" +
 
-  "</div>" +
+      "</div>" +
 
-  // CONTENU
-  "<div style='padding:30px;color:#333333;'>" +
+      /* CONTENU */
+      "<div style='padding:30px;color:#333333;'>" +
 
-  "<p style='font-size:17px;'>" +
-  "Bonjour <strong>" +
-  nomPrenom +
-  "</strong>," +
-  "</p>" +
+      "<p style='font-size:17px;'>" +
+      "Bonjour <strong>" +
+      nomPrenom +
+      "</strong>," +
+      "</p>" +
 
-  "<p style='font-size:15px;line-height:1.6;'>" +
-  "Nous avons bien reçu votre inscription et vous remercions pour votre confiance." +
-  "</p>" +
+      "<p style='font-size:15px;line-height:1.6;'>" +
+      "Nous avons bien reçu votre inscription et vous remercions pour votre confiance." +
+      "</p>" +
 
-  // ID
-  "<div style='background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:20px;text-align:center;margin:25px 0;'>" +
+      /* ID */
+      "<div style='background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:20px;text-align:center;margin:25px 0;'>" +
 
-  "<p style='margin:0;color:#64748b;font-size:13px;'>" +
-  "VOTRE ID D'INSCRIPTION" +
-  "</p>" +
+      "<p style='margin:0;color:#64748b;font-size:13px;'>" +
+      "VOTRE ID D'INSCRIPTION" +
+      "</p>" +
 
-  "<div style='margin-top:8px;font-size:28px;font-weight:bold;color:#1e3a8a;'>" +
-  idInscription +
-  "</div>" +
+      "<div style='margin-top:8px;font-size:28px;font-weight:bold;color:#1e3a8a;'>" +
+      idInscription +
+      "</div>" +
 
-  "</div>" +
+      "</div>" +
 
-  // INFORMATIONS
-  "<table style='width:100%;border-collapse:collapse;font-size:15px;'>" +
+      /* INFORMATIONS */
+      "<table style='width:100%;border-collapse:collapse;font-size:15px;'>" +
 
-  "<tr>" +
-  "<td style='padding:12px 0;border-bottom:1px solid #e5e7eb;color:#64748b;'>" +
-  "Formation" +
-  "</td>" +
+      "<tr>" +
+      "<td style='padding:12px 0;border-bottom:1px solid #e5e7eb;color:#64748b;'>" +
+      "Formation" +
+      "</td>" +
 
-  "<td style='padding:12px 0;border-bottom:1px solid #e5e7eb;text-align:right;font-weight:bold;'>" +
-  formation +
-  "</td>" +
-  "</tr>" +
+      "<td style='padding:12px 0;border-bottom:1px solid #e5e7eb;text-align:right;font-weight:bold;'>" +
+      formation +
+      "</td>" +
+      "</tr>" +
 
-  "<tr>" +
-  "<td style='padding:12px 0;border-bottom:1px solid #e5e7eb;color:#64748b;'>" +
-  "Niveau" +
-  "</td>" +
+      "<tr>" +
+      "<td style='padding:12px 0;border-bottom:1px solid #e5e7eb;color:#64748b;'>" +
+      "Niveau" +
+      "</td>" +
 
-  "<td style='padding:12px 0;border-bottom:1px solid #e5e7eb;text-align:right;font-weight:bold;'>" +
-  niveau +
-  "</td>" +
-  "</tr>" +
+      "<td style='padding:12px 0;border-bottom:1px solid #e5e7eb;text-align:right;font-weight:bold;'>" +
+      niveau +
+      "</td>" +
+      "</tr>" +
 
-  "<tr>" +
-  "<td style='padding:12px 0;color:#64748b;'>" +
-  "Statut" +
-  "</td>" +
+      "<tr>" +
+      "<td style='padding:12px 0;color:#64748b;'>" +
+      "Statut" +
+      "</td>" +
 
-  "<td style='padding:12px 0;text-align:right;font-weight:bold;color:#16a34a;'>" +
-  "NOUVEAU" +
-  "</td>" +
-  "</tr>" +
+      "<td style='padding:12px 0;text-align:right;font-weight:bold;color:#16a34a;'>" +
+      "NOUVEAU" +
+      "</td>" +
+      "</tr>" +
 
-  "</table>" +
+      "</table>" +
 
-  "<p style='font-size:15px;line-height:1.6;margin-top:25px;'>" +
-  "Votre inscription est bien enregistrée. Conservez précieusement votre ID d'inscription pour vos futurs échanges avec notre équipe." +
-  "</p>" +
+      "<p style='font-size:15px;line-height:1.6;margin-top:25px;'>" +
+      "Votre inscription est bien enregistrée. Conservez précieusement votre ID d'inscription pour vos futurs échanges avec notre équipe." +
+      "</p>" +
 
-  // WHATSAPP
-  "<div style='text-align:center;margin-top:30px;'>" +
+      /* WHATSAPP */
+      "<div style='text-align:center;margin-top:30px;'>" +
 
-  "<a href='https://wa.me/2250544165418' " +
-  "style='display:inline-block;background:#16a34a;color:#ffffff;text-decoration:none;padding:13px 22px;border-radius:7px;font-weight:bold;'>" +
+      "<a href='https://wa.me/2250544165418' " +
+      "style='display:inline-block;background:#16a34a;color:#ffffff;text-decoration:none;padding:13px 22px;border-radius:7px;font-weight:bold;'>" +
 
-  "Contacter l'équipe sur WhatsApp" +
+      "Contacter l'équipe sur WhatsApp" +
 
-  "</a>" +
+      "</a>" +
 
-  "</div>" +
+      "</div>" +
 
-  "</div>" +
+      "</div>" +
 
-  // FOOTER
-  "<div style='background:#f8fafc;padding:18px;text-align:center;color:#64748b;font-size:12px;'>" +
+      /* FOOTER */
+      "<div style='background:#f8fafc;padding:18px;text-align:center;color:#64748b;font-size:12px;'>" +
 
-  "Académie IA Générative<br>" +
-  "Message automatique" +
+      "Académie IA Générative<br>" +
+      "Message automatique" +
 
-  "</div>" +
+      "</div>" +
 
-  "</div>" +
+      "</div>" +
 
-  "</body>" +
-  "</html>";
+      "</body>" +
+      "</html>";
 
 
-MailApp.sendEmail({
-  to: email,
-  subject: sujet,
+    MailApp.sendEmail({
 
-  // Version texte de secours
-  body:
-    "Bonjour " + nomPrenom + ",\n\n" +
-    "Votre inscription a bien été enregistrée.\n\n" +
-    "ID d'inscription : " + idInscription + "\n" +
-    "Formation : " + formation + "\n" +
-    "Niveau : " + niveau + "\n" +
-    "Statut : NOUVEAU\n\n" +
-    "Votre fiche d'inscription PDF est jointe à cet e-mail.\n\n" +
-    "Académie IA Générative",
+      to: email,
 
-  // Version HTML professionnelle
-  htmlBody: htmlMessage,
+      subject: sujet,
 
-  // Fiche PDF en pièce jointe
-  attachments: [pdfAttachment]
-});
+      body:
+        "Bonjour " +
+        nomPrenom +
+        ",\n\n" +
 
+        "Votre inscription a bien été enregistrée.\n\n" +
+
+        "ID d'inscription : " +
+        idInscription +
+        "\n" +
+
+        "Formation : " +
+        formation +
+        "\n" +
+
+        "Niveau : " +
+        niveau +
+        "\n" +
+
+        "Statut : NOUVEAU\n\n" +
+
+        "Votre fiche d'inscription PDF est jointe à cet e-mail.\n\n" +
+
+        "Académie IA Générative",
+
+      htmlBody:
+        htmlMessage,
+
+      attachments:
+        [pdfAttachment]
+    });
   }
 
 
-  // --------------------------------------------------
-  // 7. Journal
-  // --------------------------------------------------
+  /* --------------------------------------------------
+     Journal
+     -------------------------------------------------- */
 
-  Logger.log("Inscription : " + idInscription);
-  Logger.log("Nom : " + nomPrenom);
-  Logger.log("Email : " + email);
-  Logger.log("Formation : " + formation);
-  Logger.log("E-mail envoyé.");
+  Logger.log(
+    "Inscription : " +
+    idInscription
+  );
+
+  Logger.log(
+    "Nom : " +
+    nomPrenom
+  );
+
+  Logger.log(
+    "Email : " +
+    email
+  );
+
+  Logger.log(
+    "Formation : " +
+    formation
+  );
+
+  Logger.log(
+    "E-mail envoyé."
+  );
 }
 
 
-/******************************************************
- * Fonction pour récupérer une réponse
- ******************************************************/
+/* =====================================================
+   2. RÉCUPÉRER UNE RÉPONSE DU FORMULAIRE
+   ===================================================== */
 
-function getAnswer(responses, question) {
+function getAnswer(
+  responses,
+  question
+) {
 
   if (!responses[question]) {
     return "";
   }
 
-  return responses[question][0] || "";
+  return (
+    responses[question][0] ||
+    ""
+  );
 }
 
 
-/******************************************************
- * GÉNÉRATION DE LA FICHE PDF
- ******************************************************/
+/* =====================================================
+   3. GÉNÉRATION DE LA FICHE PDF
+   ===================================================== */
 
 function genererFichePDF(
   nomPrenom,
@@ -344,44 +398,51 @@ function genererFichePDF(
   statut
 ) {
 
-  // --------------------------------------------------
-  // 1. Recherche ou création du dossier Drive
-  // --------------------------------------------------
+  /* --------------------------------------------------
+     Dossier Drive
+     -------------------------------------------------- */
 
-  const nomDossier = "FICHES D'INSCRIPTION";
+  const nomDossier =
+    "FICHES D'INSCRIPTION";
 
   const dossiers =
-    DriveApp.getFoldersByName(nomDossier);
+    DriveApp.getFoldersByName(
+      nomDossier
+    );
 
   let dossier;
 
   if (dossiers.hasNext()) {
 
-    dossier = dossiers.next();
+    dossier =
+      dossiers.next();
 
   } else {
 
     dossier =
-      DriveApp.createFolder(nomDossier);
+      DriveApp.createFolder(
+        nomDossier
+      );
   }
 
 
-  // --------------------------------------------------
-  // 2. Création du document temporaire
-  // --------------------------------------------------
+  /* --------------------------------------------------
+     Document temporaire
+     -------------------------------------------------- */
 
   const document =
     DocumentApp.create(
-      "FICHE - " + idInscription
+      "FICHE - " +
+      idInscription
     );
 
   const body =
     document.getBody();
 
 
-  // --------------------------------------------------
-  // 3. Mise en page
-  // --------------------------------------------------
+  /* --------------------------------------------------
+     Mise en page
+     -------------------------------------------------- */
 
   body.setMarginTop(40);
   body.setMarginBottom(40);
@@ -389,9 +450,9 @@ function genererFichePDF(
   body.setMarginRight(45);
 
 
-  // --------------------------------------------------
-  // 4. TITRE
-  // --------------------------------------------------
+  /* --------------------------------------------------
+     TITRE
+     -------------------------------------------------- */
 
   const titre =
     body.appendParagraph(
@@ -399,7 +460,9 @@ function genererFichePDF(
     );
 
   titre
-    .setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+    .setAlignment(
+      DocumentApp.HorizontalAlignment.CENTER
+    );
 
   titre
     .setFontSize(20);
@@ -414,7 +477,9 @@ function genererFichePDF(
     );
 
   sousTitre
-    .setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+    .setAlignment(
+      DocumentApp.HorizontalAlignment.CENTER
+    );
 
   sousTitre
     .setFontSize(14);
@@ -426,9 +491,9 @@ function genererFichePDF(
   body.appendParagraph("");
 
 
-  // --------------------------------------------------
-  // 5. IDENTIFIANT
-  // --------------------------------------------------
+  /* --------------------------------------------------
+     IDENTIFIANT
+     -------------------------------------------------- */
 
   const idPara =
     body.appendParagraph(
@@ -437,7 +502,9 @@ function genererFichePDF(
     );
 
   idPara
-    .setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+    .setAlignment(
+      DocumentApp.HorizontalAlignment.CENTER
+    );
 
   idPara
     .setFontSize(16);
@@ -449,17 +516,20 @@ function genererFichePDF(
   body.appendParagraph("");
 
 
-  // --------------------------------------------------
-  // 6. INFORMATIONS DU CANDIDAT
-  // --------------------------------------------------
+  /* --------------------------------------------------
+     INFORMATIONS
+     -------------------------------------------------- */
 
   const titreInfos =
     body.appendParagraph(
       "INFORMATIONS DU CANDIDAT"
     );
 
-  titreInfos.setBold(true);
-  titreInfos.setFontSize(13);
+  titreInfos
+    .setBold(true);
+
+  titreInfos
+    .setFontSize(13);
 
 
   const table =
@@ -512,24 +582,26 @@ function genererFichePDF(
   body.appendParagraph("");
 
 
-  // --------------------------------------------------
-  // 7. MESSAGE
-  // --------------------------------------------------
+  /* --------------------------------------------------
+     MESSAGE
+     -------------------------------------------------- */
 
   const confirmation =
     body.appendParagraph(
       "CONFIRMATION"
     );
 
-  confirmation.setBold(true);
-  confirmation.setFontSize(13);
+  confirmation
+    .setBold(true);
+
+  confirmation
+    .setFontSize(13);
 
 
   body.appendParagraph(
     "Nous confirmons la réception de votre inscription " +
     "à l'Académie IA Générative."
   );
-
 
   body.appendParagraph(
     "Veuillez conserver cette fiche ainsi que votre " +
@@ -541,9 +613,9 @@ function genererFichePDF(
   body.appendParagraph("");
 
 
-  // --------------------------------------------------
-  // 8. PIED DE PAGE
-  // --------------------------------------------------
+  /* --------------------------------------------------
+     PIED DE PAGE
+     -------------------------------------------------- */
 
   const footer =
     body.appendParagraph(
@@ -551,7 +623,9 @@ function genererFichePDF(
     );
 
   footer
-    .setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+    .setAlignment(
+      DocumentApp.HorizontalAlignment.CENTER
+    );
 
   footer
     .setBold(true);
@@ -563,22 +637,24 @@ function genererFichePDF(
     );
 
   automatique
-    .setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+    .setAlignment(
+      DocumentApp.HorizontalAlignment.CENTER
+    );
 
   automatique
     .setFontSize(9);
 
 
-  // --------------------------------------------------
-  // 9. Sauvegarde du document
-  // --------------------------------------------------
+  /* --------------------------------------------------
+     Sauvegarde
+     -------------------------------------------------- */
 
   document.saveAndClose();
 
 
-  // --------------------------------------------------
-  // 10. Conversion en PDF
-  // --------------------------------------------------
+  /* --------------------------------------------------
+     Conversion PDF
+     -------------------------------------------------- */
 
   const fichierDocument =
     DriveApp.getFileById(
@@ -598,32 +674,35 @@ function genererFichePDF(
       .setName(nomFichierPDF);
 
 
-  // --------------------------------------------------
-  // 11. Enregistrement du PDF
-  // --------------------------------------------------
+  /* --------------------------------------------------
+     Enregistrement PDF
+     -------------------------------------------------- */
 
   const fichierPDF =
-    dossier.createFile(pdfBlob);
+    dossier.createFile(
+      pdfBlob
+    );
 
 
-  // --------------------------------------------------
-  // 12. Suppression du document temporaire
-  // --------------------------------------------------
+  /* --------------------------------------------------
+     Suppression document temporaire
+     -------------------------------------------------- */
 
-  fichierDocument.setTrashed(true);
+  fichierDocument
+    .setTrashed(true);
 
 
-  // --------------------------------------------------
-  // 13. Retour du lien PDF
-  // --------------------------------------------------
+  /* --------------------------------------------------
+     Retour URL
+     -------------------------------------------------- */
 
   return fichierPDF.getUrl();
 }
 
 
-/******************************************************
- * AJOUT D'UNE LIGNE AU TABLEAU
- ******************************************************/
+/* =====================================================
+   4. AJOUTER UNE LIGNE AU TABLEAU
+   ===================================================== */
 
 function ajouterLigneTableau(
   table,
@@ -634,32 +713,40 @@ function ajouterLigneTableau(
   const ligne =
     table.appendTableRow();
 
+
   const celluleLibelle =
     ligne.appendTableCell(
       libelle
     );
+
 
   const celluleValeur =
     ligne.appendTableCell(
       valeur || ""
     );
 
+
   celluleLibelle
-    .setBackgroundColor("#E5E7EB");
+    .setBackgroundColor(
+      "#E5E7EB"
+    );
 
   celluleLibelle
     .getChild(0)
     .asParagraph()
     .setBold(true);
 
+
   celluleValeur
-    .setBackgroundColor("#FFFFFF");
+    .setBackgroundColor(
+      "#FFFFFF"
+    );
 }
 
 
-/******************************************************
- * FORMATAGE DE LA DATE
- ******************************************************/
+/* =====================================================
+   5. FORMATAGE DATE
+   ===================================================== */
 
 function formatDate(date) {
 
@@ -671,298 +758,691 @@ function formatDate(date) {
 }
 
 
-/******************************************************
- * NETTOYAGE DU NOM DE FICHIER
- ******************************************************/
+/* =====================================================
+   6. NETTOYAGE DU NOM DE FICHIER
+   ===================================================== */
 
 function nettoyerNom(nom) {
 
-  return String(nom || "INSCRIT")
-    .replace(/[\\\/:*?"<>|]/g, "")
-    .replace(/\s+/g, "_")
-    .substring(0, 60);
+  return String(
+    nom || "INSCRIT"
+  )
+    .replace(
+      /[\\\/:*?"<>|]/g,
+      ""
+    )
+    .replace(
+      /\s+/g,
+      "_"
+    )
+    .substring(
+      0,
+      60
+    );
 }
 
 
-/******************************************************
- * CRÉER OU RÉCUPÉRER UNE COLONNE
- ******************************************************/
+/* =====================================================
+   7. CRÉER OU RÉCUPÉRER UNE COLONNE
+   ===================================================== */
 
-function getOrCreateColumn(sheet, columnName) {
+function getOrCreateColumn(
+  sheet,
+  columnName
+) {
 
-  const lastColumn = sheet.getLastColumn();
+  let lastColumn =
+    sheet.getLastColumn();
 
-  const headers = sheet
-    .getRange(1, 1, 1, lastColumn)
-    .getValues()[0];
 
-  let column =
-    headers.indexOf(columnName) + 1;
+  /*
+   * Feuille complètement vide
+   */
+  if (lastColumn === 0) {
 
-  // La colonne existe déjà
-  if (column > 0) {
-    return column;
+    sheet
+      .getRange(1, 1)
+      .setValue(columnName);
+
+    return 1;
   }
 
-  // La colonne n'existe pas : création
-  column = lastColumn + 1;
+
+  const headers =
+    sheet
+      .getRange(
+        1,
+        1,
+        1,
+        lastColumn
+      )
+      .getValues()[0];
+
+
+  const existingColumn =
+    headers.indexOf(
+      columnName
+    ) + 1;
+
+
+  if (existingColumn > 0) {
+    return existingColumn;
+  }
+
+
+  const newColumn =
+    lastColumn + 1;
+
 
   sheet
-    .getRange(1, column)
-    .setValue(columnName);
+    .getRange(
+      1,
+      newColumn
+    )
+    .setValue(
+      columnName
+    );
 
-  return column;
+
+  return newColumn;
 }
 
-/* =========================================================
-   VÉRIFICATION DES CERTIFICATS
-   ========================================================= */
+
+/* =====================================================
+   8. VALIDATION ROBUSTE D'UN ID DE CERTIFICAT
+   ===================================================== */
+
+function isValidCertificateId(
+  certificateId
+) {
+
+  const id =
+    String(
+      certificateId || ""
+    )
+      .trim()
+      .toUpperCase();
 
 
-const CERTIFICATS_SPREADSHEET_ID =
-    "1DqmQzhg2pZwnq4MPxwO26eqqKUyhRcnyiljNn1gA66U";
+  const parts =
+    id.split("-");
 
-const CERTIFICATS_SHEET_NAME =
-    "Certificats";
 
+  /*
+   * Format attendu :
+   *
+   * AIG-N1-2026-1D01930B8FD5
+   *
+   * 4 parties :
+   * AIG
+   * N1
+   * année
+   * 12 caractères hexadécimaux
+   */
+
+  if (parts.length !== 4) {
+    return false;
+  }
+
+
+  if (parts[0] !== "AIG") {
+    return false;
+  }
+
+
+  if (parts[1] !== "N1") {
+    return false;
+  }
+
+
+  const year =
+    parts[2];
+
+  const random =
+    parts[3];
+
+
+  /*
+   * Vérification année
+   */
+
+  if (year.length !== 4) {
+    return false;
+  }
+
+
+  const digits =
+    "0123456789";
+
+
+  for (
+    let i = 0;
+    i < year.length;
+    i++
+  ) {
+
+    if (
+      !digits.includes(
+        year[i]
+      )
+    ) {
+      return false;
+    }
+  }
+
+
+  /*
+   * Vérification partie aléatoire
+   */
+
+  if (random.length !== 12) {
+    return false;
+  }
+
+
+  const hex =
+    "0123456789ABCDEF";
+
+
+  for (
+    let i = 0;
+    i < random.length;
+    i++
+  ) {
+
+    if (
+      !hex.includes(
+        random[i]
+      )
+    ) {
+      return false;
+    }
+  }
+
+
+  return true;
+}
+
+
+/* =====================================================
+   9. API WEB — VÉRIFICATION DES CERTIFICATS
+   ===================================================== */
 
 function doGet(e) {
 
-    const prefix =
-        e &&
-        e.parameter &&
-        e.parameter.prefix
-            ? e.parameter.prefix.trim()
-            : "";
-
-    const validPrefix =
-        /^[A-Za-z_$][0-9A-Za-z_$]*$/.test(prefix);
+  const prefix =
+    e &&
+    e.parameter &&
+    e.parameter.prefix
+      ? e.parameter.prefix.trim()
+      : "";
 
 
-    function respond(payload) {
+  const validPrefix =
+    /^[A-Za-z_$][0-9A-Za-z_$]*$/
+      .test(prefix);
 
-        let json = JSON.stringify(payload);
 
-        json = json
-            .replace(/</g, "\\u003C")
-            .replace(/>/g, "\\u003E")
-            .replace(/&/g, "\\u0026")
-            .replace(/'/g, "\\u0027");
+  /* --------------------------------------------------
+     Réponse JSON / JSONP
+     -------------------------------------------------- */
 
-        if (validPrefix) {
-            return ContentService
-                .createTextOutput(`${prefix}(${json})`)
-                .setMimeType(ContentService.MimeType.JAVASCRIPT);
-        }
+  function respond(payload) {
 
-        return ContentService
-            .createTextOutput(json)
-            .setMimeType(ContentService.MimeType.JSON);
+    let json =
+      JSON.stringify(payload);
+
+
+    json =
+      json
+        .replace(
+          /</g,
+          "\\u003C"
+        )
+        .replace(
+          />/g,
+          "\\u003E"
+        )
+        .replace(
+          /&/g,
+          "\\u0026"
+        )
+        .replace(
+          /'/g,
+          "\\u0027"
+        );
+
+
+    if (validPrefix) {
+
+      return ContentService
+        .createTextOutput(
+          prefix +
+          "(" +
+          json +
+          ")"
+        )
+        .setMimeType(
+          ContentService.MimeType
+            .JAVASCRIPT
+        );
     }
 
 
-    try {
-
-        const action =
-            e &&
-            e.parameter &&
-            e.parameter.action
-                ? e.parameter.action.trim().toLowerCase()
-                : "verify";
-
-        const certificateId =
-            e &&
-            e.parameter &&
-            e.parameter.id
-                ? e.parameter.id.trim().toUpperCase()
-                : "";
-
-        if (!certificateId) {
-            return respond({
-                success: false,
-                message: "ID de certificat manquant."
-            });
-        }
-
-        const spreadsheet =
-            SpreadsheetApp.openById(
-                CERTIFICATS_SPREADSHEET_ID
-            );
-
-        const sheet =
-            spreadsheet.getSheetByName(
-                CERTIFICATS_SHEET_NAME
-            );
-
-        if (!sheet) {
-            return respond({
-                success: false,
-                message: "La feuille Certificats est introuvable."
-            });
-        }
+    return ContentService
+      .createTextOutput(
+        json
+      )
+      .setMimeType(
+        ContentService.MimeType
+          .JSON
+      );
+  }
 
 
-        /* =====================================================
-           ACTION : ENREGISTRER
-           ===================================================== */
+  try {
 
-        if (action === "register") {
+    /* --------------------------------------------------
+       Action
+       -------------------------------------------------- */
 
-            const parts = certificateId.split("-");
-const year = parts[2] || "";
-const random = parts[3] || "";
+    const action =
+      e &&
+      e.parameter &&
+      e.parameter.action
+        ? e.parameter.action
+            .trim()
+            .toLowerCase()
+        : "verify";
 
-const digits = "0123456789";
-const hex = "0123456789ABCDEF";
 
-const validYear =
-    year.length === 4 &&
-    year.split("").every(char => digits.includes(char));
+    /* --------------------------------------------------
+       ID
+       -------------------------------------------------- */
 
-const validRandom =
-    random.length === 12 &&
-    random.split("").every(char => hex.includes(char));
+    const certificateId =
+      e &&
+      e.parameter &&
+      e.parameter.id
+        ? e.parameter.id
+            .trim()
+            .toUpperCase()
+        : "";
 
-const validCertificateId =
-    parts.length === 4 &&
-    parts[0] === "AIG" &&
-    parts[1] === "N1" &&
-    validYear &&
-    validRandom;
 
-if (!validCertificateId) {
-    return respond({
+    if (!certificateId) {
+
+      return respond({
+
         success: false,
-        message: "Format d'ID de certificat invalide."
-    });
-}
 
-            const nom = String(e.parameter.nom || "").trim();
-            const score = String(e.parameter.score || "").trim();
-            const date = String(e.parameter.date || "").trim();
-            const url = String(e.parameter.url || "").trim();
-
-            if (!nom) {
-                return respond({
-                    success: false,
-                    message: "Le nom du participant est obligatoire."
-                });
-            }
-
-            const data =
-                sheet.getDataRange().getValues();
-
-            for (let i = 1; i < data.length; i++) {
-
-                const existingId =
-                    String(data[i][0])
-                        .trim()
-                        .toUpperCase();
-
-                if (existingId === certificateId) {
-
-                    return respond({
-                        success: true,
-                        alreadyExists: true,
-                        message: "Certificat déjà enregistré.",
-                        certificate: {
-                            id: String(data[i][0]),
-                            nom: String(data[i][1]),
-                            formation: String(data[i][2]),
-                            niveau: String(data[i][3]),
-                            duree: String(data[i][4]),
-                            score: String(data[i][5]),
-                            date: String(data[i][6]),
-                            statut: String(data[i][7]),
-                            url: String(data[i][8])
-                        }
-                    });
-                }
-            }
-
-            const formation =
-                "Fondamentaux de l'IA générative";
-
-            const niveau = "N1";
-            const duree = "14 heures";
-            const statut = "VALIDE";
-
-            sheet.appendRow([
-                certificateId,
-                nom,
-                formation,
-                niveau,
-                duree,
-                score,
-                date,
-                statut,
-                url
-            ]);
-
-            return respond({
-                success: true,
-                alreadyExists: false,
-                message: "Certificat enregistré avec succès.",
-                certificate: {
-                    id: certificateId,
-                    nom: nom,
-                    formation: formation,
-                    niveau: niveau,
-                    duree: duree,
-                    score: score,
-                    date: date,
-                    statut: statut,
-                    url: url
-                }
-            });
-        }
-
-
-        /* =====================================================
-           ACTION : VÉRIFIER
-           ===================================================== */
-
-        const data =
-            sheet.getDataRange().getValues();
-
-        for (let i = 1; i < data.length; i++) {
-
-            const currentId =
-                String(data[i][0])
-                    .trim()
-                    .toUpperCase();
-
-            if (currentId === certificateId) {
-
-                return respond({
-                    success: true,
-                    certificate: {
-                        id: String(data[i][0]),
-                        nom: String(data[i][1]),
-                        formation: String(data[i][2]),
-                        niveau: String(data[i][3]),
-                        duree: String(data[i][4]),
-                        score: String(data[i][5]),
-                        date: String(data[i][6]),
-                        statut: String(data[i][7]),
-                        url: String(data[i][8])
-                    }
-                });
-            }
-        }
-
-        return respond({
-            success: false,
-            message: "Certificat introuvable dans le registre officiel."
-        });
-
-    } catch (error) {
-
-        return respond({
-            success: false,
-            message: "Erreur lors de la vérification.",
-            error: error.message
-        });
+        message:
+          "ID de certificat manquant."
+      });
     }
-}
 
+
+    /* --------------------------------------------------
+       Google Sheets
+       -------------------------------------------------- */
+
+    const spreadsheet =
+      SpreadsheetApp.openById(
+        CERTIFICATS_SPREADSHEET_ID
+      );
+
+
+    const sheet =
+      spreadsheet.getSheetByName(
+        CERTIFICATS_SHEET_NAME
+      );
+
+
+    if (!sheet) {
+
+      return respond({
+
+        success: false,
+
+        message:
+          "La feuille Certificats est introuvable."
+      });
+    }
+
+
+    /* =================================================
+       ACTION : REGISTER
+       ================================================= */
+
+    if (
+      action === "register"
+    ) {
+
+
+      /* ----------------------------------------------
+         Validation ID
+         ---------------------------------------------- */
+
+      if (
+        !isValidCertificateId(
+          certificateId
+        )
+      ) {
+
+        return respond({
+
+          success: false,
+
+          message:
+            "Format d'ID de certificat invalide."
+        });
+      }
+
+
+      /* ----------------------------------------------
+         Données reçues
+         ---------------------------------------------- */
+
+      const nom =
+        String(
+          e.parameter.nom || ""
+        ).trim();
+
+
+      const score =
+        String(
+          e.parameter.score || ""
+        ).trim();
+
+
+      const date =
+        String(
+          e.parameter.date || ""
+        ).trim();
+
+
+      const url =
+        String(
+          e.parameter.url || ""
+        ).trim();
+
+
+      /* ----------------------------------------------
+         Nom obligatoire
+         ---------------------------------------------- */
+
+      if (!nom) {
+
+        return respond({
+
+          success: false,
+
+          message:
+            "Le nom du participant est obligatoire."
+        });
+      }
+
+
+      /* ----------------------------------------------
+         Lecture du registre
+         ---------------------------------------------- */
+
+      const data =
+        sheet
+          .getDataRange()
+          .getValues();
+
+
+      /* ----------------------------------------------
+         Recherche doublon
+         ---------------------------------------------- */
+
+      for (
+        let i = 1;
+        i < data.length;
+        i++
+      ) {
+
+        const existingId =
+          String(
+            data[i][0]
+          )
+            .trim()
+            .toUpperCase();
+
+
+        if (
+          existingId ===
+          certificateId
+        ) {
+
+          return respond({
+
+            success: true,
+
+            alreadyExists: true,
+
+            message:
+              "Certificat déjà enregistré.",
+
+            certificate: {
+
+              id:
+                String(data[i][0]),
+
+              nom:
+                String(data[i][1]),
+
+              formation:
+                String(data[i][2]),
+
+              niveau:
+                String(data[i][3]),
+
+              duree:
+                String(data[i][4]),
+
+              score:
+                String(data[i][5]),
+
+              date:
+                String(data[i][6]),
+
+              statut:
+                String(data[i][7]),
+
+              url:
+                String(data[i][8])
+            }
+          });
+        }
+      }
+
+
+      /* ----------------------------------------------
+         Données fixes du certificat N1
+         ---------------------------------------------- */
+
+      const formation =
+        "Fondamentaux de l'IA générative";
+
+
+      const niveau =
+        "N1";
+
+
+      const duree =
+        "14 heures";
+
+
+      const statut =
+        "VALIDE";
+
+
+      /* ----------------------------------------------
+         Enregistrement
+         ---------------------------------------------- */
+
+      sheet.appendRow([
+
+        certificateId,
+
+        nom,
+
+        formation,
+
+        niveau,
+
+        duree,
+
+        score,
+
+        date,
+
+        statut,
+
+        url
+
+      ]);
+
+
+      /* ----------------------------------------------
+         Confirmation
+         ---------------------------------------------- */
+
+      return respond({
+
+        success: true,
+
+        alreadyExists: false,
+
+        message:
+          "Certificat enregistré avec succès.",
+
+        certificate: {
+
+          id:
+            certificateId,
+
+          nom:
+            nom,
+
+          formation:
+            formation,
+
+          niveau:
+            niveau,
+
+          duree:
+            duree,
+
+          score:
+            score,
+
+          date:
+            date,
+
+          statut:
+            statut,
+
+          url:
+            url
+        }
+      });
+    }
+
+
+    /* =================================================
+       ACTION : VERIFY
+       ================================================= */
+
+    const data =
+      sheet
+        .getDataRange()
+        .getValues();
+
+
+    for (
+      let i = 1;
+      i < data.length;
+      i++
+    ) {
+
+      const currentId =
+        String(
+          data[i][0]
+        )
+          .trim()
+          .toUpperCase();
+
+
+      if (
+        currentId ===
+        certificateId
+      ) {
+
+        return respond({
+
+          success: true,
+
+          certificate: {
+
+            id:
+              String(data[i][0]),
+
+            nom:
+              String(data[i][1]),
+
+            formation:
+              String(data[i][2]),
+
+            niveau:
+              String(data[i][3]),
+
+            duree:
+              String(data[i][4]),
+
+            score:
+              String(data[i][5]),
+
+            date:
+              String(data[i][6]),
+
+            statut:
+              String(data[i][7]),
+
+            url:
+              String(data[i][8])
+          }
+        });
+      }
+    }
+
+
+    /* --------------------------------------------------
+       Certificat introuvable
+       -------------------------------------------------- */
+
+    return respond({
+
+      success: false,
+
+      message:
+        "Certificat introuvable dans le registre officiel."
+    });
+
+
+  } catch (error) {
+
+    return respond({
+
+      success: false,
+
+      message:
+        "Erreur lors de la vérification.",
+
+      error:
+        error.message
+    });
+  }
+}
