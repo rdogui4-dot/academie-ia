@@ -726,32 +726,6 @@ function doPost(e) {
     }
 
     /* ----------------------------------------------
-       Vérification du jeton secret
-       ---------------------------------------------- */
-
-    const jetonAttendu = getRegisterApiToken();
-
-    if (!jetonAttendu) {
-      // Le secret n'a jamais été configuré côté serveur : on bloque tout
-      // plutôt que d'accepter des enregistrements non protégés.
-      return respond({
-        success: false,
-        message:
-          "Le service d'enregistrement n'est pas configuré (jeton manquant)."
-      });
-    }
-
-    const jetonRecu =
-      String(params.token || "");
-
-    if (jetonRecu !== jetonAttendu) {
-      return respond({
-        success: false,
-        message: "Accès refusé : jeton invalide."
-      });
-    }
-
-    /* ----------------------------------------------
        ID de certificat
        ---------------------------------------------- */
 
