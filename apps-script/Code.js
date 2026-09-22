@@ -808,12 +808,34 @@ function doGet(e) {
 
         if (action === "register") {
 
-            if (!/^AIG-N1-\d{4}-[A-F0-9]{12}$/.test(certificateId)) {
-                return respond({
-                    success: false,
-                    message: "Format d'ID de certificat invalide."
-                });
-            }
+            const parts = certificateId.split("-");
+const year = parts[2] || "";
+const random = parts[3] || "";
+
+const digits = "0123456789";
+const hex = "0123456789ABCDEF";
+
+const validYear =
+    year.length === 4 &&
+    year.split("").every(char => digits.includes(char));
+
+const validRandom =
+    random.length === 12 &&
+    random.split("").every(char => hex.includes(char));
+
+const validCertificateId =
+    parts.length === 4 &&
+    parts[0] === "AIG" &&
+    parts[1] === "N1" &&
+    validYear &&
+    validRandom;
+
+if (!validCertificateId) {
+    return respond({
+        success: false,
+        message: "Format d'ID de certificat invalide."
+    });
+}
 
             const nom = String(e.parameter.nom || "").trim();
             const score = String(e.parameter.score || "").trim();
