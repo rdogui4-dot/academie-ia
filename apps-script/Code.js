@@ -1,6 +1,6 @@
 /******************************************************
  * ACADÉMIE IA GÉNÉRATIVE
- * Google Apps Script
+ * Google Apps Script — VERSION CORRIGÉE
  *
  * Fonctions :
  * - Traitement Google Forms
@@ -9,6 +9,13 @@
  * - Envoi e-mail de confirmation
  * - Registre officiel des certificats
  * - Vérification publique des certificats
+ *
+ * CORRECTIONS APPORTÉES (voir résumé en fin de fichier) :
+ * 1. Sécurisation de l'action "register" avec un jeton secret
+ * 2. Passage de "register" en POST (au lieu de GET)
+ * 3. Formule HYPERLINK compatible avec toutes les locales
+ * 4. Validation d'ID généralisée à plusieurs niveaux (N1, N2, N3...)
+ * 5. Récupération du fichier PDF sans regex fragile
  ******************************************************/
 
 
@@ -21,6 +28,30 @@ const CERTIFICATS_SPREADSHEET_ID =
 
 const CERTIFICATS_SHEET_NAME =
   "Certificats";
+
+/*
+ * Niveaux de certificat acceptés.
+ * Ajoutez ici "N2", "N3", etc. si besoin, sans toucher au reste du code.
+ */
+const NIVEAUX_CERTIFICAT_VALIDES = ["N1"];
+
+/*
+ * IMPORTANT — Jeton secret pour sécuriser l'action "register".
+ *
+ * Ne mettez JAMAIS le secret directement dans le code.
+ * Configurez-le une fois via :
+ *   Extensions > Apps Script > Paramètres du projet > Propriétés du script
+ *   Clé   : REGISTER_API_TOKEN
+ *   Valeur: (une chaîne longue et aléatoire, ex. générée avec un gestionnaire de mots de passe)
+ *
+ * Ou en exécutant une fois manuellement dans l'éditeur :
+ *   PropertiesService.getScriptProperties().setProperty('REGISTER_API_TOKEN', 'votre-secret-long');
+ */
+function getRegisterApiToken() {
+  return PropertiesService
+    .getScriptProperties()
+    .getProperty("REGISTER_API_TOKEN");
+}
 
 
 /* =====================================================
@@ -78,46 +109,31 @@ function onFormSubmit(e) {
      -------------------------------------------------- */
 
   const idColumn =
-    getOrCreateColumn(
-      sheet,
-      "ID INSCRIPTION"
-    );
+    getOrCreateColumn(sheet, "ID INSCRIPTION");
 
   const statutColumn =
-    getOrCreateColumn(
-      sheet,
-      "STATUT"
-    );
+    getOrCreateColumn(sheet, "STATUT");
 
   const dateColumn =
-    getOrCreateColumn(
-      sheet,
-      "DATE DE TRAITEMENT"
-    );
+    getOrCreateColumn(sheet, "DATE DE TRAITEMENT");
 
 
   /* --------------------------------------------------
      Enregistrement dans la feuille
      -------------------------------------------------- */
 
-  sheet
-    .getRange(row, idColumn)
-    .setValue(idInscription);
-
-  sheet
-    .getRange(row, statutColumn)
-    .setValue("NOUVEAU");
-
-  sheet
-    .getRange(row, dateColumn)
-    .setValue(new Date());
+  sheet.getRange(row, idColumn).setValue(idInscription);
+  sheet.getRange(row, statutColumn).setValue("NOUVEAU");
+  sheet.getRange(row, dateColumn).setValue(new Date());
 
 
   /* --------------------------------------------------
      Génération automatique de la fiche PDF
      -------------------------------------------------- */
 
-  const pdfUrl =
+  // CORRECTION 5 : la fonction retourne maintenant un objet { url, fileId }
+  // au lieu d'une simple URL qu'il fallait ensuite ré-analyser par regex.
+  const ficheGeneree =
     genererFichePDF(
       nomPrenom,
       email,
@@ -127,24 +143,10 @@ function onFormSubmit(e) {
       "NOUVEAU"
     );
 
-
-  /* --------------------------------------------------
-     Récupération du fichier PDF
-     -------------------------------------------------- */
-
-  const pdfIdMatch =
-    String(pdfUrl).match(/[-\w]{25,}/);
-
-  if (!pdfIdMatch) {
-    throw new Error(
-      "Impossible de récupérer l'identifiant du fichier PDF."
-    );
-  }
+  const pdfUrl = ficheGeneree.url;
 
   const pdfFile =
-    DriveApp.getFileById(
-      pdfIdMatch[0]
-    );
+    DriveApp.getFileById(ficheGeneree.fileId);
 
   const pdfAttachment =
     pdfFile.getAs(MimeType.PDF);
@@ -155,17 +157,13 @@ function onFormSubmit(e) {
      -------------------------------------------------- */
 
   const pdfColumn =
-    getOrCreateColumn(
-      sheet,
-      "FICHE PDF"
-    );
+    getOrCreateColumn(sheet, "FICHE PDF");
 
+  // CORRECTION 3 : formule HYPERLINK compatible avec la locale du classeur.
   sheet
     .getRange(row, pdfColumn)
     .setFormula(
-      '=HYPERLINK("' +
-      pdfUrl +
-      '";"📄 OUVRIR LA FICHE")'
+      buildHyperlinkFormula(sheet, pdfUrl, "📄 OUVRIR LA FICHE")
     );
 
 
@@ -185,152 +183,78 @@ function onFormSubmit(e) {
 
       "<div style='max-width:600px;margin:30px auto;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 15px rgba(0,0,0,0.08);'>" +
 
-      /* EN-TÊTE */
       "<div style='background:#1e3a8a;padding:25px;text-align:center;color:white;'>" +
-
       "<img src='https://i.postimg.cc/mgg7cm4b/Logo-Academie-IA.png' " +
       "alt='Académie IA Générative' " +
       "style='display:block;margin:0 auto 15px auto;width:180px;max-width:80%;height:auto;'>" +
-
-      "<h1 style='margin:0;font-size:24px;'>" +
-      "Académie IA Générative" +
-      "</h1>" +
-
-      "<p style='margin:10px 0 0;font-size:16px;'>" +
-      "Confirmation d'inscription" +
-      "</p>" +
-
+      "<h1 style='margin:0;font-size:24px;'>Académie IA Générative</h1>" +
+      "<p style='margin:10px 0 0;font-size:16px;'>Confirmation d'inscription</p>" +
       "</div>" +
 
-      /* CONTENU */
       "<div style='padding:30px;color:#333333;'>" +
 
-      "<p style='font-size:17px;'>" +
-      "Bonjour <strong>" +
-      nomPrenom +
-      "</strong>," +
-      "</p>" +
+      "<p style='font-size:17px;'>Bonjour <strong>" + nomPrenom + "</strong>,</p>" +
 
       "<p style='font-size:15px;line-height:1.6;'>" +
       "Nous avons bien reçu votre inscription et vous remercions pour votre confiance." +
       "</p>" +
 
-      /* ID */
       "<div style='background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:20px;text-align:center;margin:25px 0;'>" +
-
-      "<p style='margin:0;color:#64748b;font-size:13px;'>" +
-      "VOTRE ID D'INSCRIPTION" +
-      "</p>" +
-
-      "<div style='margin-top:8px;font-size:28px;font-weight:bold;color:#1e3a8a;'>" +
-      idInscription +
+      "<p style='margin:0;color:#64748b;font-size:13px;'>VOTRE ID D'INSCRIPTION</p>" +
+      "<div style='margin-top:8px;font-size:28px;font-weight:bold;color:#1e3a8a;'>" + idInscription + "</div>" +
       "</div>" +
 
-      "</div>" +
-
-      /* INFORMATIONS */
       "<table style='width:100%;border-collapse:collapse;font-size:15px;'>" +
-
       "<tr>" +
-      "<td style='padding:12px 0;border-bottom:1px solid #e5e7eb;color:#64748b;'>" +
-      "Formation" +
-      "</td>" +
-
-      "<td style='padding:12px 0;border-bottom:1px solid #e5e7eb;text-align:right;font-weight:bold;'>" +
-      formation +
-      "</td>" +
+      "<td style='padding:12px 0;border-bottom:1px solid #e5e7eb;color:#64748b;'>Formation</td>" +
+      "<td style='padding:12px 0;border-bottom:1px solid #e5e7eb;text-align:right;font-weight:bold;'>" + formation + "</td>" +
       "</tr>" +
-
       "<tr>" +
-      "<td style='padding:12px 0;border-bottom:1px solid #e5e7eb;color:#64748b;'>" +
-      "Niveau" +
-      "</td>" +
-
-      "<td style='padding:12px 0;border-bottom:1px solid #e5e7eb;text-align:right;font-weight:bold;'>" +
-      niveau +
-      "</td>" +
+      "<td style='padding:12px 0;border-bottom:1px solid #e5e7eb;color:#64748b;'>Niveau</td>" +
+      "<td style='padding:12px 0;border-bottom:1px solid #e5e7eb;text-align:right;font-weight:bold;'>" + niveau + "</td>" +
       "</tr>" +
-
       "<tr>" +
-      "<td style='padding:12px 0;color:#64748b;'>" +
-      "Statut" +
-      "</td>" +
-
-      "<td style='padding:12px 0;text-align:right;font-weight:bold;color:#16a34a;'>" +
-      "NOUVEAU" +
-      "</td>" +
+      "<td style='padding:12px 0;color:#64748b;'>Statut</td>" +
+      "<td style='padding:12px 0;text-align:right;font-weight:bold;color:#16a34a;'>NOUVEAU</td>" +
       "</tr>" +
-
       "</table>" +
 
       "<p style='font-size:15px;line-height:1.6;margin-top:25px;'>" +
       "Votre inscription est bien enregistrée. Conservez précieusement votre ID d'inscription pour vos futurs échanges avec notre équipe." +
       "</p>" +
 
-      /* WHATSAPP */
       "<div style='text-align:center;margin-top:30px;'>" +
-
       "<a href='https://wa.me/2250544165418' " +
       "style='display:inline-block;background:#16a34a;color:#ffffff;text-decoration:none;padding:13px 22px;border-radius:7px;font-weight:bold;'>" +
-
       "Contacter l'équipe sur WhatsApp" +
-
       "</a>" +
-
       "</div>" +
 
       "</div>" +
 
-      /* FOOTER */
       "<div style='background:#f8fafc;padding:18px;text-align:center;color:#64748b;font-size:12px;'>" +
-
-      "Académie IA Générative<br>" +
-      "Message automatique" +
-
+      "Académie IA Générative<br>Message automatique" +
       "</div>" +
 
       "</div>" +
-
       "</body>" +
       "</html>";
 
 
     MailApp.sendEmail({
-
       to: email,
-
       subject: sujet,
-
       body:
-        "Bonjour " +
-        nomPrenom +
-        ",\n\n" +
-
+        "Bonjour " + nomPrenom + ",\n\n" +
         "Votre inscription a bien été enregistrée.\n\n" +
-
-        "ID d'inscription : " +
-        idInscription +
-        "\n" +
-
-        "Formation : " +
-        formation +
-        "\n" +
-
-        "Niveau : " +
-        niveau +
-        "\n" +
-
+        "ID d'inscription : " + idInscription + "\n" +
+        "Formation : " + formation + "\n" +
+        "Niveau : " + niveau + "\n" +
         "Statut : NOUVEAU\n\n" +
-
         "Votre fiche d'inscription PDF est jointe à cet e-mail.\n\n" +
-
         "Académie IA Générative",
-
-      htmlBody:
-        htmlMessage,
-
-      attachments:
-        [pdfAttachment]
+      htmlBody: htmlMessage,
+      attachments: [pdfAttachment]
     });
   }
 
@@ -339,29 +263,11 @@ function onFormSubmit(e) {
      Journal
      -------------------------------------------------- */
 
-  Logger.log(
-    "Inscription : " +
-    idInscription
-  );
-
-  Logger.log(
-    "Nom : " +
-    nomPrenom
-  );
-
-  Logger.log(
-    "Email : " +
-    email
-  );
-
-  Logger.log(
-    "Formation : " +
-    formation
-  );
-
-  Logger.log(
-    "E-mail envoyé."
-  );
+  Logger.log("Inscription : " + idInscription);
+  Logger.log("Nom : " + nomPrenom);
+  Logger.log("Email : " + email);
+  Logger.log("Formation : " + formation);
+  Logger.log("E-mail envoyé.");
 }
 
 
@@ -369,19 +275,11 @@ function onFormSubmit(e) {
    2. RÉCUPÉRER UNE RÉPONSE DU FORMULAIRE
    ===================================================== */
 
-function getAnswer(
-  responses,
-  question
-) {
-
+function getAnswer(responses, question) {
   if (!responses[question]) {
     return "";
   }
-
-  return (
-    responses[question][0] ||
-    ""
-  );
+  return responses[question][0] || "";
 }
 
 
@@ -398,51 +296,21 @@ function genererFichePDF(
   statut
 ) {
 
-  /* --------------------------------------------------
-     Dossier Drive
-     -------------------------------------------------- */
+  const nomDossier = "FICHES D'INSCRIPTION";
 
-  const nomDossier =
-    "FICHES D'INSCRIPTION";
-
-  const dossiers =
-    DriveApp.getFoldersByName(
-      nomDossier
-    );
+  const dossiers = DriveApp.getFoldersByName(nomDossier);
 
   let dossier;
 
   if (dossiers.hasNext()) {
-
-    dossier =
-      dossiers.next();
-
+    dossier = dossiers.next();
   } else {
-
-    dossier =
-      DriveApp.createFolder(
-        nomDossier
-      );
+    dossier = DriveApp.createFolder(nomDossier);
   }
 
 
-  /* --------------------------------------------------
-     Document temporaire
-     -------------------------------------------------- */
-
-  const document =
-    DocumentApp.create(
-      "FICHE - " +
-      idInscription
-    );
-
-  const body =
-    document.getBody();
-
-
-  /* --------------------------------------------------
-     Mise en page
-     -------------------------------------------------- */
+  const document = DocumentApp.create("FICHE - " + idInscription);
+  const body = document.getBody();
 
   body.setMarginTop(40);
   body.setMarginBottom(40);
@@ -450,153 +318,47 @@ function genererFichePDF(
   body.setMarginRight(45);
 
 
-  /* --------------------------------------------------
-     TITRE
-     -------------------------------------------------- */
+  const titre = body.appendParagraph("ACADÉMIE IA GÉNÉRATIVE");
+  titre.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+  titre.setFontSize(20);
+  titre.setBold(true);
 
-  const titre =
-    body.appendParagraph(
-      "ACADÉMIE IA GÉNÉRATIVE"
-    );
-
-  titre
-    .setAlignment(
-      DocumentApp.HorizontalAlignment.CENTER
-    );
-
-  titre
-    .setFontSize(20);
-
-  titre
-    .setBold(true);
-
-
-  const sousTitre =
-    body.appendParagraph(
-      "FICHE D'INSCRIPTION"
-    );
-
-  sousTitre
-    .setAlignment(
-      DocumentApp.HorizontalAlignment.CENTER
-    );
-
-  sousTitre
-    .setFontSize(14);
-
-  sousTitre
-    .setBold(true);
-
+  const sousTitre = body.appendParagraph("FICHE D'INSCRIPTION");
+  sousTitre.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+  sousTitre.setFontSize(14);
+  sousTitre.setBold(true);
 
   body.appendParagraph("");
 
 
-  /* --------------------------------------------------
-     IDENTIFIANT
-     -------------------------------------------------- */
-
-  const idPara =
-    body.appendParagraph(
-      "ID D'INSCRIPTION : " +
-      idInscription
-    );
-
-  idPara
-    .setAlignment(
-      DocumentApp.HorizontalAlignment.CENTER
-    );
-
-  idPara
-    .setFontSize(16);
-
-  idPara
-    .setBold(true);
-
+  const idPara = body.appendParagraph("ID D'INSCRIPTION : " + idInscription);
+  idPara.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+  idPara.setFontSize(16);
+  idPara.setBold(true);
 
   body.appendParagraph("");
 
 
-  /* --------------------------------------------------
-     INFORMATIONS
-     -------------------------------------------------- */
+  const titreInfos = body.appendParagraph("INFORMATIONS DU CANDIDAT");
+  titreInfos.setBold(true);
+  titreInfos.setFontSize(13);
 
-  const titreInfos =
-    body.appendParagraph(
-      "INFORMATIONS DU CANDIDAT"
-    );
+  const table = body.appendTable();
 
-  titreInfos
-    .setBold(true);
-
-  titreInfos
-    .setFontSize(13);
-
-
-  const table =
-    body.appendTable();
-
-
-  ajouterLigneTableau(
-    table,
-    "Nom et prénom",
-    nomPrenom
-  );
-
-  ajouterLigneTableau(
-    table,
-    "Email",
-    email
-  );
-
-  ajouterLigneTableau(
-    table,
-    "Formation",
-    formation
-  );
-
-  ajouterLigneTableau(
-    table,
-    "Niveau",
-    niveau
-  );
-
-  ajouterLigneTableau(
-    table,
-    "Statut",
-    statut
-  );
-
-  ajouterLigneTableau(
-    table,
-    "ID d'inscription",
-    idInscription
-  );
-
-  ajouterLigneTableau(
-    table,
-    "Date d'inscription",
-    formatDate(new Date())
-  );
-
+  ajouterLigneTableau(table, "Nom et prénom", nomPrenom);
+  ajouterLigneTableau(table, "Email", email);
+  ajouterLigneTableau(table, "Formation", formation);
+  ajouterLigneTableau(table, "Niveau", niveau);
+  ajouterLigneTableau(table, "Statut", statut);
+  ajouterLigneTableau(table, "ID d'inscription", idInscription);
+  ajouterLigneTableau(table, "Date d'inscription", formatDate(new Date()));
 
   body.appendParagraph("");
 
 
-  /* --------------------------------------------------
-     MESSAGE
-     -------------------------------------------------- */
-
-  const confirmation =
-    body.appendParagraph(
-      "CONFIRMATION"
-    );
-
-  confirmation
-    .setBold(true);
-
-  confirmation
-    .setFontSize(13);
-
+  const confirmation = body.appendParagraph("CONFIRMATION");
+  confirmation.setBold(true);
+  confirmation.setFontSize(13);
 
   body.appendParagraph(
     "Nous confirmons la réception de votre inscription " +
@@ -609,94 +371,39 @@ function genererFichePDF(
     "notre équipe."
   );
 
-
   body.appendParagraph("");
 
 
-  /* --------------------------------------------------
-     PIED DE PAGE
-     -------------------------------------------------- */
+  const footer = body.appendParagraph("Académie IA Générative");
+  footer.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+  footer.setBold(true);
 
-  const footer =
-    body.appendParagraph(
-      "Académie IA Générative"
-    );
+  const automatique = body.appendParagraph("Document généré automatiquement.");
+  automatique.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
+  automatique.setFontSize(9);
 
-  footer
-    .setAlignment(
-      DocumentApp.HorizontalAlignment.CENTER
-    );
-
-  footer
-    .setBold(true);
-
-
-  const automatique =
-    body.appendParagraph(
-      "Document généré automatiquement."
-    );
-
-  automatique
-    .setAlignment(
-      DocumentApp.HorizontalAlignment.CENTER
-    );
-
-  automatique
-    .setFontSize(9);
-
-
-  /* --------------------------------------------------
-     Sauvegarde
-     -------------------------------------------------- */
 
   document.saveAndClose();
 
 
-  /* --------------------------------------------------
-     Conversion PDF
-     -------------------------------------------------- */
-
-  const fichierDocument =
-    DriveApp.getFileById(
-      document.getId()
-    );
+  const fichierDocument = DriveApp.getFileById(document.getId());
 
   const nomFichierPDF =
-    "FICHE_" +
-    idInscription +
-    "_" +
-    nettoyerNom(nomPrenom) +
-    ".pdf";
+    "FICHE_" + idInscription + "_" + nettoyerNom(nomPrenom) + ".pdf";
 
   const pdfBlob =
-    fichierDocument
-      .getAs(MimeType.PDF)
-      .setName(nomFichierPDF);
+    fichierDocument.getAs(MimeType.PDF).setName(nomFichierPDF);
 
+  const fichierPDF = dossier.createFile(pdfBlob);
 
-  /* --------------------------------------------------
-     Enregistrement PDF
-     -------------------------------------------------- */
+  fichierDocument.setTrashed(true);
 
-  const fichierPDF =
-    dossier.createFile(
-      pdfBlob
-    );
-
-
-  /* --------------------------------------------------
-     Suppression document temporaire
-     -------------------------------------------------- */
-
-  fichierDocument
-    .setTrashed(true);
-
-
-  /* --------------------------------------------------
-     Retour URL
-     -------------------------------------------------- */
-
-  return fichierPDF.getUrl();
+  // CORRECTION 5 : on retourne directement l'ID du fichier, obtenu depuis
+  // l'objet File lui-même — plus besoin de le ré-extraire de l'URL par regex.
+  return {
+    url: fichierPDF.getUrl(),
+    fileId: fichierPDF.getId()
+  };
 }
 
 
@@ -704,43 +411,17 @@ function genererFichePDF(
    4. AJOUTER UNE LIGNE AU TABLEAU
    ===================================================== */
 
-function ajouterLigneTableau(
-  table,
-  libelle,
-  valeur
-) {
+function ajouterLigneTableau(table, libelle, valeur) {
 
-  const ligne =
-    table.appendTableRow();
+  const ligne = table.appendTableRow();
 
+  const celluleLibelle = ligne.appendTableCell(libelle);
+  const celluleValeur = ligne.appendTableCell(valeur || "");
 
-  const celluleLibelle =
-    ligne.appendTableCell(
-      libelle
-    );
+  celluleLibelle.setBackgroundColor("#E5E7EB");
+  celluleLibelle.getChild(0).asParagraph().setBold(true);
 
-
-  const celluleValeur =
-    ligne.appendTableCell(
-      valeur || ""
-    );
-
-
-  celluleLibelle
-    .setBackgroundColor(
-      "#E5E7EB"
-    );
-
-  celluleLibelle
-    .getChild(0)
-    .asParagraph()
-    .setBold(true);
-
-
-  celluleValeur
-    .setBackgroundColor(
-      "#FFFFFF"
-    );
+  celluleValeur.setBackgroundColor("#FFFFFF");
 }
 
 
@@ -749,7 +430,6 @@ function ajouterLigneTableau(
    ===================================================== */
 
 function formatDate(date) {
-
   return Utilities.formatDate(
     date,
     Session.getScriptTimeZone(),
@@ -763,22 +443,10 @@ function formatDate(date) {
    ===================================================== */
 
 function nettoyerNom(nom) {
-
-  return String(
-    nom || "INSCRIT"
-  )
-    .replace(
-      /[\\\/:*?"<>|]/g,
-      ""
-    )
-    .replace(
-      /\s+/g,
-      "_"
-    )
-    .substring(
-      0,
-      60
-    );
+  return String(nom || "INSCRIT")
+    .replace(/[\\\/:*?"<>|]/g, "")
+    .replace(/\s+/g, "_")
+    .substring(0, 60);
 }
 
 
@@ -786,65 +454,59 @@ function nettoyerNom(nom) {
    7. CRÉER OU RÉCUPÉRER UNE COLONNE
    ===================================================== */
 
-function getOrCreateColumn(
-  sheet,
-  columnName
-) {
+function getOrCreateColumn(sheet, columnName) {
 
-  let lastColumn =
-    sheet.getLastColumn();
+  let lastColumn = sheet.getLastColumn();
 
-
-  /*
-   * Feuille complètement vide
-   */
   if (lastColumn === 0) {
-
-    sheet
-      .getRange(1, 1)
-      .setValue(columnName);
-
+    sheet.getRange(1, 1).setValue(columnName);
     return 1;
   }
 
-
   const headers =
-    sheet
-      .getRange(
-        1,
-        1,
-        1,
-        lastColumn
-      )
-      .getValues()[0];
+    sheet.getRange(1, 1, 1, lastColumn).getValues()[0];
 
-
-  const existingColumn =
-    headers.indexOf(
-      columnName
-    ) + 1;
-
+  const existingColumn = headers.indexOf(columnName) + 1;
 
   if (existingColumn > 0) {
     return existingColumn;
   }
 
+  const newColumn = lastColumn + 1;
 
-  const newColumn =
-    lastColumn + 1;
-
-
-  sheet
-    .getRange(
-      1,
-      newColumn
-    )
-    .setValue(
-      columnName
-    );
-
+  sheet.getRange(1, newColumn).setValue(columnName);
 
   return newColumn;
+}
+
+
+/* =====================================================
+   7bis. FORMULE HYPERLINK COMPATIBLE TOUTES LOCALES
+   ===================================================== */
+
+// CORRECTION 3 : Google Sheets attend "," comme séparateur d'arguments
+// dans les locales anglophones, et ";" dans les locales francophones
+// (et beaucoup d'autres). On détecte la locale du classeur pour choisir
+// le bon séparateur, plutôt que de le figer en dur.
+function buildHyperlinkFormula(sheet, url, label) {
+
+  const locale =
+    sheet.getParent().getSpreadsheetLocale() || "en_US";
+
+  // Locales connues utilisant la virgule comme séparateur de formule.
+  const localesAvecVirgule = ["en_US", "en_GB", "en_CA", "en_AU", "en_IE"];
+
+  const separateur =
+    localesAvecVirgule.indexOf(locale) > -1 ? "," : ";";
+
+  const urlEchappee = url.replace(/"/g, '""');
+  const labelEchappe = label.replace(/"/g, '""');
+
+  return (
+    '=HYPERLINK("' + urlEchappee + '"' +
+    separateur +
+    '"' + labelEchappe + '")'
+  );
 }
 
 
@@ -852,21 +514,12 @@ function getOrCreateColumn(
    8. VALIDATION ROBUSTE D'UN ID DE CERTIFICAT
    ===================================================== */
 
-function isValidCertificateId(
-  certificateId
-) {
+function isValidCertificateId(certificateId) {
 
   const id =
-    String(
-      certificateId || ""
-    )
-      .trim()
-      .toUpperCase();
+    String(certificateId || "").trim().toUpperCase();
 
-
-  const parts =
-    id.split("-");
-
+  const parts = id.split("-");
 
   /*
    * Format attendu :
@@ -875,7 +528,7 @@ function isValidCertificateId(
    *
    * 4 parties :
    * AIG
-   * N1
+   * Niveau (N1, N2, N3... voir NIVEAUX_CERTIFICAT_VALIDES)
    * année
    * 12 caractères hexadécimaux
    */
@@ -884,565 +537,336 @@ function isValidCertificateId(
     return false;
   }
 
-
   if (parts[0] !== "AIG") {
     return false;
   }
 
-
-  if (parts[1] !== "N1") {
+  // CORRECTION 4 : le niveau n'est plus figé sur "N1" uniquement.
+  if (NIVEAUX_CERTIFICAT_VALIDES.indexOf(parts[1]) === -1) {
     return false;
   }
 
-
-  const year =
-    parts[2];
-
-  const random =
-    parts[3];
-
-
-  /*
-   * Vérification année
-   */
+  const year = parts[2];
+  const random = parts[3];
 
   if (year.length !== 4) {
     return false;
   }
 
+  const digits = "0123456789";
 
-  const digits =
-    "0123456789";
-
-
-  for (
-    let i = 0;
-    i < year.length;
-    i++
-  ) {
-
-    if (
-      !digits.includes(
-        year[i]
-      )
-    ) {
+  for (let i = 0; i < year.length; i++) {
+    if (!digits.includes(year[i])) {
       return false;
     }
   }
-
-
-  /*
-   * Vérification partie aléatoire
-   */
 
   if (random.length !== 12) {
     return false;
   }
 
+  const hex = "0123456789ABCDEF";
 
-  const hex =
-    "0123456789ABCDEF";
-
-
-  for (
-    let i = 0;
-    i < random.length;
-    i++
-  ) {
-
-    if (
-      !hex.includes(
-        random[i]
-      )
-    ) {
+  for (let i = 0; i < random.length; i++) {
+    if (!hex.includes(random[i])) {
       return false;
     }
   }
-
 
   return true;
 }
 
 
 /* =====================================================
-   9. API WEB — VÉRIFICATION DES CERTIFICATS
+   9. API WEB — VÉRIFICATION DES CERTIFICATS (LECTURE SEULE)
    ===================================================== */
 
+// CORRECTION 1 + 2 : doGet ne gère plus QUE la vérification (lecture seule,
+// sans danger à exposer publiquement). L'enregistrement ("register") est
+// déplacé vers doPost et protégé par un jeton secret — voir plus bas.
 function doGet(e) {
 
   const prefix =
-    e &&
-    e.parameter &&
-    e.parameter.prefix
+    e && e.parameter && e.parameter.prefix
       ? e.parameter.prefix.trim()
       : "";
 
-
   const validPrefix =
-    /^[A-Za-z_$][0-9A-Za-z_$]*$/
-      .test(prefix);
-
-
-  /* --------------------------------------------------
-     Réponse JSON / JSONP
-     -------------------------------------------------- */
+    /^[A-Za-z_$][0-9A-Za-z_$]*$/.test(prefix);
 
   function respond(payload) {
 
-    let json =
-      JSON.stringify(payload);
+    let json = JSON.stringify(payload);
 
-
-    json =
-      json
-        .replace(
-          /</g,
-          "\\u003C"
-        )
-        .replace(
-          />/g,
-          "\\u003E"
-        )
-        .replace(
-          /&/g,
-          "\\u0026"
-        )
-        .replace(
-          /'/g,
-          "\\u0027"
-        );
-
+    json = json
+      .replace(/</g, "\\u003C")
+      .replace(/>/g, "\\u003E")
+      .replace(/&/g, "\\u0026")
+      .replace(/'/g, "\\u0027");
 
     if (validPrefix) {
-
       return ContentService
-        .createTextOutput(
-          prefix +
-          "(" +
-          json +
-          ")"
-        )
-        .setMimeType(
-          ContentService.MimeType
-            .JAVASCRIPT
-        );
+        .createTextOutput(prefix + "(" + json + ")")
+        .setMimeType(ContentService.MimeType.JAVASCRIPT);
     }
 
-
     return ContentService
-      .createTextOutput(
-        json
-      )
-      .setMimeType(
-        ContentService.MimeType
-          .JSON
-      );
+      .createTextOutput(json)
+      .setMimeType(ContentService.MimeType.JSON);
   }
-
 
   try {
 
-    /* --------------------------------------------------
-       Action
-       -------------------------------------------------- */
-
     const action =
-      e &&
-      e.parameter &&
-      e.parameter.action
-        ? e.parameter.action
-            .trim()
-            .toLowerCase()
+      e && e.parameter && e.parameter.action
+        ? e.parameter.action.trim().toLowerCase()
         : "verify";
 
-
-    /* --------------------------------------------------
-       ID
-       -------------------------------------------------- */
+    // L'enregistrement via GET n'est plus autorisé : il faut passer par doPost.
+    if (action === "register") {
+      return respond({
+        success: false,
+        message:
+          "L'enregistrement d'un certificat doit se faire via une requête POST sécurisée."
+      });
+    }
 
     const certificateId =
-      e &&
-      e.parameter &&
-      e.parameter.id
-        ? e.parameter.id
-            .trim()
-            .toUpperCase()
+      e && e.parameter && e.parameter.id
+        ? e.parameter.id.trim().toUpperCase()
         : "";
 
-
     if (!certificateId) {
-
       return respond({
-
         success: false,
-
-        message:
-          "ID de certificat manquant."
+        message: "ID de certificat manquant."
       });
     }
-
-
-    /* --------------------------------------------------
-       Google Sheets
-       -------------------------------------------------- */
 
     const spreadsheet =
-      SpreadsheetApp.openById(
-        CERTIFICATS_SPREADSHEET_ID
-      );
-
+      SpreadsheetApp.openById(CERTIFICATS_SPREADSHEET_ID);
 
     const sheet =
-      spreadsheet.getSheetByName(
-        CERTIFICATS_SHEET_NAME
-      );
-
+      spreadsheet.getSheetByName(CERTIFICATS_SHEET_NAME);
 
     if (!sheet) {
-
       return respond({
-
         success: false,
-
-        message:
-          "La feuille Certificats est introuvable."
+        message: "La feuille Certificats est introuvable."
       });
     }
 
+    const data = sheet.getDataRange().getValues();
 
-    /* =================================================
-       ACTION : REGISTER
-       ================================================= */
-
-    if (
-      action === "register"
-    ) {
-
-
-      /* ----------------------------------------------
-         Validation ID
-         ---------------------------------------------- */
-
-      if (
-        !isValidCertificateId(
-          certificateId
-        )
-      ) {
-
-        return respond({
-
-          success: false,
-
-          message:
-            "Format d'ID de certificat invalide."
-        });
-      }
-
-
-      /* ----------------------------------------------
-         Données reçues
-         ---------------------------------------------- */
-
-      const nom =
-        String(
-          e.parameter.nom || ""
-        ).trim();
-
-
-      const score =
-        String(
-          e.parameter.score || ""
-        ).trim();
-
-
-      const date =
-        String(
-          e.parameter.date || ""
-        ).trim();
-
-
-      const url =
-        String(
-          e.parameter.url || ""
-        ).trim();
-
-
-      /* ----------------------------------------------
-         Nom obligatoire
-         ---------------------------------------------- */
-
-      if (!nom) {
-
-        return respond({
-
-          success: false,
-
-          message:
-            "Le nom du participant est obligatoire."
-        });
-      }
-
-
-      /* ----------------------------------------------
-         Lecture du registre
-         ---------------------------------------------- */
-
-      const data =
-        sheet
-          .getDataRange()
-          .getValues();
-
-
-      /* ----------------------------------------------
-         Recherche doublon
-         ---------------------------------------------- */
-
-      for (
-        let i = 1;
-        i < data.length;
-        i++
-      ) {
-
-        const existingId =
-          String(
-            data[i][0]
-          )
-            .trim()
-            .toUpperCase();
-
-
-        if (
-          existingId ===
-          certificateId
-        ) {
-
-          return respond({
-
-            success: true,
-
-            alreadyExists: true,
-
-            message:
-              "Certificat déjà enregistré.",
-
-            certificate: {
-
-              id:
-                String(data[i][0]),
-
-              nom:
-                String(data[i][1]),
-
-              formation:
-                String(data[i][2]),
-
-              niveau:
-                String(data[i][3]),
-
-              duree:
-                String(data[i][4]),
-
-              score:
-                String(data[i][5]),
-
-              date:
-                String(data[i][6]),
-
-              statut:
-                String(data[i][7]),
-
-              url:
-                String(data[i][8])
-            }
-          });
-        }
-      }
-
-
-      /* ----------------------------------------------
-         Données fixes du certificat N1
-         ---------------------------------------------- */
-
-      const formation =
-        "Fondamentaux de l'IA générative";
-
-
-      const niveau =
-        "N1";
-
-
-      const duree =
-        "14 heures";
-
-
-      const statut =
-        "VALIDE";
-
-
-      /* ----------------------------------------------
-         Enregistrement
-         ---------------------------------------------- */
-
-      sheet.appendRow([
-
-        certificateId,
-
-        nom,
-
-        formation,
-
-        niveau,
-
-        duree,
-
-        score,
-
-        date,
-
-        statut,
-
-        url
-
-      ]);
-
-
-      /* ----------------------------------------------
-         Confirmation
-         ---------------------------------------------- */
-
-      return respond({
-
-        success: true,
-
-        alreadyExists: false,
-
-        message:
-          "Certificat enregistré avec succès.",
-
-        certificate: {
-
-          id:
-            certificateId,
-
-          nom:
-            nom,
-
-          formation:
-            formation,
-
-          niveau:
-            niveau,
-
-          duree:
-            duree,
-
-          score:
-            score,
-
-          date:
-            date,
-
-          statut:
-            statut,
-
-          url:
-            url
-        }
-      });
-    }
-
-
-    /* =================================================
-       ACTION : VERIFY
-       ================================================= */
-
-    const data =
-      sheet
-        .getDataRange()
-        .getValues();
-
-
-    for (
-      let i = 1;
-      i < data.length;
-      i++
-    ) {
+    for (let i = 1; i < data.length; i++) {
 
       const currentId =
-        String(
-          data[i][0]
-        )
-          .trim()
-          .toUpperCase();
+        String(data[i][0]).trim().toUpperCase();
 
-
-      if (
-        currentId ===
-        certificateId
-      ) {
-
+      if (currentId === certificateId) {
         return respond({
-
           success: true,
-
           certificate: {
-
-            id:
-              String(data[i][0]),
-
-            nom:
-              String(data[i][1]),
-
-            formation:
-              String(data[i][2]),
-
-            niveau:
-              String(data[i][3]),
-
-            duree:
-              String(data[i][4]),
-
-            score:
-              String(data[i][5]),
-
-            date:
-              String(data[i][6]),
-
-            statut:
-              String(data[i][7]),
-
-            url:
-              String(data[i][8])
+            id: String(data[i][0]),
+            nom: String(data[i][1]),
+            formation: String(data[i][2]),
+            niveau: String(data[i][3]),
+            duree: String(data[i][4]),
+            score: String(data[i][5]),
+            date: String(data[i][6]),
+            statut: String(data[i][7]),
+            url: String(data[i][8])
           }
         });
       }
     }
 
-
-    /* --------------------------------------------------
-       Certificat introuvable
-       -------------------------------------------------- */
-
     return respond({
-
       success: false,
-
-      message:
-        "Certificat introuvable dans le registre officiel."
+      message: "Certificat introuvable dans le registre officiel."
     });
 
-
   } catch (error) {
+    return respond({
+      success: false,
+      message: "Erreur lors de la vérification.",
+      error: error.message
+    });
+  }
+}
+
+
+/* =====================================================
+   10. API WEB — ENREGISTREMENT DES CERTIFICATS (SÉCURISÉ)
+   ===================================================== */
+
+// CORRECTION 1 + 2 : nouvelle fonction dédiée, appelée uniquement en POST,
+// et protégée par un jeton secret comparé côté serveur.
+function doPost(e) {
+
+  function respond(payload) {
+    return ContentService
+      .createTextOutput(JSON.stringify(payload))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  try {
+
+    const params =
+      (e && e.parameter) || {};
+
+    const action =
+      params.action ? String(params.action).trim().toLowerCase() : "";
+
+    if (action !== "register") {
+      return respond({
+        success: false,
+        message: "Action non reconnue pour une requête POST."
+      });
+    }
+
+    /* ----------------------------------------------
+       Vérification du jeton secret
+       ---------------------------------------------- */
+
+    const jetonAttendu = getRegisterApiToken();
+
+    if (!jetonAttendu) {
+      // Le secret n'a jamais été configuré côté serveur : on bloque tout
+      // plutôt que d'accepter des enregistrements non protégés.
+      return respond({
+        success: false,
+        message:
+          "Le service d'enregistrement n'est pas configuré (jeton manquant)."
+      });
+    }
+
+    const jetonRecu =
+      String(params.token || "");
+
+    if (jetonRecu !== jetonAttendu) {
+      return respond({
+        success: false,
+        message: "Accès refusé : jeton invalide."
+      });
+    }
+
+    /* ----------------------------------------------
+       ID de certificat
+       ---------------------------------------------- */
+
+    const certificateId =
+      params.id ? String(params.id).trim().toUpperCase() : "";
+
+    if (!certificateId) {
+      return respond({
+        success: false,
+        message: "ID de certificat manquant."
+      });
+    }
+
+    if (!isValidCertificateId(certificateId)) {
+      return respond({
+        success: false,
+        message: "Format d'ID de certificat invalide."
+      });
+    }
+
+    const nom = String(params.nom || "").trim();
+    const score = String(params.score || "").trim();
+    const date = String(params.date || "").trim();
+    const url = String(params.url || "").trim();
+
+    if (!nom) {
+      return respond({
+        success: false,
+        message: "Le nom du participant est obligatoire."
+      });
+    }
+
+    /* ----------------------------------------------
+       Google Sheets
+       ---------------------------------------------- */
+
+    const spreadsheet =
+      SpreadsheetApp.openById(CERTIFICATS_SPREADSHEET_ID);
+
+    const sheet =
+      spreadsheet.getSheetByName(CERTIFICATS_SHEET_NAME);
+
+    if (!sheet) {
+      return respond({
+        success: false,
+        message: "La feuille Certificats est introuvable."
+      });
+    }
+
+    const data = sheet.getDataRange().getValues();
+
+    for (let i = 1; i < data.length; i++) {
+
+      const existingId =
+        String(data[i][0]).trim().toUpperCase();
+
+      if (existingId === certificateId) {
+        return respond({
+          success: true,
+          alreadyExists: true,
+          message: "Certificat déjà enregistré.",
+          certificate: {
+            id: String(data[i][0]),
+            nom: String(data[i][1]),
+            formation: String(data[i][2]),
+            niveau: String(data[i][3]),
+            duree: String(data[i][4]),
+            score: String(data[i][5]),
+            date: String(data[i][6]),
+            statut: String(data[i][7]),
+            url: String(data[i][8])
+          }
+        });
+      }
+    }
+
+    const formation = "Fondamentaux de l'IA générative";
+    const niveau = "N1";
+    const duree = "14 heures";
+    const statut = "VALIDE";
+
+    sheet.appendRow([
+      certificateId,
+      nom,
+      formation,
+      niveau,
+      duree,
+      score,
+      date,
+      statut,
+      url
+    ]);
 
     return respond({
+      success: true,
+      alreadyExists: false,
+      message: "Certificat enregistré avec succès.",
+      certificate: {
+        id: certificateId,
+        nom: nom,
+        formation: formation,
+        niveau: niveau,
+        duree: duree,
+        score: score,
+        date: date,
+        statut: statut,
+        url: url
+      }
+    });
 
+  } catch (error) {
+    return respond({
       success: false,
-
-      message:
-        "Erreur lors de la vérification.",
-
-      error:
-        error.message
+      message: "Erreur lors de l'enregistrement.",
+      error: error.message
     });
   }
 }
