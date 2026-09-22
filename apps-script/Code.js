@@ -808,7 +808,7 @@ function doGet(e) {
 
         if (action === "register") {
 
-            if (!/^AIG-N1-\\d{4}-[A-F0-9]{12}$/.test(certificateId)) {
+            if (!/^AIG-N1-\d{4}-[A-F0-9]{12}$/.test(certificateId)) {
                 return respond({
                     success: false,
                     message: "Format d'ID de certificat invalide."
