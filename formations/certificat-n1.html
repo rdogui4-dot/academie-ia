@@ -205,58 +205,196 @@ function enregistrerCertificatEnLigne() {
     status.textContent =
         'Enregistrement du certificat dans le registre officiel…';
 
-    window[JSONP_CALLBACK] = function(response) {
 
-        if (response && response.success) {
+    /* ================================================
+       POST vers Google Apps Script
+       ================================================ */
 
-            status.className = 'registration-status success';
-            status.textContent = response.alreadyExists
-                ? '✅ Certificat déjà enregistré dans le registre officiel.'
-                : '✅ Certificat enregistré avec succès dans le registre officiel.';
+    const iframeName =
+        'certificateRegisterFrame_' + Date.now();
 
-            return;
-        }
+    const iframe =
+        document.createElement('iframe');
 
-        status.className = 'registration-status error';
-        status.textContent = response && response.message
-            ? `❌ ${response.message}`
-            : '❌ Impossible d’enregistrer le certificat.';
+    iframe.name = iframeName;
+    iframe.style.display = 'none';
+    iframe.setAttribute('aria-hidden', 'true');
 
-        delete window[JSONP_CALLBACK];
-    };
+    document.body.appendChild(iframe);
 
-    const script = document.createElement('script');
 
-    const params = new URLSearchParams({
+    const form =
+        document.createElement('form');
+
+    form.method = 'POST';
+    form.action = APPS_SCRIPT_URL;
+    form.target = iframeName;
+    form.style.display = 'none';
+
+
+    const fields = {
         action: 'register',
         id: id,
         nom: name,
         score: `${quizScore}%`,
         date: date,
-        url: verifyUrl.toString(),
-        prefix: JSONP_CALLBACK
-    });
-
-    script.src = `${APPS_SCRIPT_URL}?${params.toString()}`;
-    script.async = true;
-
-    script.onload = function() {
-        setTimeout(() => {
-            script.remove();
-        }, 1000);
+        url: verifyUrl.toString()
     };
 
-    script.onerror = function() {
-        status.className = 'registration-status error';
+
+    Object.entries(fields).forEach(
+        ([key, value]) => {
+
+            const input =
+                document.createElement('input');
+
+            input.type = 'hidden';
+            input.name = key;
+            input.value = value;
+
+            form.appendChild(input);
+        }
+    );
+
+
+    document.body.appendChild(form);
+
+
+    try {
+
+        form.submit();
+
+    } catch (error) {
+
+        status.className =
+            'registration-status error';
+
         status.textContent =
-            '❌ Impossible de contacter le registre officiel. Vérifiez votre connexion Internet.';
-        delete window[JSONP_CALLBACK];
-        script.remove();
-    };
+            '❌ Impossible d’envoyer le certificat au registre officiel.';
 
-    document.body.appendChild(script);
+        form.remove();
+        iframe.remove();
+
+        return;
+    }
+
+
+    /* ================================================
+       Attente puis vérification du registre
+       ================================================ */
+
+    setTimeout(() => {
+
+        verifierCertificatApresEnregistrement(
+            id,
+            status
+        );
+
+        form.remove();
+        iframe.remove();
+
+    }, 2000);
 }
 
+
+/* ====================================================
+   Vérification après enregistrement
+   ==================================================== */
+
+function verifierCertificatApresEnregistrement(
+    id,
+    status
+) {
+
+    const callback =
+        'certificateVerify_' +
+        Date.now();
+
+
+    window[callback] =
+        function(response) {
+
+            if (
+                response &&
+                response.success
+            ) {
+
+                status.className =
+                    'registration-status success';
+
+                status.textContent =
+                    '✅ Certificat enregistré avec succès dans le registre officiel.';
+
+            } else {
+
+                status.className =
+                    'registration-status error';
+
+                status.textContent =
+                    response &&
+                    response.message
+                        ? `❌ ${response.message}`
+                        : '❌ Le certificat n’a pas été retrouvé dans le registre officiel.';
+            }
+
+
+            delete window[callback];
+
+            if (script) {
+                script.remove();
+            }
+        };
+
+
+    const script =
+        document.createElement('script');
+
+
+    script.src =
+        `${APPS_SCRIPT_URL}?id=${encodeURIComponent(id)}&prefix=${encodeURIComponent(callback)}`;
+
+    script.async = true;
+
+
+    script.onerror =
+        function() {
+
+            status.className =
+                'registration-status error';
+
+            status.textContent =
+                '❌ Impossible de vérifier le registre officiel.';
+
+            delete window[callback];
+
+            script.remove();
+        };
+
+
+    document.body.appendChild(script);
+
+
+    /* Sécurité : timeout */
+
+    setTimeout(() => {
+
+        if (
+            typeof window[callback] === 'function'
+        ) {
+
+            status.className =
+                'registration-status error';
+
+            status.textContent =
+                '❌ Le certificat n’a pas pu être confirmé dans le registre officiel.';
+
+            delete window[callback];
+
+            script.remove();
+        }
+
+    }, 7000);
+}
 
 function genererCertificat() {
 
