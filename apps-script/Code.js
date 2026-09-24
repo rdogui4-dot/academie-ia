@@ -622,6 +622,71 @@ function doGet(e) {
         ? e.parameter.action.trim().toLowerCase()
         : "verify";
 
+/* --------------------------------------------------
+   API QUIZ N1 — DÉMARRAGE ET STATUT
+   -------------------------------------------------- */
+
+if (action === "startquizn1") {
+
+  return respond(
+    demarrerQuizN1()
+  );
+
+}
+
+if (action === "statusquizn1") {
+
+  const attemptId =
+    e &&
+    e.parameter &&
+    e.parameter.attemptId
+      ? e.parameter.attemptId.trim()
+      : "";
+
+  return respond(
+    statutQuizN1(attemptId)
+  );
+
+}
+
+/* --------------------------------------------------
+   API QUIZ N1 — CORRECTION
+   -------------------------------------------------- */
+
+if (action === "submitquizn1") {
+
+  const attemptId =
+    params.attemptId
+      ? String(params.attemptId).trim()
+      : "";
+
+  let answers = [];
+
+  try {
+
+    answers =
+      JSON.parse(
+        params.answers || "[]"
+      );
+
+  } catch (error) {
+
+    return respond({
+      success: false,
+      message: "Format des réponses invalide."
+    });
+
+  }
+
+  return respond(
+    corrigerQuizN1(
+      attemptId,
+      answers
+    )
+  );
+
+}
+     
     // L'enregistrement via GET n'est plus autorisé : il faut passer par doPost.
     if (action === "register") {
       return respond({
