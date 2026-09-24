@@ -845,3 +845,569 @@ function doPost(e) {
     });
   }
 }
+
+/* =====================================================
+   11. QUIZ N1 — CORRECTION CÔTÉ SERVEUR
+   ===================================================== */
+
+function getN1QuizBank() {
+
+  return [
+
+    {
+      id: "q1",
+      question: "Qu'est-ce qu'une IA générative ?",
+      options: [
+        { value: "a", label: "Un système capable de générer du contenu." },
+        { value: "b", label: "Un simple moteur de recherche." },
+        { value: "c", label: "Un système uniquement destiné aux calculs." }
+      ],
+      correct: "a"
+    },
+
+    {
+      id: "q2",
+      question: "Que signifie LLM ?",
+      options: [
+        { value: "a", label: "Large Language Model" },
+        { value: "b", label: "Local Learning Machine" },
+        { value: "c", label: "Language Logic Module" }
+      ],
+      correct: "a"
+    },
+
+    {
+      id: "q3",
+      question: "Que peut produire une IA générative ?",
+      options: [
+        { value: "a", label: "Uniquement du texte." },
+        { value: "b", label: "Différents types de contenus selon l'outil." },
+        { value: "c", label: "Uniquement des tableaux Excel." }
+      ],
+      correct: "b"
+    },
+
+    {
+      id: "q4",
+      question: "Pourquoi faut-il vérifier les réponses d'une IA ?",
+      options: [
+        { value: "a", label: "Parce qu'une IA peut produire des informations incorrectes." },
+        { value: "b", label: "Parce qu'une IA ne peut jamais répondre." },
+        { value: "c", label: "Parce que toutes les réponses sont automatiquement fausses." }
+      ],
+      correct: "a"
+    },
+
+    {
+      id: "q5",
+      question: "Quelle est une bonne pratique avec l'IA ?",
+      options: [
+        { value: "a", label: "Fournir toutes ses informations confidentielles." },
+        { value: "b", label: "Vérifier les résultats importants." },
+        { value: "c", label: "Accepter systématiquement la première réponse." }
+      ],
+      correct: "b"
+    },
+
+    {
+      id: "q6",
+      question: "Quelle est la première étape pour utiliser l'IA efficacement ?",
+      options: [
+        { value: "a", label: "Identifier clairement le besoin." },
+        { value: "b", label: "Copier immédiatement la réponse." },
+        { value: "c", label: "Ne donner aucune information à l'IA." }
+      ],
+      correct: "a"
+    },
+
+    {
+      id: "q7",
+      question: "Qu'est-ce qu'une hallucination d'IA ?",
+      options: [
+        { value: "a", label: "Une erreur de connexion Internet." },
+        { value: "b", label: "Une information générée qui peut sembler crédible mais être fausse." },
+        { value: "c", label: "Une image générée par une IA." }
+      ],
+      correct: "b"
+    },
+
+    {
+      id: "q8",
+      question: "Quel rôle doit conserver l'utilisateur ?",
+      options: [
+        { value: "a", label: "Aucun rôle." },
+        { value: "b", label: "Un rôle de vérification et de décision." },
+        { value: "c", label: "Uniquement un rôle technique." }
+      ],
+      correct: "b"
+    },
+
+    {
+      id: "q9",
+      question: "Que faut-il éviter avec les données confidentielles ?",
+      options: [
+        { value: "a", label: "Les protéger." },
+        { value: "b", label: "Les transmettre sans vérifier les conditions du service utilisé." },
+        { value: "c", label: "Les classer correctement." }
+      ],
+      correct: "b"
+    },
+
+    {
+      id: "q10",
+      question: "Quel est l'objectif principal de l'IA générative ?",
+      options: [
+        { value: "a", label: "Remplacer systématiquement l'être humain." },
+        { value: "b", label: "Augmenter les capacités humaines et faciliter certaines tâches." },
+        { value: "c", label: "Empêcher toute prise de décision humaine." }
+      ],
+      correct: "b"
+    }
+
+  ];
+
+}
+
+
+/* =====================================================
+   CRÉER UN IDENTIFIANT D'ATTEMPT
+   ===================================================== */
+
+function genererQuizAttemptId() {
+
+  const bytes = Utilities.getUuid()
+    .replace(/-/g, "")
+    .toUpperCase();
+
+  return "QUIZ-N1-" + bytes;
+
+}
+
+
+/* =====================================================
+   MÉLANGE SÉCURISÉ
+   ===================================================== */
+
+function melangerTableau(array) {
+
+  const copie = array.slice();
+
+  for (
+    let i = copie.length - 1;
+    i > 0;
+    i--
+  ) {
+
+    const j =
+      Math.floor(Math.random() * (i + 1));
+
+    const temp =
+      copie[i];
+
+    copie[i] =
+      copie[j];
+
+    copie[j] =
+      temp;
+  }
+
+  return copie;
+
+}
+
+
+/* =====================================================
+   SECRET SERVEUR
+   ===================================================== */
+
+function getQuizSecret() {
+
+  const properties =
+    PropertiesService.getScriptProperties();
+
+  let secret =
+    properties.getProperty("QUIZ_SERVER_SECRET");
+
+  if (!secret) {
+
+    secret =
+      Utilities.getUuid() +
+      Utilities.getUuid();
+
+    properties.setProperty(
+      "QUIZ_SERVER_SECRET",
+      secret
+    );
+  }
+
+  return secret;
+
+}
+
+
+/* =====================================================
+   SIGNATURE D'UN TOKEN DE RÉUSSITE
+   ===================================================== */
+
+function signerQuizToken(payload) {
+
+  const secret =
+    getQuizSecret();
+
+  const data =
+    Utilities.base64EncodeWebSafe(
+      JSON.stringify(payload)
+    );
+
+  const signatureBytes =
+    Utilities.computeHmacSha256Signature(
+      data,
+      secret
+    );
+
+  const signature =
+    Utilities.base64EncodeWebSafe(
+      signatureBytes
+    );
+
+  return data + "." + signature;
+
+}
+
+
+/* =====================================================
+   VÉRIFICATION DU TOKEN
+   ===================================================== */
+
+function verifierQuizToken(token) {
+
+  try {
+
+    if (!token || token.indexOf(".") === -1) {
+      return null;
+    }
+
+    const parts =
+      token.split(".");
+
+    if (parts.length !== 2) {
+      return null;
+    }
+
+    const data =
+      parts[0];
+
+    const signature =
+      parts[1];
+
+    const secret =
+      getQuizSecret();
+
+    const expectedBytes =
+      Utilities.computeHmacSha256Signature(
+        data,
+        secret
+      );
+
+    const expectedSignature =
+      Utilities.base64EncodeWebSafe(
+        expectedBytes
+      );
+
+    if (
+      signature !==
+      expectedSignature
+    ) {
+      return null;
+    }
+
+    const json =
+      Utilities.newBlob(
+        Utilities.base64DecodeWebSafe(data)
+      ).getDataAsString();
+
+    const payload =
+      JSON.parse(json);
+
+    return payload;
+
+  } catch (error) {
+
+    return null;
+
+  }
+
+}
+
+
+/* =====================================================
+   DÉMARRER UN QUIZ N1
+   ===================================================== */
+
+function demarrerQuizN1() {
+
+  const bank =
+    getN1QuizBank();
+
+  const questions =
+    melangerTableau(bank);
+
+  const attemptId =
+    genererQuizAttemptId();
+
+  const publicQuestions =
+    questions.map(question => {
+
+      return {
+        id: question.id,
+        question: question.question,
+        options: melangerTableau(question.options)
+      };
+
+    });
+
+
+  const attemptData = {
+
+    attemptId: attemptId,
+
+    createdAt: Date.now(),
+
+    questions: questions.map(question => {
+
+      return {
+        id: question.id,
+        correct: question.correct
+      };
+
+    }),
+
+    submitted: false
+
+  };
+
+
+  CacheService
+    .getScriptCache()
+    .put(
+      "quiz_" + attemptId,
+      JSON.stringify(attemptData),
+      900
+    );
+
+
+  return {
+
+    success: true,
+
+    attemptId: attemptId,
+
+    questions: publicQuestions
+
+  };
+
+}
+
+
+/* =====================================================
+   CORRIGER UN QUIZ N1
+   ===================================================== */
+
+function corrigerQuizN1(attemptId, answers) {
+
+  const cache =
+    CacheService.getScriptCache();
+
+  const raw =
+    cache.get(
+      "quiz_" + attemptId
+    );
+
+  if (!raw) {
+
+    return {
+      success: false,
+      message:
+        "Session de quiz expirée. Veuillez recommencer le quiz."
+    };
+
+  }
+
+
+  const attempt =
+    JSON.parse(raw);
+
+
+  if (attempt.submitted) {
+
+    return {
+      success: false,
+      message:
+        "Cette tentative a déjà été corrigée."
+    };
+
+  }
+
+
+  if (!Array.isArray(answers)) {
+
+    return {
+      success: false,
+      message:
+        "Réponses du quiz invalides."
+    };
+
+  }
+
+
+  const answerMap = {};
+
+  answers.forEach(item => {
+
+    if (
+      item &&
+      item.id
+    ) {
+
+      answerMap[item.id] =
+        String(item.value || "")
+          .trim()
+          .toLowerCase();
+
+    }
+
+  });
+
+
+  let score = 0;
+
+
+  attempt.questions.forEach(question => {
+
+    if (
+      answerMap[question.id] ===
+      question.correct
+    ) {
+
+      score++;
+
+    }
+
+  });
+
+
+  const percentage =
+    score * 10;
+
+  const passed =
+    percentage >= 70;
+
+
+  attempt.submitted = true;
+
+  attempt.score = score;
+
+  attempt.percentage =
+    percentage;
+
+  attempt.passed =
+    passed;
+
+
+  cache.put(
+    "quiz_" + attemptId,
+    JSON.stringify(attempt),
+    900
+  );
+
+
+  let passToken = null;
+
+
+  if (passed) {
+
+    passToken =
+      signerQuizToken({
+
+        type: "N1_QUIZ_PASS",
+
+        attemptId: attemptId,
+
+        score: score,
+
+        percentage: percentage,
+
+        issuedAt: Date.now()
+
+      });
+
+  }
+
+
+  return {
+
+    success: true,
+
+    score: score,
+
+    percentage: percentage,
+
+    passed: passed,
+
+    passToken: passToken
+
+  };
+
+}
+
+
+/* =====================================================
+   STATUT D'UNE TENTATIVE
+   ===================================================== */
+
+function statutQuizN1(attemptId) {
+
+  const raw =
+    CacheService
+      .getScriptCache()
+      .get(
+        "quiz_" + attemptId
+      );
+
+  if (!raw) {
+
+    return {
+      success: false,
+      message:
+        "Tentative introuvable ou expirée."
+    };
+
+  }
+
+
+  const attempt =
+    JSON.parse(raw);
+
+
+  return {
+
+    success: true,
+
+    attemptId:
+      attempt.attemptId,
+
+    submitted:
+      attempt.submitted === true,
+
+    score:
+      attempt.score || 0,
+
+    percentage:
+      attempt.percentage || 0,
+
+    passed:
+      attempt.passed === true
+
+  };
+
+}
