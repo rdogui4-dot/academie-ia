@@ -1,4 +1,4 @@
-@import url("assets/brand.css");
+
 
 /* =========================================================
    VARIABLES
@@ -6,14 +6,14 @@
 
 :root {
 
-    --primary: #4B0082;
-    --secondary: #0066FF;
-    --accent: #4CAF50;
+    --primary: #2D0A6E;
+    --secondary: #0057FF;
+    --accent: #0F8A2E;
 
     --primary-dark: #380061;
     --secondary-dark: #0050CC;
 
-    --ink: #111827;
+    --ink: #14142B;
     --text: #334155;
     --muted: #64748B;
 
@@ -183,7 +183,7 @@ header {
         block;
 
     background:
-        url("assets/logo.svg")
+        url("assets/logo-officiel-blanc.png")
         center
         center
         /
@@ -223,7 +223,7 @@ header {
         0;
 
     background:
-        url("assets/logo.svg")
+        url("assets/logo-officiel-blanc.png")
         center
         center
         /

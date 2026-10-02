@@ -8,9 +8,9 @@ Site vitrine, catalogue et espace apprenant réunis dans le dépôt
 | Page | Fonction |
 | --- | --- |
 | `index.html` | Présentation de l’Académie, expertises et contact |
-| `formations.html` | Catalogue des quatre parcours et inscription |
-| `espace-apprenant.html` | Progression N1 et reprise du prochain module |
-| `formations/n1.html` | Présentation et programme du cours N1 |
+| `formations.html` | Catalogue, inscription, progression et reprise N1 |
+| `espace-apprenant.html` | Redirection vers la page Formations unifiée |
+| `formations/n1.html` | Redirection vers le parcours N1 dans Formations |
 | `modules/n1-module-1.html` à `n1-module-5.html` | Les cinq modules N1 |
 | `modules/quiz-n1.html` | Quiz final du parcours N1 |
 | `formations/n1-terminee.html` | Résultat de la formation |
@@ -24,14 +24,18 @@ programme et de leur inscription dans le catalogue.
 ## Structure
 
 - `vitrine.css` : styles de l’accueil et du catalogue.
-- `style.css` et `assets/brand.css` : styles des pages de formation.
-- `assets/navigation.css` : navigation des cours sur ordinateur et mobile.
-- `assets/portal.css` et `assets/portal.js` : espace apprenant et reprise N1.
-- `script.js` : progression et accès aux modules N1.
+- `style.css` : mise en page des cours, du quiz et des certificats.
+- `assets/brand.css` : charte commune à toutes les pages, chargée en dernier.
+- `script.js` : progression commune, reprise, accès et brouillons des modules N1.
 - `assets/` : logos et identité visuelle.
 - `apps-script/` : backend Google Apps Script existant.
 - `tools/` : vérification des liens et des parcours de navigation.
 - `docs/FUSION.md` : origine des fichiers et procédure de fusion.
+- `docs/AUDIT-REFONTE.md` : diagnostic, changements et limites de la refonte.
+
+Les polices de texte DejaVu Sans sont hébergées dans `assets/fonts/` avec leur
+licence. Poppins est chargée via Google Fonts, avec une police locale de repli.
+Les logos officiels ont été extraits sans recomposition de la charte fournie.
 
 La progression N1 utilise les clés `localStorage` déjà présentes. Elle se
 retrouve dans le même navigateur sur la même origine ; publier sous une autre
