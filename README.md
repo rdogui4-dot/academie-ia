@@ -8,7 +8,8 @@ Site vitrine, catalogue et espace apprenant réunis dans le dépôt
 | Page | Fonction |
 | --- | --- |
 | `index.html` | Présentation de l’Académie, expertises et contact |
-| `formations.html` | Catalogue, inscription, progression et reprise N1 |
+| `formations.html` | Catalogue, inscription et accès aux quatre parcours |
+| `cours/apprendre.html` | Lecture guidée, carnet et interface du tuteur IA |
 | `espace-apprenant.html` | Redirection vers la page Formations unifiée |
 | `formations/n1.html` | Redirection vers le parcours N1 dans Formations |
 | `modules/n1-module-1.html` à `n1-module-5.html` | Les cinq modules N1 |
@@ -32,6 +33,10 @@ programme et de leur inscription dans le catalogue.
 - `tools/` : vérification des liens et des parcours de navigation.
 - `docs/FUSION.md` : origine des fichiers et procédure de fusion.
 - `docs/AUDIT-REFONTE.md` : diagnostic, changements et limites de la refonte.
+- `docs/APPRENTISSAGE-LMS-LLM.md` : état du LMS, raccordement Canva et tuteur.
+- `cours/` : quatre parcours et configuration publique des intégrations.
+- `ressources/` : copies exactes des quatre supports PDF fournis.
+- `server-tuteur/` : service Python séparé à héberger, corpus et tests.
 
 Les polices de texte DejaVu Sans sont hébergées dans `assets/fonts/` avec leur
 licence. Poppins est chargée via Google Fonts, avec une police locale de repli.
@@ -49,6 +54,7 @@ Depuis la racine du dépôt :
 ```powershell
 python tools/verify.py
 node tools/verify-navigation.cjs
+node tools/verify-learning.cjs
 python -m http.server 8000
 ```
 
@@ -61,3 +67,5 @@ déploiement existant pour les inscriptions et la vérification des certificats.
 Le site statique peut rester publié avec GitHub Pages depuis la branche `main`,
 dossier `/ (root)`, dans ce dépôt. Aucun processus de compilation n’est requis.
 Le code Google Apps Script se déploie séparément dans le projet Google existant.
+Le tuteur nécessite un serveur HTTPS et une clé API côté serveur ; il n’est pas
+activé par la simple publication GitHub Pages. Lire `server-tuteur/README.md`.
