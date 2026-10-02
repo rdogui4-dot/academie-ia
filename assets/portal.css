@@ -1,0 +1,64 @@
+.learning-portal .hero {
+    padding: 72px 24px;
+}
+
+.learning-portal .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+}
+
+.learning-portal .card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.learning-portal .card .btn {
+    align-self: flex-start;
+    margin-top: auto;
+}
+
+.portal-progress {
+    width: min(100%, 620px);
+    margin: 28px auto 0;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--ink);
+    text-align: left;
+}
+
+.portal-progress p {
+    color: var(--text);
+    font-size: 15px;
+    margin: 0 0 12px;
+}
+
+.portal-progress .progress-bar {
+    margin-bottom: 20px;
+}
+
+.portal-note {
+    max-width: 620px;
+    margin: 20px auto 0;
+}
+
+.portal-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 24px;
+    padding: 24px;
+}
+
+.portal-links a {
+    color: var(--secondary);
+    font-weight: 600;
+}
+
+@media (max-width: 720px) {
+    .learning-portal .cards {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
