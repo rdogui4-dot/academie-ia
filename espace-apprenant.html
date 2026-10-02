@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Retrouvez les parcours de l’Académie IA Générative et reprenez votre formation N1.">
+    <title>Espace apprenant | Académie IA Générative</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/navigation.css">
+    <link rel="stylesheet" href="assets/portal.css">
+    <script src="assets/portal.js" defer></script>
+</head>
+<body class="learning-portal">
+    <header class="academy-navigation">
+        <nav aria-label="Navigation principale">
+            <a class="logo" href="index.html" aria-label="Académie IA Générative, accueil">Académie IA Générative</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="formations.html">Formations</a></li>
+                <li><a href="espace-apprenant.html" aria-current="page">Espace apprenant</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>Votre espace apprenant</h1>
+            <p>De novice à Expert Engineer</p>
+            <p>Retrouvez vos cours et poursuivez votre apprentissage.</p>
+            <div class="portal-progress">
+                <p id="portal-progress-text" aria-live="polite">Votre progression N1 s’affichera ici.</p>
+                <div class="progress-bar" id="portal-progress-bar" role="progressbar" aria-label="Modules N1 terminés" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                    <div class="progress-fill" id="portal-progress-fill" style="width: 0%"></div>
+                </div>
+                <a class="btn" id="resume-course" href="modules/n1-module-1.html">Commencer le module 1</a>
+            </div>
+            <p class="portal-note">Votre progression est enregistrée dans ce navigateur. Utilisez le même navigateur et le même appareil pour la retrouver.</p>
+        </section>
+
+        <section class="formations" id="formations" aria-labelledby="courses-title">
+            <h2 id="courses-title">Vos parcours de formation</h2>
+            <div class="cards">
+                <article class="card">
+                    <h3>N1 — Fondamentaux de l’IA générative</h3>
+                    <p>Comprendre l’IA générative, découvrir les modèles, rédiger ses premiers prompts et pratiquer.</p>
+                    <p>14 heures · 50 000 FCFA</p>
+                    <p>5 modules, un quiz final et un certificat de réussite.</p>
+                    <a class="btn" href="formations/n1.html">Ouvrir la formation N1</a>
+                </article>
+                <article class="card">
+                    <h3>N2 — Prompts et productivité</h3>
+                    <p>Concevez des prompts structurés et des méthodes réutilisables pour vos tâches professionnelles.</p>
+                    <p>28 heures · 120 000 FCFA</p>
+                    <a class="btn" href="formations.html#niveau-2">Programme et inscription</a>
+                </article>
+                <article class="card">
+                    <h3>N3 — RAG, agents et fine-tuning</h3>
+                    <p>Concevez des systèmes d’IA générative adaptés aux besoins réels des entreprises.</p>
+                    <p>35 heures · 250 000 FCFA</p>
+                    <a class="btn" href="formations.html#niveau-3">Programme et inscription</a>
+                </article>
+                <article class="card">
+                    <h3>N4 — IA générative par métier</h3>
+                    <p>Appliquez l’IA aux contraintes, aux données et aux pratiques de votre secteur.</p>
+                    <p>Parcours sur mesure</p>
+                    <a class="btn" href="formations.html#niveau-4">Programme et inscription</a>
+                </article>
+            </div>
+        </section>
+        <div class="portal-links">
+            <a href="formations.html">Consulter le catalogue complet</a>
+            <a href="https://forms.gle/a2er9w8P3pEbZtwM7" target="_blank" rel="noopener">S’inscrire à une formation</a>
+            <a href="https://wa.me/2250544165418" target="_blank" rel="noopener">Contacter l’Académie</a>
+        </div>
+    </main>
+    <footer><p>© 2026 — Académie IA Générative</p></footer>
+</body>
+</html>

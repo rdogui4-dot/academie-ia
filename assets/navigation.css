@@ -1,0 +1,48 @@
+/* Navigation partagée des pages de formation et de l'espace apprenant. */
+.academy-navigation > nav,
+.academy-navigation .container {
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.academy-navigation .nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 22px;
+}
+
+.academy-navigation a[aria-current="page"] {
+    color: var(--secondary);
+}
+
+.academy-navigation a:focus-visible {
+    outline: 3px solid var(--secondary);
+    outline-offset: 5px;
+    border-radius: 3px;
+}
+
+@media (max-width: 768px) {
+    .academy-navigation > nav,
+    .academy-navigation .container {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .academy-navigation .nav-links,
+    .academy-navigation .container nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 18px;
+    }
+
+    .academy-navigation .site-header nav a,
+    .academy-navigation.site-header nav a {
+        display: inline-block;
+    }
+
+    .academy-navigation .nav-links a,
+    .academy-navigation nav a {
+        font-size: 14px;
+    }
+}
