@@ -1,4 +1,4 @@
-import {courseData,downloadResource,message} from '../assets/academy-api.js';
+import {courseData,message} from '../assets/academy-api.js';
 const $=id=>document.getElementById(id),params=new URLSearchParams(location.search),n=Number(params.get('niveau'))||1,urls=[];
 try{
  const {deck}=await courseData(n);let i=Math.max(0,Math.min(deck.slides.length-1,(Number(params.get('slide'))||deck.lessonStarts[(Number(params.get('etape'))||1)-1]||1)-1));
@@ -11,7 +11,6 @@ try{
  $('previous').onclick=()=>move(-1);$('next').onclick=()=>move(1);$('slide-picker').onchange=()=>{i=Number($('slide-picker').value);render();};
  document.addEventListener('keydown',e=>{if(/INPUT|TEXTAREA|SELECT|BUTTON/.test(e.target.tagName))return;if(['ArrowRight','PageDown'].includes(e.key)){e.preventDefault();move(1);}if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();move(-1);}});
  $('fullscreen').hidden=!document.fullscreenEnabled;$('fullscreen').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{message('fullscreen-status','Plein écran indisponible.');}};
- for(const [id,name] of [['manual','manuel.pdf'],['pdf','slides.pdf'],['pptx','slides.pptx']])$(id).onclick=async()=>{try{const u=await downloadResource(n,name);urls.push(u);const a=document.createElement('a');a.href=u;a.download=name;a.click();}catch(e){message('fullscreen-status',e.message);}};
  render();
 }catch(e){message('access-message',e.message);}
 window.addEventListener('pagehide',()=>urls.forEach(URL.revokeObjectURL));

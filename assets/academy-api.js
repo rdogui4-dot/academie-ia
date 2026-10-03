@@ -16,5 +16,4 @@ export async function requireLevel(level){
  return {db,user};
 }
 export async function courseData(level){const {db,user}=await requireLevel(level);const {data,error}=await db.storage.from('academy-private').download(`n${level}/course.json`);if(error)throw Error('Support indisponible. Contactez l’Académie.');return {db,user,...JSON.parse(await data.text())};}
-export async function downloadResource(level,name){const {db}=await requireLevel(level);const {data,error}=await db.storage.from('academy-private').download(`n${level}/${name}`);if(error)throw Error('Document indisponible.');return URL.createObjectURL(data);}
 export function message(id,text){document.getElementById(id).textContent=text;}

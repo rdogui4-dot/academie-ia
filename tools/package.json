@@ -3,7 +3,8 @@
   "type": "module",
   "scripts": {
     "test:db": "node test-supabase.mjs",
-    "test:edge": "node compile-edge.mjs"
+    "test:edge": "node compile-edge.mjs",
+    "test:required": "node test-required-learning.mjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.5.8",
