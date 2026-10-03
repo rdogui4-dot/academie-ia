@@ -7,3 +7,9 @@ node_modules/
 __pycache__/
 *.sqlite3
 *.sqlite3-*
+
+# Supports privés : importer dans Storage, jamais dans GitHub Pages
+private-content/
+dist/
+*.bak
+tools/.edge-check/

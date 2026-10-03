@@ -1,0 +1,4 @@
+[functions.enrollment-sync]
+verify_jwt = false
+[functions.tutor]
+verify_jwt = false

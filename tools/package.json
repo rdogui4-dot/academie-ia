@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:db": "node test-supabase.mjs",
+    "test:edge": "node compile-edge.mjs"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
+    "@supabase/supabase-js": "2.117.2",
+    "typescript": "7.0.2"
+  }
+}
