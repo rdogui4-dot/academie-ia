@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap');
+@font-face{font-family:'Poppins';src:url('fonts/Poppins-Bold.ttf') format('truetype');font-weight:500 800;font-display:swap}
 @font-face{font-family:'DejaVu Sans';src:url('fonts/DejaVuSans.ttf') format('truetype');font-weight:400;font-display:swap}
 @font-face{font-family:'DejaVu Sans';src:url('fonts/DejaVuSans-Bold.ttf') format('truetype');font-weight:700;font-display:swap}
 :root{--brand-purple:#2D0A6E;--brand-blue:#0057FF;--brand-cyan:#00A4FA;--brand-green:#0F8A2E;--brand-ink:#14142B;--brand-muted:#6B7280;--brand-border:#E2E5EF;--brand-gradient:linear-gradient(90deg,#2D0A6E,#0057FF,#00A4FA,#0F8A2E);--sans:'DejaVu Sans',sans-serif;--mono:'Poppins',sans-serif}
@@ -17,3 +17,7 @@
 .pulse,.dot{background:var(--brand-green)}.section-label,.principles span,.why li>span,.offer-list span,.level-track b{color:var(--brand-muted)}.expertise,.expertise .light,.expertise-heading>p,.expertise-grid .mono,.expertise-grid p:not(.mono){color:var(--brand-ink)}.expertise .light span{border-color:var(--brand-border)}.cta{color:var(--brand-ink)}.cta>div:last-child p{color:var(--brand-muted)}.training-note{color:var(--brand-ink)}.academy-footer>div>p{color:#fff}.learning-hub h1{font-size:clamp(28px,3vw,40px);letter-spacing:-1px}.training-hero h2{font-size:clamp(30px,4vw,54px);letter-spacing:-1px;max-width:850px}.certificate-controls h1{font-size:24px;margin-top:0}
 
 .academy-header .header-enroll{background:#fff;color:#2D0A6E;padding:12px 18px;border-radius:8px;font-weight:700}
+
+[hidden]{display:none!important}.legacy-notice{padding:1rem;background:#f3effa}.certificate-brand{display:block;background:#2D0A6E;width:280px;padding:1rem}.certificate-print{border:3px solid #2D0A6E;padding:2rem}.enrollment textarea{width:100%;min-height:8rem;font:inherit;padding:1rem} @media print{.academy-header,.academy-footer,button{display:none!important}}
+
+.certificate-print{position:relative;isolation:isolate}.certificate-print::before{content:'ACADÉMIE IA GÉNÉRATIVE';position:absolute;inset:40% 0 auto;z-index:-1;opacity:.04;transform:rotate(-20deg);font-size:3rem;font-weight:bold;text-align:center;pointer-events:none}#certificate-qr{margin:1.5rem 0}

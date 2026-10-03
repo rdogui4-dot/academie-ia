@@ -1,71 +1,42 @@
-# Académie IA Générative
+# Académie IA Générative — Google Forms + Supabase
 
-Site vitrine, catalogue et espace apprenant réunis dans le dépôt
-[`rdogui4-dot/academie-ia`](https://github.com/rdogui4-dot/academie-ia).
+Le catalogue public peut rester sur GitHub Pages. Les inscriptions passent toutes par le formulaire Google existant et restent liées à Google Sheets. Supabase protège les supports, synchronise les carnets et porte le registre des nouveaux certificats.
 
-## Accès
+**Version préparée, non déployée.** Aucun compte Supabase, secret, formulaire ou déclencheur distant n'a été modifié ici.
 
-| Page | Fonction |
-| --- | --- |
-| `index.html` | Présentation de l’Académie, expertises et contact |
-| `formations.html` | Catalogue, inscription et accès aux quatre parcours |
-| `cours/apprendre.html` | Lecture guidée, carnet et interface du tuteur IA |
-| `espace-apprenant.html` | Redirection vers la page Formations unifiée |
-| `formations/n1.html` | Redirection vers le parcours N1 dans Formations |
-| `modules/n1-module-1.html` à `n1-module-5.html` | Les cinq modules N1 |
-| `modules/quiz-n1.html` | Quiz final du parcours N1 |
-| `formations/n1-terminee.html` | Résultat de la formation |
-| `formations/certificat-n1.html` | Certificat, impression et QR code |
-| `formations/verification-certificat.html` | Vérification d’un certificat |
+Lire d'abord [le guide d'activation](docs/ACTIVER-SUPABASE-GOOGLE-FORMS.md), puis [l'état des corrections](docs/ETAT-CORRECTIONS.md).
 
-Les liens du catalogue conduisent au formulaire d’inscription existant. Le
-parcours N1 possède les cours en ligne ; les autres parcours disposent de leur
-programme et de leur inscription dans le catalogue.
+- `assets/config.js` : URL Supabase, clé PUBLIQUE et quatre liens Google Forms préremplis.
+- `apps-script/InscriptionSupabase.gs` : ajout au projet du formulaire existant, synchronisation signée, réessais.
+- `supabase/` : schéma, RLS, évaluation côté serveur, webhook et tuteur.
+- `cours/` : interface apprenant unique, slides, évaluation, certificat.
+- `private-content/` : supports du paquet complet, ignorés par Git, à importer dans le bucket privé.
+- `build-tools/` : construction du frontend, import privé et protection du registre historique.
+- `dist/` : SEUL dossier à publier, généré ; jamais de PDF/PPTX ni de corrigés.
+- `docs/archives/` : historique, ne pas utiliser comme instructions de déploiement actuelles.
 
-## Structure
+## Prévisualiser
 
-- `vitrine.css` : styles de l’accueil et du catalogue.
-- `style.css` : mise en page des cours, du quiz et des certificats.
-- `assets/brand.css` : charte commune à toutes les pages, chargée en dernier.
-- `script.js` : progression commune, reprise, accès et brouillons des modules N1.
-- `assets/` : logos et identité visuelle.
-- `apps-script/` : backend Google Apps Script existant.
-- `tools/` : vérification des liens et des parcours de navigation.
-- `docs/FUSION.md` : origine des fichiers et procédure de fusion.
-- `docs/AUDIT-REFONTE.md` : diagnostic, changements et limites de la refonte.
-- `docs/APPRENTISSAGE-LMS-LLM.md` : état du LMS, raccordement Canva et tuteur.
-- `cours/` : quatre parcours et configuration publique des intégrations.
-- `ressources/` : copies exactes des quatre supports PDF fournis.
-- `server-tuteur/` : service Python séparé à héberger, corpus et tests.
-
-Les polices de texte DejaVu Sans sont hébergées dans `assets/fonts/` avec leur
-licence. Poppins est chargée via Google Fonts, avec une police locale de repli.
-Les logos officiels ont été extraits sans recomposition de la charte fournie.
-
-La progression N1 utilise les clés `localStorage` déjà présentes. Elle se
-retrouve dans le même navigateur sur la même origine ; publier sous une autre
-adresse change l’origine du stockage. Le chemin du dépôt GitHub Pages
-`/academie-ia/` et les chemins des cours et certificats sont conservés.
-
-## Vérifier localement
-
-Depuis la racine du dépôt :
-
-```powershell
-python tools/verify.py
-node tools/verify-navigation.cjs
-node tools/verify-learning.cjs
-python -m http.server 8000
+```sh
+python build-tools/build_public.py --preview
+python -m http.server 8090 --bind 127.0.0.1 --directory dist
 ```
 
-Ouvrir ensuite <http://localhost:8000>. Les tests utilisent Python 3 et Node.js,
-sans paquet supplémentaire. Les fonctions Google Apps Script nécessitent leur
-déploiement existant pour les inscriptions et la vérification des certificats.
+Ouvrir http://127.0.0.1:8090. Les cours exigent la configuration Supabase ; l'aperçu sans configuration ne simule pas une inscription réussie.
+
+## Vérifier
+
+```sh
+python tools/test-public.py
+python tools/verify.py dist
+cd tools
+npm install --ignore-scripts
+npm run test:db
+npm run test:edge
+```
+
+Les tests PostgreSQL utilisent un moteur local avec les interfaces Auth/Storage représentées pour vérifier les permissions. Les handlers sont testés avec des appels simulés. Les essais de bout en bout dans Google et Supabase restent obligatoires.
 
 ## Publier
 
-Le site statique peut rester publié avec GitHub Pages depuis la branche `main`,
-dossier `/ (root)`, dans ce dépôt. Aucun processus de compilation n’est requis.
-Le code Google Apps Script se déploie séparément dans le projet Google existant.
-Le tuteur nécessite un serveur HTTPS et une clé API côté serveur ; il n’est pas
-activé par la simple publication GitHub Pages. Lire `server-tuteur/README.md`.
+Configurer le backend, le formulaire et les supports privés avant le site. `python build-tools/build_public.py` bloque les valeurs publiques manquantes. Le workflow GitHub Pages est manuel et ne publie que dist. Le dépôt public et son historique contiennent déjà d'anciens supports ; leur confidentialité passée ne peut pas être rétablie rétroactivement.

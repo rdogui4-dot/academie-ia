@@ -5,7 +5,8 @@ import re
 from urllib.parse import unquote, urlsplit
 
 
-ROOT = Path(__file__).resolve().parents[1]
+import sys
+ROOT = Path(sys.argv[1]).resolve() if len(sys.argv)>1 else Path(__file__).resolve().parents[1] / 'dist'
 
 
 class Page(HTMLParser):
@@ -25,6 +26,8 @@ class Page(HTMLParser):
 
 
 pages = {path: Page(path.read_text(encoding="utf-8")) for path in ROOT.rglob("*.html")}
+if not ROOT.is_dir() or not pages:
+    raise SystemExit("Aucune page à vérifier : générez dist et indiquez son chemin exact.")
 errors = []
 checked = 0
 
