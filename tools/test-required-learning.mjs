@@ -31,6 +31,19 @@ let count=0;const ok=s=>{count++;console.log('OK',s);};
 // Preserve a real legacy carnet and completion before migration.
 await db.query("insert into public.academy_progress(user_id,level,step,notes,done) values($1,1,1,'Carnet historique conservé',true)",[student]);
 await db.exec(fs.readFileSync(path.join(root,'supabase/migrations/202610030002_required_learning.sql'),'utf8'));
+// Production migration keeps legacy evidence and excludes preliminary pages.
+await db.query("insert into public.academy_read_receipts(user_id,level,page) values($1,1,1)",[student]);
+await db.query("insert into public.academy_work(user_id,requirement_id,answer,state,feedback) values($1,'n2-s8-activite',$2,'accepted','Retour historique à conserver')",[student,'Travail historique déjà corrigé. '.repeat(8)]);
+await db.query("insert into public.academy_progress(user_id,level,step,notes,done,requirements_version) values($1,2,8,'Carnet historique N2 conservé',true,2)",[student]);
+await db.query("insert into public.academy_certificates(user_id,level,full_name) values($1,2,'Apprenant Test')",[student]);
+await db.exec(fs.readFileSync(path.join(root,'supabase/migrations/202610030003_course_coherence.sql'),'utf8'));
+assert.equal((await db.query('select count(*)::int n from public.academy_reading_pages where required')).rows[0].n,182);
+assert.equal((await db.query('select count(*)::int n from public.academy_read_receipts')).rows[0].n,1);
+const historical=(await db.query("select * from public.academy_work where requirement_id='n2-s8-activite'")).rows[0];assert.equal(historical.state,'revision');assert.ok(historical.answer.startsWith('Travail historique'));assert.ok(historical.feedback.includes('Retour historique'));
+assert.equal((await db.query('select revoked from public.academy_certificates where level=2')).rows[0].revoked,true);
+assert.equal((await db.query('select notes,done from public.academy_progress where level=2')).rows[0].notes,'Carnet historique N2 conservé');
+ok('Migration de cohérence : 182 pages de cours ; anciennes réponses et déclarations conservées ; trois consignes rectifiées à revoir');
+
 await db.exec("insert into storage.objects(bucket_id,name) values('academy-private','n1/slides.pptx'),('academy-private','n1/corpus.json'),('academy-private','n1/course.json'),('academy-private','n1/pages/001.webp'),('academy-private','n1/pages/001.txt');");
 async function rpc(name,args){return (await db.query(`select public.${name}(${args.map((_,i)=>'$'+(i+1)).join(',')}) as result`,args)).rows[0].result;}
 const note='Mon analyse personnelle explique les notions, les difficultés rencontrées et les vérifications réalisées. ';const answer='Ce travail présente mon objectif, la méthode suivie, un résultat concret et une analyse critique des limites avec des vérifications documentées. ';
@@ -40,14 +53,14 @@ for(let level=1;level<=4;level++){
  await role('authenticated',admin,'admin@example.org');const enrollment=(await db.query('select id from public.academy_enrollments where level=$1',[level])).rows[0].id;await rpc('academy_set_enrollment',[enrollment,'active']);
  await role('authenticated',student,'student@example.org');
  if(level===1){
-  const legacy=(await db.query('select * from public.academy_progress')).rows[0];assert.equal(legacy.notes,'Carnet historique conservé');assert.equal(legacy.requirements_version,1);assert.equal((await rpc('academy_prerequisites',[1])).ready,false);
+  const legacy=(await db.query('select * from public.academy_progress where level=1')).rows[0];assert.equal(legacy.notes,'Carnet historique conservé');assert.equal(legacy.requirements_version,1);assert.equal((await rpc('academy_prerequisites',[1])).ready,false);
   assert.deepEqual((await db.query('select name from storage.objects order by name')).rows.map(r=>r.name),['n1/course.json','n1/pages/001.txt','n1/pages/001.webp']);
   await db.exec('reset role');await db.exec("create policy accidental_allow on storage.objects for select to authenticated using(true)");
   await role('authenticated',student,'student@example.org');assert.equal((await db.query("select * from storage.objects where name like '%.pdf' or name like '%.pptx' or name like '%corpus.json'")).rows.length,0);
   await db.exec('reset role');await db.exec('drop policy accidental_allow on storage.objects');await role('authenticated',student,'student@example.org');ok('Ancien carnet conservé ; PDF/PPTX/corpus refusés même avec une politique permissive supplémentaire');
   await denied('insert into public.academy_progress(user_id,level,step,done) values($1,1,2,true)',[student]);
   await denied('update public.academy_progress set done=true');await denied('insert into public.academy_projects(user_id,level,submission) values($1,1,$2)',[student,answer]);
-  await denied('select public.academy_save_notes(1,2,$1)',[note]);await denied('select public.academy_acknowledge_page(1,999)');await denied('select public.academy_prerequisites(null)');
+  await denied('select public.academy_save_notes(1,2,$1)',[note]);await denied('select public.academy_acknowledge_page(1,999)');await denied('select public.academy_prerequisites(null)');await denied('select public.academy_acknowledge_page(1,2)');assert.equal((await rpc('academy_prerequisites',[1])).missing_pages,38);
   await denied('select public.academy_prerequisites(1,$1)',[other]);ok('Écritures directes, saut d’étape et consultation d’un autre dossier refusés');
  }
  await denied('select public.academy_submit_project($1,$2)',[level,answer.repeat(3)]);
@@ -79,5 +92,5 @@ for(let level=1;level<=4;level++){
  await role('authenticated',student,'student@example.org');await denied('select public.academy_save_notes($1,1,$2)',[level,note]);assert.equal((await db.query('select * from storage.objects where name like $1',[`n${level}/%`])).rows.length,0);
  ok(`N${level} : toutes pages et remises obligatoires ; correction préalable ; seuils ; preuve archivée ; modification et suspension bloquantes`);
 }
-console.log(`${count} groupes de contrôles PostgreSQL réussis : 41 étapes, 98 travaux, 201 pages. Auth et Storage simulés localement.`);
+console.log(`${count} groupes de contrôles PostgreSQL réussis : 41 étapes, 98 travaux, 182 pages de cours ; sommaires et pages préliminaires hors progression. Auth et Storage simulés localement.`);
 await db.close();

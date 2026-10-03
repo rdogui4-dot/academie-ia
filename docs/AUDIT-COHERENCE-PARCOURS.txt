@@ -1,0 +1,298 @@
+RAPPORT DE COHÉRENCE DES PARCOURS N1 À N4
+Académie IA Générative — 3 octobre 2026
+Correction préparée après le déploiement des évaluations obligatoires (23946c8).
+
+RÉSULTAT
+Le sommaire est désormais distinct des cours. Les 41 étapes, les 41 carnets,
+les 98 remises et les conditions de certification sont conservés. La lecture
+obligatoire porte sur 182 pages de contenu, et non sur les 201 pages physiques
+des PDF. Les 19 pages exclues sont les couvertures, les sommaires, les fiches
+de présentation des N3/N4 et les pages blanches.
+
+Cette version remplace le décompte de lecture du précédent rapport
+RAPPORT-EVALUATIONS.txt. Elle ne remplace pas les barèmes des évaluations.
+Les modifications sont préparées et testées localement ; elles restent à
+appliquer à Supabase et à publier sur votre site.
+
+1. ANOMALIE SIGNALÉE EN N1
+Le lecteur de la première étape commençait à la page 1 et incluait couverture
+et sommaire. Une activité d’application affichait « Page 4 » pendant que le
+lecteur pouvait encore montrer une page préliminaire, sans lien permettant
+d’ouvrir la référence correspondante. Cela créait une confusion entre la page
+consultée et la page de référence de l’activité.
+Dans le manuel source vérifié ici, la page physique 4 contient « Introduction
+à l’IA générative ». Le sommaire occupe les pages physiques 2 et 3. Les numéros
+conservés désignent les pages physiques du manuel, couverture comprise : ils
+ne sont pas renumérotés après exclusion du sommaire. Cette convention sera
+explicitement affichée, pour ne pas décaler les références existantes.
+
+Correction : le parcours N1 commence directement page 4. Le sommaire s’ouvre
+dans une page indépendante, accessible depuis le parcours. Chaque activité
+possède un bouton « Lire le passage de référence ». Le lecteur indique la page
+du manuel et sa position dans l’étape, en distinguant ces deux nombres.
+Une activité ajoutée au parcours est présentée comme une application du chapitre,
+pas comme une consigne textuellement présente à cette page du PDF.
+
+2. DÉCOUPAGE DES QUATRE NIVEAUX
+
+Niveau | Début du cours | Fin du contenu | Pages requises | Étapes | Remises
+N1     | 4              | 41             | 38             | 8      | 24
+N2     | 4              | 58             | 54             | 12     | 30
+N3     | 5              | 39             | 35             | 11     | 20
+N4     | 5              | 59             | 55             | 10     | 24
+Total  |                |                | 182            | 41     | 98
+
+N2 : la page 28, blanche, n’est pas requise.
+La page finale blanche de chaque manuel est également exclue.
+Les pages 1, 2 et 3 sont hors cours pour chaque niveau.
+Les pages 4 des N3/N4 sont des fiches de présentation, consultables à part.
+N2 page 4 : introduction et objectifs du chapitre, conservés comme cours.
+Les ressources et la consolidation de fin de parcours restent dans leurs
+étapes pédagogiques existantes. Le sommaire ne constitue pas une nouvelle étape.
+
+3. ALIGNEMENT COURS → ACTIVITÉS → ÉVALUATION
+Chaque remise a été rapprochée du chapitre qui l’accompagne et des pages
+où commence la consigne ou le contexte. Les références indiquent désormais
+une plage de pages quand les consignes se poursuivent sur plusieurs pages.
+Les exercices, ateliers, cas et fil rouge restent obligatoires.
+
+Trois consignes et leurs objectifs ont été rectifiés :
+- N2, étape 8 : choix d’un cas du chapitre (réunion, proposition commerciale,
+  FAQ interne), plutôt qu’une invitation trop générale à choisir RH ou finance
+  sans désigner le cas du support.
+- N3, étape 1 : architecture des transformeurs et rôles de l’attention,
+  de la position, des connexions résiduelles et de la normalisation ; le schéma
+  distingue ensuite ces composants du modèle, de l’interface et des outils.
+  L’ancien schéma d’application seul n’évaluait pas suffisamment le chapitre.
+- N4, étape 8 : personnalisation de deux templates métier du chapitre
+  (fiche de poste, campagne, synthèse financière, analyse de contrat ou fiche
+  d’information), au lieu de demander uniquement des documents de gouvernance
+  qui appartiennent à d’autres étapes.
+
+Autre référence corrigée : le cas N4 de cadrage d’un projet RAG est référencé
+page 14, où son exemple se développe, avec le cadre méthodologique page 13.
+Les consignes qui se prolongent sur une autre page indiquent toute leur plage.
+Les deux compléments N1 (images et brainstorming) restent clairement identifiés
+comme « compléments du parcours ». Ils ne sont pas présentés comme du cours
+contenu dans le sommaire ou comme une consigne complète déjà développée dans le PDF.
+
+4. DIAPORAMAS
+Les anciens points de départ pouvaient ouvrir un atelier ou une slide de
+présentation au lieu du chapitre sélectionné. Les 144 slides existantes sont
+maintenant réparties entre présentation séparée et chapitres correspondants.
+Les slides de présentation sont hors progression ; les 41 routes de chapitre
+ne commencent plus sur le sommaire ou la fiche générale du module.
+La navigation des slides reste dans le chapitre sélectionné et les références
+sont exprimées comme supports de ce chapitre, sans promettre une citation exacte
+pour une slide de synthèse rédigée séparément du manuel.
+Les fichiers course.json privés existants restent utilisables ; les nouvelles
+routes sont stockées dans Supabase. Aucun nouvel import de supports n’est requis.
+
+5. DONNÉES EXISTANTES
+Aucun carnet, réponse ou déclaration de lecture n’est supprimé.
+Les anciennes déclarations de lecture des sommaires restent dans l’historique,
+mais ne comptent plus parmi les pages requises. L’accès au sommaire ne crée
+aucune déclaration de lecture ni écriture dans la progression.
+
+ATTENTION AUX TROIS CONSIGNES RECTIFIÉES : les réponses N2 étape 8, N3 étape 1
+et N4 étape 8 déjà remises sont conservées et passent à « à corriger ». Le retour
+historique est conservé avec une indication de mise à jour. Un formateur doit
+vérifier si la réponse correspond à la consigne rectifiée et l’accepter à nouveau,
+ou demander une modification. Pour les apprenants ayant remis ces activités,
+l’étape correspondante et les suivantes doivent être revalidées ; un certificat
+du niveau, s’il existait, est invalidé jusqu’à une nouvelle évaluation.
+Les dossiers non concernés ne sont pas invalidés par cette rectification.
+Les résultats précédents et les instantanés de preuve restent conservés.
+
+6. TESTS
+- Cohérence de l’affectation : 182 pages requises sans manque ni doublon ;
+  aucune référence d’activité placée dans le sommaire ou sur une page blanche.
+- Plages de référence des 98 remises vérifiées dans leurs étapes respectives.
+- Les 144 slides sont affectées exactement une fois au cours ou à la présentation.
+- Huit groupes de tests PostgreSQL/RLS réussis avec les trois migrations,
+  sur les 41 étapes, 98 remises et 182 pages requises.
+- Les sommaires ne sont pas obligatoires ; leurs déclarations anciennes sont
+  conservées ; la lecture du cours, les carnets, les remises et la correction
+  continuent à bloquer une validation incomplète.
+- Conservation des réponses et retours existants testée lors de la rectification.
+- Tests d’intégration DOM : scripts réels exécutés avec services simulés ;
+  début correct des 41 étapes, 98 liens de référence, sommaires séparés et
+  diaporamas des 41 chapitres vérifiés.
+- Syntaxe JavaScript contrôlée ; construction de dist ; 23 pages HTML et
+  275 liens locaux vérifiés sans lien cassé, identifiant dupliqué ou conflit Git.
+
+Limites : ces tests ne s’exécutent pas sur votre base Supabase de production.
+Les tests DOM ne vérifient pas le rendu graphique sur un véritable navigateur.
+Une vérification du site après publication reste nécessaire. Ce travail vérifie
+l’alignement pédagogique et la pagination ; il ne constitue pas une actualisation
+factuelle de toutes les affirmations historiques ou techniques des manuels.
+Les protections contre les téléchargements PDF/PPTX sont conservées.
+
+7. INSTALLATION
+Le ZIP contient une mise à jour légère : script PowerShell, bundle Git,
+migration 003 et ce rapport. Aucun besoin de réimporter les 402 fichiers.
+Ordre : préparer les modifications localement ; appliquer uniquement la
+nouvelle migration 003 dans Supabase ; publier le frontend et lancer GitHub Pages.
+Ne réexécuter ni la migration 001, ni la migration 002.
+Lire INSTALLATION.txt pour les commandes exactes.
+
+8. DÉCOUPAGE VÉRIFIÉ DES ÉTAPES
+
+NIVEAU 1
+Étape 1 — Découvrir l’IA générative — pages 4 à 8 du manuel
+Étape 2 — Lexique et mécanismes — pages 9 à 13 du manuel
+Étape 3 — Histoire, limites et enjeux — pages 14 à 17 du manuel
+Étape 4 — Structurer un prompt — pages 18 à 20 du manuel
+Étape 5 — Ateliers guidés — pages 21 à 23 du manuel
+Étape 6 — Études de cas et modèles — pages 24 à 27 du manuel
+Étape 7 — Évaluation et projet — pages 28 à 36 du manuel
+Étape 8 — Ressources et suite du parcours — pages 37 à 41 du manuel
+
+NIVEAU 2
+Étape 1 — Objectifs et prérequis — pages 4 à 4 du manuel
+Étape 2 — Apprendre par exemples : few-shot — pages 5 à 8 du manuel
+Étape 3 — Décomposer une tâche — pages 9 à 11 du manuel
+Étape 4 — Construire un workflow — pages 12 à 16 du manuel
+Étape 5 — Évaluer et fiabiliser les sorties — pages 17 à 22 du manuel
+Étape 6 — Introduction au RAG et lexique — pages 23 à 27 du manuel
+Étape 7 — Ateliers guidés — pages 29 à 32 du manuel
+Étape 8 — Études de cas métier — pages 33 à 37 du manuel
+Étape 9 — Bibliothèque de prompts — pages 38 à 41 du manuel
+Étape 10 — Automatiser un processus — pages 42 à 44 du manuel
+Étape 11 — Évaluation et projet — pages 45 à 54 du manuel
+Étape 12 — Ressources et suite du parcours — pages 55 à 58 du manuel
+
+NIVEAU 3
+Étape 1 — Architecture des transformeurs — pages 5 à 5 du manuel
+Étape 2 — Embeddings et recherche vectorielle — pages 6 à 6 du manuel
+Étape 3 — RAG avancé — pages 7 à 8 du manuel
+Étape 4 — Agents et appels d’outils — pages 9 à 10 du manuel
+Étape 5 — Fine-tuning, LoRA et PEFT — pages 11 à 12 du manuel
+Étape 6 — Évaluation, sécurité et lexique — pages 13 à 16 du manuel
+Étape 7 — Ateliers techniques guidés — pages 17 à 23 du manuel
+Étape 8 — Études de cas — pages 24 à 26 du manuel
+Étape 9 — Templates réutilisables — pages 27 à 28 du manuel
+Étape 10 — Évaluation et projet — pages 29 à 36 du manuel
+Étape 11 — Ressources et suite du parcours — pages 37 à 39 du manuel
+
+NIVEAU 4
+Étape 1 — Panorama des usages métier — pages 5 à 7 du manuel
+Étape 2 — Données et confidentialité — pages 8 à 9 du manuel
+Étape 3 — Conduite du changement — pages 10 à 10 du manuel
+Étape 4 — Gouvernance et charte d’usage — pages 11 à 12 du manuel
+Étape 5 — Cadrage de projet et lexique — pages 13 à 16 du manuel
+Étape 6 — Ateliers guidés — pages 17 à 22 du manuel
+Étape 7 — Études de cas sectorielles — pages 23 à 39 du manuel
+Étape 8 — Templates métier — pages 40 à 47 du manuel
+Étape 9 — Évaluation et projet sectoriel — pages 48 à 55 du manuel
+Étape 10 — Ressources et suite du parcours — pages 56 à 59 du manuel
+
+9. RÉFÉRENCES DES REMISES
+
+NIVEAU 1
+Étape 1 | Découvrir l’IA générative | application du chapitre | contexte : pages 4–8
+Étape 1 | Découverte des LLM | consigne du manuel | contexte : pages 7–8
+Étape 2 | Lexique et mécanismes | application du chapitre | contexte : pages 9–13
+Étape 2 | Quiz lexique | consigne du manuel | contexte : pages 10–10
+Étape 2 | Tokenisation manuelle | consigne du manuel | contexte : pages 10–11
+Étape 2 | Limite de contexte | consigne du manuel | contexte : pages 12–12
+Étape 2 | Test de température | consigne du manuel | contexte : pages 13–13
+Étape 3 | Histoire, limites et enjeux | application du chapitre | contexte : pages 14–17
+Étape 3 | Débat éthique | consigne du manuel | contexte : pages 16–17
+Étape 4 | Structurer un prompt | application du chapitre | contexte : pages 18–20
+Étape 4 | Transformation de prompts | consigne du manuel | contexte : pages 19–19
+Étape 4 | Création de prompts | consigne du manuel | contexte : pages 20–20
+Étape 5 | Premiers pas avec un chatbot | consigne du manuel | contexte : pages 21–21
+Étape 5 | Ateliers guidés | application du chapitre | contexte : pages 21–23
+Étape 5 | Détection des hallucinations | consigne du manuel | contexte : pages 22–22
+Étape 5 | Génération de texte | consigne du manuel | contexte : pages 23–23
+Étape 5 | Génération d’images — complément du parcours | complément du parcours | contexte : pages 23–23
+Étape 6 | Service client : traiter trois demandes | consigne du manuel | contexte : pages 24–25
+Étape 6 | Études de cas et modèles | application du chapitre | contexte : pages 24–27
+Étape 6 | Note de synthèse | consigne du manuel | contexte : pages 25–26
+Étape 6 | Brainstorming produit — complément du parcours | complément du parcours | contexte : pages 27–27
+Étape 7 | Évaluation et projet | application du chapitre | contexte : pages 28–36
+Étape 7 | Projet fil rouge N1 | consigne du manuel | contexte : pages 31–33
+Étape 8 | Ressources et suite du parcours | application du chapitre | contexte : pages 37–41
+
+NIVEAU 2
+Étape 1 | Objectifs et prérequis | application du chapitre | contexte : pages 4–4
+Étape 2 | Apprendre par exemples : few-shot | application du chapitre | contexte : pages 5–8
+Étape 2 | Zero-shot vers few-shot | consigne du manuel | contexte : pages 6–6
+Étape 2 | Créer des prompts few-shot | consigne du manuel | contexte : pages 6–8
+Étape 3 | Décomposer une tâche | application du chapitre | contexte : pages 9–11
+Étape 3 | Décomposer et vérifier une résolution — exercice 2.3 | consigne du manuel | contexte : pages 10–11
+Étape 4 | Construire un workflow | application du chapitre | contexte : pages 12–16
+Étape 4 | Décomposer une tâche complexe | consigne du manuel | contexte : pages 14–16
+Étape 5 | Évaluer et fiabiliser les sorties | application du chapitre | contexte : pages 17–22
+Étape 5 | Audit de réponses générées | consigne du manuel | contexte : pages 18–18
+Étape 5 | Détection et correction des biais | consigne du manuel | contexte : pages 19–20
+Étape 5 | Audit de sécurité — exercice 2.7 | consigne du manuel | contexte : pages 21–22
+Étape 6 | Introduction au RAG et lexique | application du chapitre | contexte : pages 23–27
+Étape 6 | Pipeline RAG simple — second exercice 2.7 | consigne du manuel | contexte : pages 24–25
+Étape 7 | Prompt vague vers prompt structuré | consigne du manuel | contexte : pages 29–29
+Étape 7 | Ateliers guidés | application du chapitre | contexte : pages 29–32
+Étape 7 | Few-shot avec exemples | consigne du manuel | contexte : pages 30–30
+Étape 7 | Chaînage de cinq prompts | consigne du manuel | contexte : pages 30–31
+Étape 7 | Évaluation et grille de test | consigne du manuel | contexte : pages 31–32
+Étape 8 | Compte rendu de réunion | consigne du manuel | contexte : pages 33–34
+Étape 8 | Études de cas métier | application du chapitre | contexte : pages 33–37
+Étape 8 | Proposition commerciale | consigne du manuel | contexte : pages 34–36
+Étape 8 | Support interne à partir d’une FAQ | consigne du manuel | contexte : pages 36–37
+Étape 9 | Bibliothèque de prompts | application du chapitre | contexte : pages 38–41
+Étape 9 | Templates personnalisés | consigne du manuel | contexte : pages 40–41
+Étape 10 | Automatiser un processus | application du chapitre | contexte : pages 42–44
+Étape 10 | Automatisation d’un processus personnel | consigne du manuel | contexte : pages 43–44
+Étape 11 | Évaluation et projet | application du chapitre | contexte : pages 45–54
+Étape 11 | Transformation d’un processus métier réel | consigne du manuel | contexte : pages 49–52
+Étape 12 | Ressources et suite du parcours | application du chapitre | contexte : pages 55–58
+
+NIVEAU 3
+Étape 1 | Objectifs et architecture des modèles | application du chapitre | contexte : pages 5–5
+Étape 2 | Embeddings et recherche vectorielle | application du chapitre | contexte : pages 6–6
+Étape 3 | RAG avancé | application du chapitre | contexte : pages 7–8
+Étape 4 | Agents et appels d’outils | application du chapitre | contexte : pages 9–10
+Étape 5 | Fine-tuning, LoRA et PEFT | application du chapitre | contexte : pages 11–12
+Étape 6 | Évaluation, sécurité et lexique | application du chapitre | contexte : pages 13–16
+Étape 7 | Pipeline RAG minimal | consigne du manuel | contexte : pages 17–18
+Étape 7 | Ateliers techniques guidés | application du chapitre | contexte : pages 17–23
+Étape 7 | Améliorer le retrieval | consigne du manuel | contexte : pages 19–19
+Étape 7 | Agent avec appels d’outils | consigne du manuel | contexte : pages 20–20
+Étape 7 | Fine-tuning LoRA | consigne du manuel | contexte : pages 21–22
+Étape 7 | Évaluation automatisée et garde-fous | consigne du manuel | contexte : pages 23–23
+Étape 8 | Support client documentaire | consigne du manuel | contexte : pages 24–24
+Étape 8 | Études de cas | application du chapitre | contexte : pages 24–26
+Étape 8 | Analyse de documents financiers | consigne du manuel | contexte : pages 25–25
+Étape 8 | Rapports au format maison | consigne du manuel | contexte : pages 26–26
+Étape 9 | Templates réutilisables | application du chapitre | contexte : pages 27–28
+Étape 10 | Évaluation et projet | application du chapitre | contexte : pages 29–36
+Étape 10 | Assistant métier complet | consigne du manuel | contexte : pages 32–33
+Étape 11 | Ressources et suite du parcours | application du chapitre | contexte : pages 37–39
+
+NIVEAU 4
+Étape 1 | Panorama des usages métier | application du chapitre | contexte : pages 5–7
+Étape 2 | Données et confidentialité | application du chapitre | contexte : pages 8–9
+Étape 3 | Conduite du changement | application du chapitre | contexte : pages 10–10
+Étape 4 | Gouvernance et charte d’usage | application du chapitre | contexte : pages 11–12
+Étape 5 | Cadrage de projet et lexique | application du chapitre | contexte : pages 13–16
+Étape 5 | Cadrage d’un projet RAG | consigne du manuel | contexte : pages 14–14
+Étape 6 | Cartographie des usages | consigne du manuel | contexte : pages 17–18
+Étape 6 | Ateliers guidés | application du chapitre | contexte : pages 17–22
+Étape 6 | Charte d’usage IA | consigne du manuel | contexte : pages 19–19
+Étape 6 | Cadrage d’un projet IA | consigne du manuel | contexte : pages 20–21
+Étape 6 | Conduite du changement | consigne du manuel | contexte : pages 22–22
+Étape 7 | Marketing : campagne complète | consigne du manuel | contexte : pages 23–24
+Étape 7 | Études de cas sectorielles | application du chapitre | contexte : pages 23–39
+Étape 7 | RH : fiche de poste | consigne du manuel | contexte : pages 25–26
+Étape 7 | Finance : analyse de rapport | consigne du manuel | contexte : pages 27–28
+Étape 7 | Juridique : analyse de contrat | consigne du manuel | contexte : pages 29–30
+Étape 7 | Santé : fiche d’information | consigne du manuel | contexte : pages 32–33
+Étape 7 | Éducation : module de cours et exercices | consigne du manuel | contexte : pages 34–35
+Étape 7 | Immobilier : annonce | consigne du manuel | contexte : pages 36–37
+Étape 7 | Industrie : système de détection | consigne du manuel | contexte : pages 38–39
+Étape 8 | Templates métier | application du chapitre | contexte : pages 40–47
+Étape 9 | Évaluation et projet sectoriel | application du chapitre | contexte : pages 48–55
+Étape 9 | Projet IA sectoriel | consigne du manuel | contexte : pages 51–52
+Étape 10 | Ressources et suite du parcours | application du chapitre | contexte : pages 56–59
+
+FIN DU RAPPORT
