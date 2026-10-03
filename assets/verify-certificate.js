@@ -1,0 +1,4 @@
+import {client,message,titles} from './academy-api.js';
+const input=document.getElementById('certificate-id');input.value=new URLSearchParams(location.search).get('id')||'';
+async function verify(){try{if(!/^[0-9a-f-]{36}$/i.test(input.value.trim()))throw Error('Saisissez l’identifiant du nouveau certificat. Pour un ancien numéro N1, utilisez le registre historique.');const db=await client();const {data,error}=await db.rpc('academy_verify_certificate',{p_id:input.value.trim()});if(error)throw error;if(!data.length)throw Error('Certificat introuvable.');const c=data[0];message('verify-status',`${c.valid?'Certificat valide':'Certificat révoqué'} — N${c.level} : ${titles[c.level]}. Délivré le ${new Date(c.issued_at).toLocaleDateString('fr-FR')}.`);}catch(e){message('verify-status',e.message);}}
+document.getElementById('verify-form').onsubmit=e=>{e.preventDefault();verify();};if(input.value)verify();
