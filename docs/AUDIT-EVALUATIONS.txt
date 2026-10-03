@@ -1,0 +1,324 @@
+AUDIT DES ÉVALUATIONS ET CORRECTIONS PRÉPARÉES
+Académie IA Générative — 3 octobre 2026
+
+STATUT
+Ce rapport porte sur le code de la branche principale récupérée au commit
+b8b3d9cbab76537d2d9dd96475608b1718d5f4c5 et sur les quatre manuels privés
+fournis précédemment. Les corrections sont préparées et testées localement.
+Elles ne sont pas encore appliquées à votre Supabase ni publiées sur GitHub.
+Aucun compte apprenant réel n’a été modifié pendant ces tests.
+
+1. RÉSULTAT DU CHECKUP
+
+A. Validation des étapes — anomalie majeure corrigée dans le paquet
+Avant : une case cochée et une écriture directe dans la progression pouvaient
+suffire ; le serveur n’exigeait ni carnet renseigné, ni lecture complète,
+ni remises distinctes. Le blocage de navigation se faisait surtout à l’écran.
+Correction : toute écriture de progression passe par des fonctions contrôlées.
+Une étape nécessite les précédentes, un carnet personnel d’au moins 80
+caractères, la déclaration de lecture de chaque page et toutes les remises.
+Une remise exige de 120 à 30 000 caractères. Les travaux demandés à nouveau
+par le formateur doivent être corrigés. Le minimum de longueur sert uniquement
+à refuser une réponse vide, et ne démontre pas la qualité pédagogique.
+
+B. Accès à l’évaluation — anomalie majeure corrigée dans le paquet
+Avant : le projet pouvait être remis sans terminer le parcours ; le serveur
+exigeait un projet et une inscription active pour noter, sans exiger l’ensemble
+des activités. Correction : le projet final reste verrouillé tant que toutes
+les étapes, pages, carnets et remises ne sont pas complétés. Le dossier final
+exige de 200 à 30 000 caractères. Les erreurs sont renvoyées par Supabase,
+même si un utilisateur contourne l’interface.
+
+C. Correction et certification — renforcées dans le paquet
+Toutes les remises doivent être acceptées par un formateur habilité avant
+l’enregistrement de la note finale. L’espace formateur affiche les carnets,
+les consignes, les réponses et les éléments manquants. Il permet d’accepter
+une remise ou de demander une correction avec un retour explicatif.
+Le serveur refuse de corriger une version devenue obsolète. La note finale
+archive un instantané des remises, carnets et déclarations de lecture.
+Modifier un carnet ou une remise invalide l’étape et les suivantes, et invalide
+le certificat du niveau jusqu’à une nouvelle évaluation. Modifier le projet
+final invalide également ce certificat. Une nouvelle correction est nécessaire
+pour une remise modifiée, même si elle avait été acceptée.
+
+D. Téléchargements — blocage préparé côté serveur
+Avant : un apprenant inscrit pouvait récupérer le PDF, les slides PDF/PPTX
+et le corpus complet depuis le stockage privé. Retirer un bouton ne suffisait
+pas à interdire l’accès direct. Correction : une politique restrictive du
+stockage bloque les fichiers originaux pour les rôles anonymes et connectés.
+Seuls le fichier de présentation du cours et les pages de lecture WebP/TXT
+restent lisibles, sous réserve du droit d’accès au niveau. Le bucket reste
+privé. Les boutons PDF/PPTX et le lecteur PDF sont retirés du site.
+Le manuel est consultable page par page avec une version texte accessible ;
+les slides restent consultables en ligne. Le carnet personnel reste exportable
+au format TXT. Les clés serveur administratives gardent leurs droits : elles
+ne doivent jamais être placées dans le site ou communiquées à un apprenant.
+
+LIMITES : afficher un contenu dans un navigateur ne peut empêcher toutes
+les captures, l’impression, la copie du texte ou l’enregistrement d’images.
+Le blocage vise la distribution des originaux PDF/PPTX, pas une protection
+absolue contre toute copie. Les anciens téléchargements, copies, caches et
+versions historiques du dépôt ne peuvent pas être retirés à distance.
+Les anciens liens signés éventuels peuvent conserver leur validité jusqu’à
+leur expiration ; le nouveau lecteur ne crée pas de liens signés.
+
+E. Lecture intégrale — obligatoire, mais déclarative
+Les 201 pages sont affectées aux étapes, sans trou ni doublon de couverture.
+L’apprenant déclare la lecture de chaque page. L’interface attend le chargement
+de la page avant d’autoriser cette déclaration. Le serveur exige toutes les
+déclarations. Ni une case, ni un temps d’affichage ne prouvent qu’un texte a
+été compris. La vérification de compréhension reste fondée sur les productions
+et leur examen par le formateur. Il n’y a pas de dispositif de surveillance.
+
+F. QCM — distinction nécessaire entre entraînement et examen
+Les manuels contiennent des questions avec leurs réponses visibles. Ils
+conviennent à l’auto-évaluation, pas à un examen secret. Le site ne possède
+pas actuellement de banque de questions confidentielle, de tirage aléatoire,
+de chronomètre d’épreuve ni de correction automatique sécurisée.
+Le formateur organise donc l’épreuve finale supervisée, puis saisit les notes.
+La présentation du site utilise désormais des POINTS de barème plutôt que
+promettre un nombre de questions que l’application ne distribue pas.
+La conception d’une nouvelle banque d’examen est un chantier distinct ; elle
+n’a pas été inventée ni présentée comme opérationnelle dans cette livraison.
+
+2. BARÈMES VÉRIFIÉS ET CONSERVÉS
+
+N1 : connaissances /40, minimum 28 ; projet /60, minimum 42 ; total >=70/100.
+N2 : connaissances /30, minimum 21 ; projet /70, minimum 49 ; total >=70/100.
+N3 : connaissances /40, minimum 28, converties sur 30 pour le total ;
+     projet /70, minimum 50 ; total >=70/100.
+N4 : connaissances /30, minimum 21 ; projet /70, minimum 50 ; total >=70/100.
+
+Les seuils séparés restent obligatoires : un excellent projet ne compense pas
+une note de connaissances sous le minimum. Seul le formateur peut attribuer
+les notes. L’inscription doit être active et l’adresse du compte confirmée.
+La lecture et les activités seules ne délivrent jamais de certificat.
+
+3. COUVERTURE DES OBLIGATIONS
+
+Niveau | Pages du manuel | Étapes/carnets | Remises obligatoires
+N1     | 42              | 8              | 24
+N2     | 59              | 12             | 30
+N3     | 40              | 11             | 20
+N4     | 60              | 10             | 24
+Total  | 201             | 41             | 98
+
+Le catalogue comprend les 41 activités existantes et 57 exigences distinctes
+supplémentaires : exercices, ateliers, cas et travaux de fil rouge.
+Toutes ces remises sont obligatoires. Cela inclut l’ensemble des cas métiers
+N4, sans choix facultatif entre secteurs. Le portfolio/projet final s’ajoute
+aux remises ; il ne les remplace pas.
+Les réponses peuvent décrire une production, ses résultats et ses preuves,
+avec des liens autorisés si nécessaire. Aucun dépôt de pièces jointes n’a été
+ajouté. Le formateur doit vérifier les éléments cités ; un lien seul ne suffit
+pas à démontrer le travail.
+
+4. INCOHÉRENCES PÉDAGOGIQUES À CONNAÎTRE
+
+- N1 : le sommaire annonce notamment un atelier de génération d’images et un
+  cas de brainstorming qui ne disposent pas d’un développement aussi explicite
+  dans le corps du support. Deux consignes complémentaires sont ajoutées au
+  catalogue et identifiées comme compléments ; elles ne sont pas présentées
+  comme des passages déjà présents dans le manuel.
+- N2 : le numéro 2.7 est utilisé pour deux exercices différents. Le catalogue
+  distingue l’audit de sécurité et le pipeline RAG par leurs titres et identifiants.
+  Le PDF d’origine n’est pas réécrit dans cette livraison.
+- Les supports conservent des intitulés de certification et des formulations
+  historiques. Certaines mentions de reconnaissance ou de durée de validité
+  ne constituent pas une preuve d’accréditation. Le site indique qu’aucune
+  reconnaissance externe n’est revendiquée. Une harmonisation éditoriale des
+  manuels reste à faire avant toute promesse commerciale de ce type.
+- Le titre historique du corpus N1 et certaines références à « Prompt
+  Engineering » ne correspondent pas toujours au nouvel intitulé du parcours.
+- Les durées annoncées doivent être harmonisées entre supports et catalogue,
+  notamment N4. La présente livraison ne modifie pas arbitrairement les durées.
+- L’ancien circuit Apps Script de certificats, s’il est toujours déployé,
+  doit être retiré ou rendu inaccessible séparément. Les protections Supabase
+  ne ferment pas automatiquement un ancien déploiement Google indépendant.
+
+5. EFFET SUR LES DONNÉES EXISTANTES
+
+Les inscriptions, carnets, remises finales et résultats existants sont gardés.
+Les étapes cochées sous l’ancien système restent dans la base avec leur version
+historique, mais ne satisfont pas les nouvelles obligations. L’apprenant voit
+son carnet et complète les exigences manquantes avant de revalider les étapes.
+Les certificats déjà émis ne sont pas tous révoqués par la migration. Ils ne
+prouvent donc pas rétrospectivement le respect du nouveau dispositif. En cas
+de modification de leur dossier, les règles de revalidation décrites plus haut
+s’appliquent. L’Académie doit distinguer les sessions anciennes des nouvelles.
+Les formateurs habilités peuvent lire les carnets pour l’évaluation ; le texte
+d’information du site le précise. Les carnets ne sont pas envoyés au tuteur IA.
+
+6. VÉRIFICATIONS EFFECTUÉES
+
+- Exécution des migrations 001 puis 002 dans PostgreSQL embarqué (PGlite),
+  avec représentations locales d’Auth et Storage.
+- Sept groupes de contrôles du nouveau dispositif, parcourant les quatre
+  niveaux : 41 étapes, 98 remises et 201 déclarations de lecture.
+- Refus des sauts d’étape, des réponses trop courtes, de l’écriture directe de
+  progression/projet, de l’accès anonyme et de la lecture d’un autre dossier.
+- Refus des originaux PDF/PPTX/corpus même en présence d’une politique
+  permissive supplémentaire ; pages permises au niveau actif ; accès refusé
+  après suspension.
+- Refus du projet incomplet et de la note avant acceptation des remises ;
+  seuils testés ; snapshot conservé ; modification invalidante et contrôle
+  des versions de correction testés.
+- Treize scénarios du schéma initial également réussis, séparément, pour
+  conserver une référence sur les inscriptions, certificats et seuils.
+- Sept tests du frontend public réussis ; 22 pages HTML et 255 liens locaux
+  vérifiés ; aucun lien local cassé, identifiant HTML dupliqué ou conflit Git.
+- Syntaxe JavaScript et Python contrôlée ; correspondance entre les identifiants
+  des interfaces et les éléments HTML vérifiée.
+- 201 images de pages décodées ; contrôle visuel ponctuel de pages rendues.
+  Aucun manuel PDF, PPTX, corpus ou migration SQL n’est inclus dans dist.
+
+LIMITES DE VÉRIFICATION : pas de test sur la base Supabase de production,
+pas de test SMTP supplémentaire, pas de véritable examen avec un apprenant.
+Le test visuel interactif navigateur n’a pas pu être effectué ici : le
+navigateur de test n’a pas pu être installé. Une recette après publication
+reste nécessaire, sur ordinateur et téléphone, avec comptes apprenant et
+formateur. Les vérifications locales ne sont pas un audit de sécurité exhaustif.
+
+7. MISE EN PLACE — ORDRE À RESPECTER
+
+Lire INSTALLATION.txt fourni dans le ZIP.
+1) Extraire le paquet complet.
+2) Préparer la branche locale avec PREPARER-EVALUATIONS.ps1 : sauvegarde Git,
+   intégration et vérification, sans publication.
+3) Importer les 402 fichiers WebP/TXT (deux fichiers par page) dans le bucket
+   academy-private, au moyen du script fourni et de votre clé serveur saisie
+   localement. Garder le bucket PRIVÉ. Les PDF/PPTX existants ne sont pas effacés.
+4) Dans Supabase SQL Editor, exécuter UNIQUEMENT la nouvelle migration 002,
+   une seule fois. Ne pas réexécuter la migration initiale 001.
+5) Publier la branche préparée vers main puis lancer le workflow GitHub Pages.
+6) Vérifier la recette décrite dans INSTALLATION.txt.
+
+Prévoir un court créneau sans apprenants entre l’étape 4 et la fin du déploiement :
+l’ancien lecteur ne fonctionnera plus lorsque les originaux seront interdits.
+La sauvegarde Git ne sauvegarde pas Supabase : conserver une sauvegarde des
+données de production selon les moyens disponibles dans votre projet avant
+l’application de la migration. Aucune clé secrète ne doit être copiée dans Git.
+
+FICHIERS PRINCIPAUX
+supabase/migrations/202610030002_required_learning.sql
+cours/learning.js, cours/apprendre.html, cours/learning.css
+cours/evaluation.js, cours/evaluation.html
+assets/admin.js, administration.html
+assets/academy-api.js, cours/slides.js, cours/slides.html
+informations.html, docs/exigences-pedagogiques.json
+tools/test-required-learning.mjs, build-tools/upload_reading_pages.py
+
+RÉFÉRENCES TECHNIQUES
+https://supabase.com/docs/guides/storage/security/access-control
+https://www.postgresql.org/docs/current/sql-createpolicy.html
+
+8. INVENTAIRE DES 98 REMISES OBLIGATOIRES
+Les pages indiquées sont les pages physiques des PDF, couverture incluse.
+
+NIVEAU 1
+Étape 1 | page 4 | activite | Découvrir l’IA générative
+Étape 1 | page 7 | exercice | Découverte des LLM
+Étape 2 | page 9 | activite | Lexique et mécanismes
+Étape 2 | page 10 | exercice | Quiz lexique
+Étape 2 | page 10 | exercice | Tokenisation manuelle
+Étape 2 | page 12 | exercice | Limite de contexte
+Étape 2 | page 13 | exercice | Test de température
+Étape 3 | page 14 | activite | Histoire, limites et enjeux
+Étape 3 | page 16 | exercice | Débat éthique
+Étape 4 | page 18 | activite | Structurer un prompt
+Étape 4 | page 19 | exercice | Transformation de prompts
+Étape 4 | page 20 | exercice | Création de prompts
+Étape 5 | page 21 | atelier | Premiers pas avec un chatbot
+Étape 5 | page 21 | activite | Ateliers guidés
+Étape 5 | page 22 | atelier | Détection des hallucinations
+Étape 5 | page 23 | atelier | Génération de texte
+Étape 5 | page 23 | atelier | Génération d’images — complément annoncé au sommaire
+Étape 6 | page 24 | cas | Service client : traiter trois demandes
+Étape 6 | page 24 | activite | Études de cas et modèles
+Étape 6 | page 25 | cas | Note de synthèse
+Étape 6 | page 27 | cas | Brainstorming produit — complément annoncé au sommaire
+Étape 7 | page 28 | activite | Évaluation et projet
+Étape 7 | page 31 | fil_rouge | Projet fil rouge N1
+Étape 8 | page 37 | activite | Ressources et suite du parcours
+
+NIVEAU 2
+Étape 1 | page 4 | activite | Objectifs et prérequis
+Étape 2 | page 5 | activite | Apprendre par exemples : few-shot
+Étape 2 | page 6 | exercice | Zero-shot vers few-shot
+Étape 2 | page 6 | exercice | Créer des prompts few-shot
+Étape 3 | page 9 | activite | Décomposer une tâche
+Étape 3 | page 10 | exercice | Décomposer et vérifier une résolution — exercice 2.3
+Étape 4 | page 12 | activite | Construire un workflow
+Étape 4 | page 14 | exercice | Décomposer une tâche complexe
+Étape 5 | page 17 | activite | Évaluer et fiabiliser les sorties
+Étape 5 | page 18 | exercice | Audit de réponses générées
+Étape 5 | page 19 | exercice | Détection et correction des biais
+Étape 5 | page 21 | exercice | Audit de sécurité — exercice 2.7
+Étape 6 | page 23 | activite | Introduction au RAG et lexique
+Étape 6 | page 24 | exercice | Pipeline RAG simple — second exercice 2.7
+Étape 7 | page 29 | atelier | Prompt vague vers prompt structuré
+Étape 7 | page 29 | activite | Ateliers guidés
+Étape 7 | page 30 | atelier | Few-shot avec exemples
+Étape 7 | page 30 | atelier | Chaînage de cinq prompts
+Étape 7 | page 31 | atelier | Évaluation et grille de test
+Étape 8 | page 33 | cas | Compte rendu de réunion
+Étape 8 | page 33 | activite | Études de cas métier
+Étape 8 | page 34 | cas | Proposition commerciale
+Étape 8 | page 36 | cas | Support interne à partir d’une FAQ
+Étape 9 | page 38 | activite | Bibliothèque de prompts
+Étape 9 | page 40 | exercice | Templates personnalisés
+Étape 10 | page 42 | activite | Automatiser un processus
+Étape 10 | page 43 | exercice | Automatisation d’un processus personnel
+Étape 11 | page 45 | activite | Évaluation et projet
+Étape 11 | page 49 | fil_rouge | Transformation d’un processus métier réel
+Étape 12 | page 55 | activite | Ressources et suite du parcours
+
+NIVEAU 3
+Étape 1 | page 4 | activite | Objectifs et architecture des modèles
+Étape 2 | page 6 | activite | Embeddings et recherche vectorielle
+Étape 3 | page 7 | activite | RAG avancé
+Étape 4 | page 9 | activite | Agents et appels d’outils
+Étape 5 | page 11 | activite | Fine-tuning, LoRA et PEFT
+Étape 6 | page 13 | activite | Évaluation, sécurité et lexique
+Étape 7 | page 17 | atelier | Pipeline RAG minimal
+Étape 7 | page 17 | activite | Ateliers techniques guidés
+Étape 7 | page 19 | atelier | Améliorer le retrieval
+Étape 7 | page 20 | atelier | Agent avec appels d’outils
+Étape 7 | page 21 | atelier | Fine-tuning LoRA
+Étape 7 | page 23 | atelier | Évaluation automatisée et garde-fous
+Étape 8 | page 24 | cas | Support client documentaire
+Étape 8 | page 24 | activite | Études de cas
+Étape 8 | page 25 | cas | Analyse de documents financiers
+Étape 8 | page 26 | cas | Rapports au format maison
+Étape 9 | page 27 | activite | Templates réutilisables
+Étape 10 | page 29 | activite | Évaluation et projet
+Étape 10 | page 32 | fil_rouge | Assistant métier complet
+Étape 11 | page 37 | activite | Ressources et suite du parcours
+
+NIVEAU 4
+Étape 1 | page 4 | activite | Panorama des usages métier
+Étape 2 | page 8 | activite | Données et confidentialité
+Étape 3 | page 10 | activite | Conduite du changement
+Étape 4 | page 11 | activite | Gouvernance et charte d’usage
+Étape 5 | page 13 | cas | Cadrage d’un projet RAG
+Étape 5 | page 13 | activite | Cadrage de projet et lexique
+Étape 6 | page 17 | atelier | Cartographie des usages
+Étape 6 | page 17 | activite | Ateliers guidés
+Étape 6 | page 19 | atelier | Charte d’usage IA
+Étape 6 | page 20 | atelier | Cadrage d’un projet IA
+Étape 6 | page 22 | atelier | Conduite du changement
+Étape 7 | page 23 | cas | Marketing : campagne complète
+Étape 7 | page 23 | activite | Études de cas sectorielles
+Étape 7 | page 25 | cas | RH : fiche de poste
+Étape 7 | page 27 | cas | Finance : analyse de rapport
+Étape 7 | page 29 | cas | Juridique : analyse de contrat
+Étape 7 | page 32 | cas | Santé : fiche d’information
+Étape 7 | page 34 | cas | Éducation : module de cours et exercices
+Étape 7 | page 36 | cas | Immobilier : annonce
+Étape 7 | page 38 | cas | Industrie : système de détection
+Étape 8 | page 40 | activite | Templates métier
+Étape 9 | page 48 | activite | Évaluation et projet sectoriel
+Étape 9 | page 51 | fil_rouge | Projet IA sectoriel
+Étape 10 | page 56 | activite | Ressources et suite du parcours
+
+FIN DU RAPPORT
