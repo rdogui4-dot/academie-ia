@@ -16,7 +16,18 @@
  const pdf=`${course.pdf}#page=${lesson.start}`;$('open-pdf').href=pdf;
  function reader(src,title){const frame=document.createElement('iframe');frame.src=src;frame.title=title;frame.loading='lazy';frame.referrerPolicy='no-referrer';$('reader').replaceChildren(frame);}
  $('show-pdf').addEventListener('click',()=>reader(pdf,`Support N${course.id}, page ${lesson.start}`));
+ const deck=window.ACADEMY_SLIDES.find(d=>d.level===course.id);
+ const slideUrl=`slides.html?niveau=${course.id}&slide=${deck.lessonStarts[step]}&etape=${step+1}`;
+ $('open-slides').href=slideUrl;
+ $('download-slides-pdf').href=`../ressources/slides/niveau-${course.id}.pdf`;
+ $('download-slides-pptx').href=`../ressources/slides/niveau-${course.id}.pptx`;
+ $('show-slides').addEventListener('click',()=>{
+  const frame=document.createElement('iframe');frame.src=slideUrl;frame.title=`Diaporama du niveau ${course.id}`;
+  frame.allowFullscreen=true;$('slides-reader').replaceChildren(frame);
+ });
  const config=window.ACADEMY_INTEGRATION||{},canva=config.canvaEmbeds?.[course.id];
+ const view=config.canvaViews?.[course.id];
+ if(view){try{const u=new URL(view);if(u.protocol==='https:'&&u.hostname==='www.canva.com'&&(u.pathname.startsWith('/d/')||u.pathname.endsWith('/view'))){$('open-canva').href=u.href;$('open-canva').hidden=false;}}catch{}}
  if(canva){try{const u=new URL(canva);if(u.protocol==='https:'&&u.hostname==='www.canva.com'&&u.pathname.startsWith('/design/')){$('show-canva').hidden=false;$('show-canva').addEventListener('click',()=>reader(u.href,`Présentation Canva du niveau ${course.id}`));}}catch{}}
  $('learning-notes').value=get(`notes-${step}`);$('notes-status').textContent='Votre carnet reste sur cet appareil.';
  $('learning-notes').addEventListener('input',()=>{$('notes-status').textContent=set(`notes-${step}`,$('learning-notes').value)?'Brouillon enregistré.':'Stockage indisponible : téléchargez votre carnet avant de quitter.';});
