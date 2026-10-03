@@ -17,4 +17,8 @@ test('Reprise et brouillon après rechargement',()=>{let r=setup(2);r.elements['
 test('Les niveaux et la progression historique sont indépendants',()=>{const store={'n1-module-1-complete':'true','academy-2026-n2-notes-0':'Privé N2'};assert.equal(setup(1,1,store).elements['learning-notes'].value,'');assert.equal(store['n1-module-1-complete'],'true');});
 test('Stockage bloqué : aucun succès fictif',()=>{let r=setup(4,1,{},true);r.elements['review-done'].checked=true;r.elements['complete-step'].events.click();assert.match(r.elements['step-status'].textContent,/non enregistrée/);assert.equal(r.elements['complete-step'].disabled,false);});
 test('Inscription présente dans chaque en-tête',()=>{function walk(p){for(const f of fs.readdirSync(p,{withFileTypes:true})){if(f.name.startsWith('.'))continue;const name=path.join(p,f.name);if(f.isDirectory())walk(name);else if(name.endsWith('.html')){const text=fs.readFileSync(name,'utf8');assert.match(text,/<a class="header-enroll" href="https:\/\/forms.gle\/a2er9w8P3pEbZtwM7"/);}}}walk(root);});
+test('Les quatre liens Canva pointent vers le bon niveau',()=>{
+ const expected={1:'https://www.canva.com/d/bifpo5swV9ap-bC',2:'https://www.canva.com/d/Tkfl_sH8Il1A465',3:'https://www.canva.com/d/CFNMr1t1HlFD8gx',4:'https://www.canva.com/d/l-aK0lcE7XrTIif'};
+ for(let n=1;n<=4;n++){const r=setup(n);assert.equal(r.elements['open-canva'].href,expected[n]);assert.equal(r.elements['open-canva'].hidden,false);assert.equal(r.elements['show-canva'].events.click,undefined);}
+});
 console.log(`${scenarios} scénarios LMS réussis.`);
