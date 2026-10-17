@@ -24,6 +24,13 @@ Le catalogue public est publié sur [GitHub Pages](https://rdogui4-dot.github.io
 - Les 47 fonctions `SECURITY DEFINER` relevées comme accessibles à `authenticated` ne sont pas toutes vulnérables par le seul fait de cet avis : les RPC de correction et de lecture du dossier consultées délèguent les contrôles à `academy_can_review` ou `academy_can_read_dossier`. Une revue complète des 47 corps de fonctions reste nécessaire avant de lever l’avis générique.
 - Les quatre tables privées signalées « RLS enabled, no policy » restent en refus d’accès direct par défaut ; les tables sont dans le schéma privé. Les avis d’index FK et de réévaluation des politiques sont des sujets de performance.
 
+## Revue éditoriale privée — 17 octobre 2026
+
+- Contrôle structurel de la banque d’étape : 41 quiz, 287 questions, références et empreintes des corpus N1–N4 cohérentes ; les quiz restent en `editorial_review`.
+- Une question exacte sur le ROI, répétée dans le quiz N2 consacré à l’automatisation, a été remplacée dans la copie privée par une question sur la mesure des gains de temps et de qualité. Aucun import ni activation n’a été effectué.
+- L’examen visuel du manuel N1, page PDF 6, a révélé une incohérence dans l’exemple de tokenisation : le document annonce trois tokens pour « Bonjour le monde », puis en liste quatre. Corriger la source puis relancer la validation avant d’ouvrir les quiz N1.
+- Le validateur technique des examens finaux passe sur les 70 questions, mais la relecture pédagogique indépendante reste requise pour les 287 quiz et les 70 examens.
+
 ## Écarts à fermer avant la recette complète
 
 1. Faire relire indépendamment les 287 questions de la banque privée (41 étapes) à partir des corpus N1–N4, corriger les anomalies éditoriales puis décider de la publication. Les tests locaux couvrent l’import idempotent, la correction, les trois tentatives et les seuils ; aucune banque n’est encore publiée ni affectée sur Supabase. Garder les corrigés privés et ne jamais exposer les examens finaux dans le site public.
