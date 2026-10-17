@@ -1,8 +1,10 @@
+import {mountStepQuiz} from './step-quiz.js';
 import {courseData,enrollmentLink,message} from '../assets/academy-api.js';
 const $=id=>document.getElementById(id),params=new URLSearchParams(location.search),level=Number(params.get('niveau'))||1;
 let imageUrl;window.addEventListener('pagehide',()=>{if(imageUrl)URL.revokeObjectURL(imageUrl);});
 try {
  const {db,user,course}=await courseData(level);
+ const {data:finalModule,error:finalError}=await db.rpc('academy_final_module',{p_level:level});if(finalError)throw finalError;
  async function rpc(name,args){const {data,error}=await db.rpc(name,args);if(error)throw error;return data;}
  async function rows(table){const {data,error}=await db.from(table).select('*').eq('level',level);if(error)throw error;return data;}
  const [progress,lessons,requirements,receipts,pageRows]=await Promise.all([db.from('academy_progress').select('*').eq('user_id',user.id).eq('level',level).then(r=>{if(r.error)throw r.error;return r.data;}),rows('academy_lessons'),rows('academy_requirements'),db.from('academy_read_receipts').select('*').eq('user_id',user.id).eq('level',level).then(r=>{if(r.error)throw r.error;return r.data;}),rows('academy_reading_pages')]);
@@ -16,6 +18,7 @@ try {
  const step=Math.max(1,Math.min(Number(params.get('etape'))||first,first,lessons.length));
  const meta=lessons.find(l=>l.step===step),lesson=course.lessons[step-1];
  const go=i=>`apprendre.html?niveau=${level}&etape=${i}`;
+ if(finalModule?.enabled)$('mandatory-work-description').textContent='Remettez les activités de cette étape. Les cas communs et le fil rouge seront remis dans le module final, après les étapes et quiz.';
  $('learning-content').hidden=false;$('access-message').hidden=true;
  $('course-title').textContent=course.title;$('course-label').textContent=`Niveau ${level}`;$('course-duration').textContent=course.duration;
  $('step-label').textContent=`Étape ${step} sur ${lessons.length}`;$('lesson-title').textContent=meta.title;$('page-range').textContent=`Lecture obligatoire : pages ${meta.first_page} à ${meta.last_page} du manuel. Présentation et sommaire consultables séparément.`;
@@ -32,10 +35,11 @@ try {
  $('previous-step').hidden=step===1;$('previous-step').href=go(step-1);$('next-step').hidden=step===lessons.length;$('next-step').href=go(step+1);$('next-step').onclick=e=>{if(!done(step)){e.preventDefault();message('step-status','Complétez puis validez cette étape.');}};
  $('open-summary').href=`sommaire.html?niveau=${level}`;
  $('evaluation-link').href=`evaluation.html?niveau=${level}`;
+ await mountStepQuiz(db,level,step,$('step-quiz'));
  $('complete-step').onclick=async()=>{if(!$('review-done').checked)return message('step-status','Confirmez votre travail personnel.');$('complete-step').disabled=true;try{await rpc('academy_save_notes',{p_level:level,p_step:step,p_notes:$('learning-notes').value});await rpc('academy_complete_step',{p_level:level,p_step:step});location.href=go(step);}catch(e){message('step-status',e.message);$('complete-step').disabled=false;}};
  $('export-notes').onclick=()=>{const text=lessons.map((l,i)=>`${i+1}. ${l.title}\n${i+1===step?$('learning-notes').value:records.get(i+1)?.notes||''}`).join('\n\n');const u=URL.createObjectURL(new Blob([text],{type:'text/plain;charset=utf-8'}));const a=document.createElement('a');a.href=u;a.download=`mon-carnet-n${level}.txt`;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);};
  const workMap=new Map(works.map(w=>[w.requirement_id,w]));
- for(const r of requirements.filter(r=>r.step===step)){
+ for(const r of requirements.filter(r=>r.step===step&&!(finalModule?.enabled&&['cas','fil_rouge'].includes(r.kind)))){
   const jump=document.createElement('button');jump.type='button';jump.textContent=r.source_kind==='supplement'?'Lire le contexte du chapitre':'Lire le passage de référence';jump.onclick=()=>{page=r.page;showPage();$('manual-image').scrollIntoView({behavior:'smooth',block:'center'});};
   const form=document.createElement('form'),h=document.createElement('h3'),p=document.createElement('p'),label=document.createElement('label'),input=document.createElement('textarea'),button=document.createElement('button'),status=document.createElement('p');
   h.textContent=`${r.kind.replace('_',' ')} — ${r.title}`;const span=r.last_page&&r.last_page!==r.page?`pages ${r.page} à ${r.last_page}`:`page ${r.page}`;

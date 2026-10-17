@@ -8,7 +8,7 @@ import re
 import shutil
 ROOT=Path(__file__).resolve().parents[1]
 parser=argparse.ArgumentParser();parser.add_argument('--preview',action='store_true');args=parser.parse_args()
-config=(ROOT/'assets/config.js').read_text()
+config=(ROOT/'assets/config.js').read_text(encoding='utf-8')
 if not args.preview:
     def value(name,source=config):
         match=re.search(r"\b"+name+r"\s*:\s*(['\"])(.*?)\1",source)
@@ -44,7 +44,7 @@ for folder in ('cours','modules','formations'):
         if p.suffix in ('.html','.css','.js'):
             if p.name in ('programmes.js','slides-data.js','integration.js'):continue
             shutil.copy2(p,out/folder/p.name)
-(out/'.nojekyll').write_text('')
+(out/'.nojekyll').write_text('',encoding='utf-8')
 public_pages=['index.html','formations.html','inscription.html','informations.html','verification.html']
 base='https://rdogui4-dot.github.io/academie-ia/'
 (out/'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+''.join(f'<url><loc>{base}{p}</loc></url>' for p in public_pages)+'</urlset>')
