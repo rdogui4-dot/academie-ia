@@ -179,28 +179,8 @@
     <div class="verify-data" id="verifyData">
 
         <div class="verify-row">
-            <div class="verify-label">Titulaire</div>
-            <div class="verify-value" id="dataNom">—</div>
-        </div>
-
-        <div class="verify-row">
-            <div class="verify-label">Formation</div>
-            <div class="verify-value" id="dataFormation">—</div>
-        </div>
-
-        <div class="verify-row">
             <div class="verify-label">Niveau</div>
             <div class="verify-value" id="dataNiveau">—</div>
-        </div>
-
-        <div class="verify-row">
-            <div class="verify-label">Durée</div>
-            <div class="verify-value" id="dataDuree">—</div>
-        </div>
-
-        <div class="verify-row">
-            <div class="verify-label">Score</div>
-            <div class="verify-value" id="dataScore">—</div>
         </div>
 
         <div class="verify-row">
@@ -354,20 +334,8 @@ function recevoirVerification(data) {
     }
 
 
-    document.getElementById("dataNom").textContent =
-        certificate.nom || "—";
-
-    document.getElementById("dataFormation").textContent =
-        certificate.formation || "—";
-
     document.getElementById("dataNiveau").textContent =
         certificate.niveau || "—";
-
-    document.getElementById("dataDuree").textContent =
-        certificate.duree || "—";
-
-    document.getElementById("dataScore").textContent =
-        certificate.score || "—";
 
     document.getElementById("dataDate").textContent =
         formatDate(certificate.date);
