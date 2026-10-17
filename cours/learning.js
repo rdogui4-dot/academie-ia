@@ -1,4 +1,4 @@
-import {mountStepQuiz} from './step-quiz.js';
+import {mountStepQuiz} from './step-quiz.js?v=20261017-layout';
 import {courseData,enrollmentLink,message} from '../assets/academy-api.js';
 const $=id=>document.getElementById(id),params=new URLSearchParams(location.search),level=Number(params.get('niveau'))||1;
 let imageUrl;window.addEventListener('pagehide',()=>{if(imageUrl)URL.revokeObjectURL(imageUrl);});
@@ -35,6 +35,7 @@ try {
  $('previous-step').hidden=step===1;$('previous-step').href=go(step-1);$('next-step').hidden=step===lessons.length;$('next-step').href=go(step+1);$('next-step').onclick=e=>{if(!done(step)){e.preventDefault();message('step-status','Complétez puis validez cette étape.');}};
  $('open-summary').href=`sommaire.html?niveau=${level}`;
  $('evaluation-link').href=`evaluation.html?niveau=${level}`;
+ $('outline-evaluation').href=`evaluation.html?niveau=${level}`;
  await mountStepQuiz(db,level,step,$('step-quiz'));
  $('complete-step').onclick=async()=>{if(!$('review-done').checked)return message('step-status','Confirmez votre travail personnel.');$('complete-step').disabled=true;try{await rpc('academy_save_notes',{p_level:level,p_step:step,p_notes:$('learning-notes').value});await rpc('academy_complete_step',{p_level:level,p_step:step});location.href=go(step);}catch(e){message('step-status',e.message);$('complete-step').disabled=false;}};
  $('export-notes').onclick=()=>{const text=lessons.map((l,i)=>`${i+1}. ${l.title}\n${i+1===step?$('learning-notes').value:records.get(i+1)?.notes||''}`).join('\n\n');const u=URL.createObjectURL(new Blob([text],{type:'text/plain;charset=utf-8'}));const a=document.createElement('a');a.href=u;a.download=`mon-carnet-n${level}.txt`;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);};
