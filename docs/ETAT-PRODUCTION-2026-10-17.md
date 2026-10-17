@@ -30,7 +30,7 @@ Aucun essai avec un vrai apprenant/formateur et aucune création ou révocation 
 
 ## Références
 
-- [Cahier des charges validé](./DEMANDE-ET-FEUILLE-DE-ROUTE-AIG.txt)
+- Cahier des charges de référence : pièce jointe utilisateur « DEMANDE-ET-FEUILLE-DE-ROUTE-AIG.txt » (version 2, paramètres validés le 4 octobre 2026).
 - [Guide d’activation Supabase et Google Forms](./ACTIVER-SUPABASE-GOOGLE-FORMS.md)
 - [État des corrections préparées](./ETAT-CORRECTIONS.md)
 - [Avis de sécurité Supabase — fonctions SECURITY DEFINER](https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable)
