@@ -1,7 +1,7 @@
 export async function mountStepQuiz(db,level,step,host){
  host.replaceChildren();host.hidden=true;
  async function rpc(name,args){const {data,error}=await db.rpc(name,args);if(error)throw error;return data;}
- const state=await rpc('academy_quiz_status',{p_level:level,p_step:step});if(!state.enabled)return;
+ const state=await rpc('academy_quiz_status',{p_level:level,p_step:step});if(!state.enabled){host.hidden=false;const title=document.createElement('h2'),notice=document.createElement('p');title.textContent='QCM de cette étape';notice.textContent='Ce quiz n’est pas encore publié. Il sera disponible après validation pédagogique par l’Académie.';notice.setAttribute('role','status');host.append(title,notice);return;}
  host.hidden=false;const heading=document.createElement('h2'),info=document.createElement('p'),status=document.createElement('p'),start=document.createElement('button');heading.textContent='Quiz de compréhension';info.textContent=`5 QCM et 2 réponses courtes · 20 points · réussite à 14/20. Tentatives : ${state.used}/${state.limit}. Une tentative commencée peut être reprise.`;status.setAttribute('role','status');start.type='button';start.textContent=state.open_id?'Reprendre ma tentative':'Commencer le quiz';host.append(heading,info,status);
  if(state.passed){status.textContent=`Quiz réussi : ${state.best}/20. Vous pouvez valider cette étape après avoir rempli les autres obligations.`;return;}
  if(state.remediation){status.textContent='Contactez votre formateur pour une remédiation avant une nouvelle tentative.';return;}host.append(start);
