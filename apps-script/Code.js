@@ -626,6 +626,15 @@ function doGet(e) {
    API QUIZ N1 — DÉMARRAGE ET STATUT
    -------------------------------------------------- */
 
+// Le quiz Apps Script historique n’est plus utilisé. Les évaluations du parcours
+// sont gérées par Supabase ; ces routes anonymes ne doivent plus démarrer de tentative.
+if (action === "startquizn1" || action === "statusquizn1") {
+  return respond({
+    success: false,
+    message: "Le service historique de quiz est désactivé."
+  });
+}
+
 if (action === "startquizn1") {
 
   return respond(
@@ -695,14 +704,9 @@ if (action === "statusquizn1") {
           success: true,
           certificate: {
             id: String(data[i][0]),
-            nom: String(data[i][1]),
-            formation: String(data[i][2]),
             niveau: String(data[i][3]),
-            duree: String(data[i][4]),
-            score: String(data[i][5]),
             date: String(data[i][6]),
-            statut: String(data[i][7]),
-            url: String(data[i][8])
+            statut: String(data[i][7])
           }
         });
       }
@@ -748,6 +752,14 @@ function doPost(e) {
 /* --------------------------------------------------
    API QUIZ N1 — CORRECTION
    -------------------------------------------------- */
+
+// Refuser aussi la correction des tentatives de l’ancien service public.
+if (action === "submitquizn1") {
+  return respond({
+    success: false,
+    message: "Le service historique de quiz est désactivé."
+  });
+}
 
 if (action === "submitquizn1") {
 
