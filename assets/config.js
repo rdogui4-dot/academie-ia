@@ -10,5 +10,5 @@ window.ACADEMY_CONFIG = {
   3: "https://docs.google.com/forms/d/e/1FAIpQLSd3wZY241Mu27VVJp8P6v5FfnV8U1hSl3PwY0ojaPLGNAHLLA/viewform?usp=pp_url&entry.11322915=N3+%E2%80%94+IA+g%C3%A9n%C3%A9rative+avanc%C3%A9e+:+RAG,+agents+et+fine-tuning",
   4: "https://docs.google.com/forms/d/e/1FAIpQLSd3wZY241Mu27VVJp8P6v5FfnV8U1hSl3PwY0ojaPLGNAHLLA/viewform?usp=pp_url&entry.11322915=N4+%E2%80%94+IA+g%C3%A9n%C3%A9rative+appliqu%C3%A9e+par+m%C3%A9tier"
 },
- tutorEnabled: false
+ tutorEnabled: true
 };
