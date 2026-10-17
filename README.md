@@ -1,30 +1,27 @@
-# Académie IA Générative — Google Forms + Supabase
+# Académie IA Générative
 
-Le catalogue public peut rester sur GitHub Pages. Les inscriptions passent toutes par le formulaire Google existant et restent liées à Google Sheets. Supabase protège les supports, synchronise les carnets et porte le registre des nouveaux certificats.
+Le catalogue public est publié sur [GitHub Pages](https://rdogui4-dot.github.io/academie-ia/). Le backend Supabase du compte **rdogui4-dot**, projet **Academie** (`feryogknkzewcaazeoax`), est actif. La mise en service pédagogique reste partielle : les banques de quiz/examen et la recette Google Forms → Supabase ne sont pas terminées.
 
-**Version préparée, non déployée.** Aucun compte Supabase, secret, formulaire ou déclencheur distant n'a été modifié ici.
+## État vérifié
 
-Lire d'abord [le guide d'activation](docs/ACTIVER-SUPABASE-GOOGLE-FORMS.md), puis [l'état des corrections](docs/ETAT-CORRECTIONS.md).
+Consulter [l’état de production du 17 octobre 2026](docs/ETAT-PRODUCTION-2026-10-17.md) avant toute opération. Il distingue ce qui est observé dans le projet réel des travaux encore nécessaires.
 
-- `assets/config.js` : URL Supabase, clé PUBLIQUE et quatre liens Google Forms préremplis.
-- `apps-script/InscriptionSupabase.gs` : ajout au projet du formulaire existant, synchronisation signée, réessais.
-- `supabase/` : schéma, RLS, évaluation côté serveur, webhook et tuteur.
-- `cours/` : interface apprenant unique, slides, évaluation, certificat.
-- `private-content/` : supports du paquet complet, ignorés par Git, à importer dans le bucket privé.
-- `build-tools/` : construction du frontend, import privé et protection du registre historique.
-- `dist/` : SEUL dossier à publier, généré ; jamais de PDF/PPTX ni de corrigés.
-- `docs/archives/` : historique, ne pas utiliser comme instructions de déploiement actuelles.
+- `assets/config.js` contient l’URL Supabase, la clé publique et les liens d’inscription ; aucune clé serveur ne doit se trouver dans le frontend.
+- `apps-script/InscriptionSupabase.gs` prépare la synchronisation du formulaire existant ; son installation et le parcours complet restent à vérifier dans Google.
+- `supabase/` contient le schéma, les migrations versionnées et le code source des fonctions Edge suivies dans le dépôt.
+- `cours/` contient l’interface apprenant ; les fichiers de cours du stockage restent privés.
+- `private-content/` est ignoré par Git. Ne jamais publier les supports ou corrigés confidentiels.
+- `dist/` est le seul répertoire généré pour GitHub Pages ; vérifier son contenu avant publication.
+- `docs/ETAT-CORRECTIONS.md` et les audits datés sont des rapports historiques, pas une description à jour du service.
 
-## Prévisualiser
+## Développement local
 
 ```sh
 python build-tools/build_public.py --preview
 python -m http.server 8090 --bind 127.0.0.1 --directory dist
 ```
 
-Ouvrir http://127.0.0.1:8090. Les cours exigent la configuration Supabase ; l'aperçu sans configuration ne simule pas une inscription réussie.
-
-## Vérifier
+Vérifications du frontend et des fonctions :
 
 ```sh
 python tools/test-public.py
@@ -35,8 +32,4 @@ npm run test:db
 npm run test:edge
 ```
 
-Les tests PostgreSQL utilisent un moteur local avec les interfaces Auth/Storage représentées pour vérifier les permissions. Les handlers sont testés avec des appels simulés. Les essais de bout en bout dans Google et Supabase restent obligatoires.
-
-## Publier
-
-Configurer le backend, le formulaire et les supports privés avant le site. `python build-tools/build_public.py` bloque les valeurs publiques manquantes. Le workflow GitHub Pages est manuel et ne publie que dist. Le dépôt public et son historique contiennent déjà d'anciens supports ; leur confidentialité passée ne peut pas être rétablie rétroactivement.
+Les tests locaux ne remplacent pas la recette authentifiée en production. Ne rejouez pas une migration ancienne sur le projet actif ; consultez d’abord le rapport d’état et réconciliez l’historique avec le schéma réel.
