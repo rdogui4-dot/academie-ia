@@ -1,0 +1,15 @@
+export async function mountStepQuiz(db,level,step,host){
+ host.replaceChildren();host.hidden=true;
+ async function rpc(name,args){const {data,error}=await db.rpc(name,args);if(error)throw error;return data;}
+ const state=await rpc('academy_quiz_status',{p_level:level,p_step:step});if(!state.enabled)return;
+ host.hidden=false;const heading=document.createElement('h2'),info=document.createElement('p'),status=document.createElement('p'),start=document.createElement('button');heading.textContent='Quiz de compréhension';info.textContent=`5 QCM et 2 réponses courtes · 20 points · réussite à 14/20. Tentatives : ${state.used}/${state.limit}. Une tentative commencée peut être reprise.`;status.setAttribute('role','status');start.type='button';start.textContent=state.open_id?'Reprendre ma tentative':'Commencer le quiz';host.append(heading,info,status);
+ if(state.passed){status.textContent=`Quiz réussi : ${state.best}/20. Vous pouvez valider cette étape après avoir rempli les autres obligations.`;return;}
+ if(state.remediation){status.textContent='Contactez votre formateur pour une remédiation avant une nouvelle tentative.';return;}host.append(start);
+ start.onclick=async()=>{start.disabled=true;try{const attempt=await rpc('academy_start_quiz',{p_level:level,p_step:step});start.hidden=true;const form=document.createElement('form');
+ attempt.questions.forEach((q,i)=>{const field=document.createElement('fieldset'),legend=document.createElement('legend');legend.textContent=`${i+1}. ${q.prompt} (${q.points} points)`;field.append(legend);
+ if(q.type==='qcm'){const hint=document.createElement('p');hint.textContent='Sélectionnez toutes les bonnes réponses.';field.append(hint);q.options.forEach((option,j)=>{const label=document.createElement('label'),input=document.createElement('input');input.type='checkbox';input.name=`q${i}`;input.value=String(j);label.append(input,document.createTextNode(option));field.append(label);});}
+ else{const label=document.createElement('label'),input=document.createElement('input');label.textContent='Votre réponse courte';input.name=`q${i}`;input.type='text';input.maxLength=1000;label.append(input);field.append(label);}form.append(field);});
+ const submit=document.createElement('button');submit.type='submit';submit.textContent='Valider mes réponses';form.append(submit);host.append(form);
+ form.onsubmit=async e=>{e.preventDefault();submit.disabled=true;try{const data=new FormData(form),answers=attempt.questions.map((q,i)=>q.type==='qcm'?data.getAll(`q${i}`).map(Number):String(data.get(`q${i}`)||''));const result=await rpc('academy_submit_quiz',{p_attempt:attempt.id,p_answers:answers});await mountStepQuiz(db,level,step,host);const resultText=document.createElement('p');resultText.setAttribute('role','status');resultText.textContent=`Résultat : ${result.score}/20. Points par question : ${result.points.join(', ')}. ${result.passed?'Seuil atteint.':'Relisez le cours et analysez vos difficultés avant de recommencer.'}`;host.append(resultText);}catch(e){status.textContent=e.message;submit.disabled=false;}};
+ }catch(e){status.textContent=e.message;start.disabled=false;}};
+}

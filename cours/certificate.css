@@ -1,0 +1,7 @@
+@page{size:A4 landscape;margin:12mm}
+.certificate-print{box-sizing:border-box;max-width:273mm;min-height:186mm;margin:1rem auto;padding:10mm;border:2px solid #bc9244;background:#fff;color:#172943;text-align:center;overflow-wrap:anywhere}
+.certificate-print .certificate-brand{width:62mm;max-height:24mm;object-fit:contain;background:#172943;padding:3mm}
+.certificate-print h2{font-size:28pt;margin:6mm 0}.certificate-print p{margin:3mm 0;line-height:1.35}
+#certificate-name{font-size:24pt;font-weight:700}#certificate-training{font-size:15pt}#certificate-iuid{font-weight:700}
+#certificate-id,#certificate-edition{font-size:9pt}#certificate-qr{display:flex;justify-content:center;margin:4mm auto}#certificate-qr img,#certificate-qr canvas{width:24mm;height:24mm}
+@media print{html,body{margin:0!important;padding:0!important;background:white!important}body>header,body>footer,main>h1,#certificate-status,.certificate-print button{display:none!important}main.enrollment{margin:0!important;padding:0!important;max-width:none!important;width:auto!important}.certificate-print{width:273mm;height:186mm;min-height:0;max-height:186mm;margin:0;padding:7mm;break-inside:avoid;box-shadow:none;print-color-adjust:exact;-webkit-print-color-adjust:exact}.certificate-print h2{font-size:24pt;margin:4mm 0}.certificate-print p{margin:2mm 0}.certificate-print a{color:inherit;text-decoration:none}}
