@@ -22,3 +22,5 @@ a:focus-visible { outline: 3px solid #0057FF; outline-offset: 5px; }
     [id] { scroll-margin-top: 160px; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+.shop-highlight{max-width:1200px;margin:24px auto 56px;padding:36px clamp(24px,5vw,64px);border-radius:24px;background:linear-gradient(110deg,#24105c,#0057ff);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:28px;box-shadow:0 18px 40px rgba(36,16,92,.2)}.shop-highlight h2{margin:.2em 0;font-size:clamp(26px,4vw,42px);line-height:1.1}.shop-highlight p{max-width:680px}.shop-highlight .eyebrow{color:#dfe6ff}.shop-highlight .button{background:#fff;color:#24105c;white-space:nowrap}@media(max-width:700px){.shop-highlight{display:block;margin:24px 16px 40px}.shop-highlight .button{display:inline-block;margin-top:12px}}
