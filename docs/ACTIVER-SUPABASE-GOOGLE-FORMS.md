@@ -1,3 +1,5 @@
+> **État actuel (17 octobre 2026) :** le projet Supabase « Academie » existe déjà et le backend est partiellement actif. Ce guide décrit la procédure historique préparée le 3 octobre ; ne créez pas un deuxième projet et ne rejouez pas les migrations sans comparaison préalable. Consultez d’abord [l’état de production](ETAT-PRODUCTION-2026-10-17.md), qui liste les éléments déployés et les contrôles encore attendus.
+
 # Activer les inscriptions Google Forms et les parcours Supabase
 
 Cette version remplace le portail Python proposé précédemment. Toutes les inscriptions utilisent le formulaire Google EXISTANT. Supabase gère la connexion, les droits par niveau, les supports privés, le carnet, les projets et les certificats. Google Sheets conserve les réponses via la liaison déjà existante du formulaire.
