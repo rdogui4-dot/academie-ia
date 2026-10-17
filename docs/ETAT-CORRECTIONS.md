@@ -1,5 +1,7 @@
 # État des corrections — 3 octobre 2026
 
+> **Rapport historique du 3 octobre 2026.** Son statut « préparé, non activé » décrit l’état à cette date et n’est plus l’état actuel du projet. Consultez [l’état de production du 17 octobre 2026](ETAT-PRODUCTION-2026-10-17.md) avant toute action ou décision de mise en service.
+
 Le paquet corrige le code et prépare la migration. Il n'est pas activé dans les comptes de l'utilisateur. Il ne faut pas confondre correction préparée et fonctionnalité disponible sur le site public.
 
 | Irrégularité | Correction préparée | Reste à faire pour l'activation |
