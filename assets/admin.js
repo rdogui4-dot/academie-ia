@@ -1,4 +1,4 @@
-import {showCorrectionGuide} from './correction-guide.js';
+import {showCorrectionGuide} from './correction-guide.js?v=20261028-n4';
 import {showTrainerQuizzes} from './trainer-quizzes.js';
 import {client,message} from './academy-api.js';
 const $=id=>document.getElementById(id);
@@ -17,7 +17,8 @@ try{const db=await client();const {data:admin,error}=await db.rpc('academy_is_ad
   const notice=document.createElement('p');notice.textContent='Vérifiez la pertinence, les preuves et la compréhension. La longueur du texte et les déclarations de lecture ne suffisent pas à valider une compétence.';host.append(notice);
   for(const p of notes.data){const d=document.createElement('details'),t=document.createElement('summary'),text=document.createElement('p');t.textContent=`Carnet de l’étape ${p.step}`;text.textContent=p.notes;text.style.whiteSpace='pre-wrap';d.append(t,text);host.append(d);}
   const map=new Map(work.data.map(w=>[w.requirement_id,w]));
-  for(const r of req.data){const w=map.get(r.id),box=document.createElement('details'),heading=document.createElement('summary'),instruction=document.createElement('p');heading.textContent=`Étape ${r.step} · ${r.kind} · ${r.title} — ${w?.state||'non remis'}`;instruction.textContent=`${r.source_kind==='supplement'?'Consigne complémentaire du parcours':`Support : pages ${r.page} à ${r.last_page||r.page} du manuel`}. ${r.instruction}`;box.append(heading,instruction);
+  let n4=null;if(level===4){const {data,error}=await db.rpc('academy_n4_context',{p_user:uid});if(error)throw error;n4=data;const profession=document.createElement('p');profession.textContent='Spécialité : '+(n4?.title||'à renseigner');host.append(profession);}
+  for(const r of req.data.filter(r=>level!==4||(n4?.required_ids||[]).includes(r.id))){const w=map.get(r.id),box=document.createElement('details'),heading=document.createElement('summary'),instruction=document.createElement('p');heading.textContent=`Étape ${r.step} · ${r.kind} · ${r.title} — ${w?.state||'non remis'}`;instruction.textContent=`${r.source_kind==='supplement'?'Consigne complémentaire du parcours':`Support : pages ${r.page} à ${r.last_page||r.page} du manuel`}. ${r.instruction}`;box.append(heading,instruction);
    if(w){const answer=document.createElement('p'),label=document.createElement('label'),feedback=document.createElement('textarea'),status=document.createElement('p');answer.textContent=w.answer;answer.style.whiteSpace='pre-wrap';label.textContent='Retour au participant (10 caractères minimum)';feedback.value=w.feedback;feedback.rows=3;feedback.maxLength=5000;label.append(feedback);box.append(answer,label,status);
     for(const [state,text] of [['accepted','Accepter ce travail'],['revision','Demander une correction']]){const b=document.createElement('button');b.type='button';b.textContent=text;b.onclick=async()=>{b.disabled=true;try{const {error}=await db.rpc('academy_review_work',{p_user:uid,p_requirement:r.id,p_state:state,p_feedback:feedback.value,p_expected_updated:w.updated_at});if(error)throw error;await dossier(uid,level);}catch(e){status.textContent=e.message;b.disabled=false;}};box.append(b);}
    }host.append(box);
