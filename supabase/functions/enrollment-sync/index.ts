@@ -15,7 +15,7 @@ Deno.serve(async req => {
   const d=JSON.parse(body);
   if(typeof d.event!=='string'||d.event.length>300||typeof d.email!=='string'||!/^\S+@\S+\.\S+$/.test(d.email)||typeof d.name!=='string'||!Number.isInteger(d.level)||d.level<1||d.level>4)throw Error();
   const db=createClient(Deno.env.get('SUPABASE_URL')!,Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
-  const {error}=await db.rpc('academy_sync_enrollment',{p_event:d.event,p_email:d.email,p_name:d.name,p_level:d.level});
+  const {error}=await db.rpc('academy_sync_enrollment_details',{p_event:d.event,p_email:d.email,p_name:d.name,p_level:d.level});
   if(error){
    // Ne pas journaliser le corps, l'adresse e-mail, les clés ou les détails SQL.
    const code=typeof error.code==='string'&&/^[A-Z0-9_]{1,32}$/.test(error.code)?error.code:'UNKNOWN';
