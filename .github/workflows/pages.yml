@@ -2,6 +2,8 @@ name: Publier le frontend public uniquement
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
 
 permissions:
   contents: read
