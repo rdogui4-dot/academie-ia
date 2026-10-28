@@ -1,5 +1,5 @@
 import {mountFinalExam} from './final-exam.js';
-import {mountFinalWork} from './final-work.js?v=20261028-n4';
+import {mountFinalWork} from './final-work.js?v=20261028-learning';
 import {requireLevel,message} from '../assets/academy-api.js';
 const $=id=>document.getElementById(id),n=Number(new URLSearchParams(location.search).get('niveau'))||1;
 const rules={1:'QCM : 40 points, minimum 28/40. Projet : minimum 42/60. Total : au moins 70/100.',2:'QCM : 30 points, minimum 21/30. Projet : minimum 49/70. Total : au moins 70/100.',3:'QCM : 40 points, minimum 28/40, ramené à /30 pour le total. Projet : minimum 50/70. Total : au moins 70/100.',4:'Examens pratiques métier : 30 points, minimum 21/30. Fil rouge : 70 points, minimum 50/70. Correction par le formateur ; aucun QCM.'};

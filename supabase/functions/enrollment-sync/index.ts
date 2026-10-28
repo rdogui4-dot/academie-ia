@@ -14,8 +14,14 @@ Deno.serve(async req => {
  try {
   const d=JSON.parse(body);
   if(typeof d.event!=='string'||d.event.length>300||typeof d.email!=='string'||!/^\S+@\S+\.\S+$/.test(d.email)||typeof d.name!=='string'||!Number.isInteger(d.level)||d.level<1||d.level>4)throw Error();
+  if(!d.event.trim()||d.email.length>254||d.name.trim().length<2||d.name.trim().length>120)throw Error();
+  const specialties=['marketing_communication','ressources_humaines','finance_gestion','juridique_conformite','sante_information','education_formation','immobilier','industrie_maintenance','autre'];
+  const specialty=d.specialty??null;
+  if(specialty!==null&&(d.level!==4||!specialties.includes(specialty)))throw Error();
+  const other=specialty==='autre'&&typeof d.specialty_other==='string'?d.specialty_other.trim():null;
+  if(specialty==='autre'&&(!other||other.length<2||other.length>120))throw Error();
   const db=createClient(Deno.env.get('SUPABASE_URL')!,Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
-  const {error}=await db.rpc('academy_sync_enrollment_details',{p_event:d.event,p_email:d.email,p_name:d.name,p_level:d.level});
+  const {error}=await db.rpc('academy_sync_enrollment_details',{p_event:d.event,p_email:d.email,p_name:d.name,p_level:d.level,p_specialty:specialty,p_other:other});
   if(error){
    // Ne pas journaliser le corps, l'adresse e-mail, les clés ou les détails SQL.
    const code=typeof error.code==='string'&&/^[A-Z0-9_]{1,32}$/.test(error.code)?error.code:'UNKNOWN';
