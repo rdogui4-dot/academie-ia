@@ -45,7 +45,7 @@ for folder in ('cours','modules','formations'):
             if p.name in ('programmes.js','slides-data.js','integration.js'):continue
             shutil.copy2(p,out/folder/p.name)
 (out/'.nojekyll').write_text('',encoding='utf-8')
-public_pages=['index.html','formations.html','inscription.html','informations.html','verification.html']
+public_pages=['index.html','formations.html','inscription.html','informations.html','verification.html','decouverte.html']
 base='https://rdogui4-dot.github.io/academie-ia/'
 (out/'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+''.join(f'<url><loc>{base}{p}</loc></url>' for p in public_pages)+'</urlset>')
 assert not list(out.rglob('*.pdf')) and not list(out.rglob('*.pptx')) and not (out/'private-content').exists()
