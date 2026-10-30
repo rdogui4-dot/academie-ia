@@ -44,3 +44,16 @@ Date : 30 octobre 2026. Source analysée : archive `cours_academie.zip` (21 fich
 - **Structure du parcours** : recalculer les étapes à partir des chapitres des manuels (recommandé), ou conserver les étapes actuelles et y rattacher les nouveaux chapitres ?
 - **Manuel N4 RH et exercices N4 juridique et éducation** : à rédiger, ou à retirer du parcours tant qu'ils n'existent pas ?
 - **Mentions « corrigé » dans les manuels** : à retirer des versions publiables, ou à conserver dans le privé ?
+
+## 5. Décisions validées (30 octobre 2026)
+
+1. **Suppression des anciens cours : oui**, après sauvegarde complète et vérifiée. Aucune suppression avant la fin de la sauvegarde.
+2. **Parcours : recalculé à partir des chapitres.** Les étapes ne sont plus celles de l'ancien parcours (41 étapes).
+3. **Rédaction : uniquement les exercices manquants** (N4 juridique et éducation). Les manuels sont des produits vendus : ils ne sont pas à rédiger et ne sont pas publiés gratuitement sur le site. Le manuel N4 ressources humaines n'est donc pas à produire pour la plateforme.
+4. **Corrigés : réservés aux formateurs.** Un apprenant ne voit jamais un corrigé. Le formateur y accède dans l'espace formateur, après la remise de l'apprenant.
+
+## 6. Conséquences et points à confirmer
+
+- **Sauvegarde avant suppression** : base complète (schéma et données) et stockage privé (fichiers). La sauvegarde contient des données personnelles d'apprenants : elle est conservée hors du dépôt, sur un support sécurisé.
+- **Manuels vendus** : la plateforme doit-elle quand même donner accès aux chapitres aux apprenants qui ont acheté le manuel ? Hypothèse de travail : oui, le parcours se fait avec le manuel. À confirmer, car elle change la manière de publier les chapitres.
+- **Ordre d'exécution** : sauvegarde vérifiée → correspondance chapitres ↔ nouvelles étapes → import en brouillon → relecture → publication niveau par niveau → retrait des anciens cours niveau par niveau.
