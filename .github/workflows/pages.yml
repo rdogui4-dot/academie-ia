@@ -15,7 +15,32 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.12'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - run: python tools/test-public.py
+      - run: python tools/test-coherence.py
+
+      - name: Tests PostgreSQL simulés et comptabilité
+        working-directory: tools
+        run: |
+          npm install --ignore-scripts
+          npm run test:required
+          npm run test:db
+          node test-finance.mjs
+
   build:
+    needs: tests
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7.0.1
