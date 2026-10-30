@@ -3,7 +3,7 @@ const $=id=>document.getElementById(id),n=Number(new URLSearchParams(location.se
 let imageUrl,requestId=0;window.addEventListener('pagehide',()=>{if(imageUrl)URL.revokeObjectURL(imageUrl);});
 try{
  const {db}=await requireLevel(n);const {data:d,error}=await db.from('academy_documents').select('*').eq('level',n).single();if(error)throw error;
- $('document-content').hidden=false;$('access-message').hidden=true;$('begin-course').href=`apprendre.html?niveau=${n}&etape=1`;$('overview-slides').href=`slides.html?niveau=${n}&presentation=1`;
+ $('document-content').hidden=false;$('access-message').hidden=true;$('begin-course').href=`apprendre.html?niveau=${n}&etape=1`;
  const picker=$('document-page');
  async function show(){const id=++requestId,p=Number(picker.value);$('document-image').hidden=true;message('document-status',`Chargement de la page ${p}…`);
   try{const [image,text]=await Promise.all([db.storage.from('academy-private').download(`n${n}/pages/${String(p).padStart(3,'0')}.webp`),db.storage.from('academy-private').download(`n${n}/pages/${String(p).padStart(3,'0')}.txt`)]);if(image.error||text.error)throw Error('Page indisponible.');if(id!==requestId)return;const t=await text.data.text();if(id!==requestId)return;

@@ -5,7 +5,7 @@ const {JSDOM}=await import(process.env.UI_MODULE||'jsdom');
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),catalog=JSON.parse(fs.readFileSync(path.join(root,'docs/exigences-pedagogiques.json')));
 const AsyncFunction=Object.getPrototypeOf(async function(){}).constructor,user={id:'11111111-1111-4111-8111-111111111111'};
 const source=process.env.COURSE_SOURCE||path.join(root,'private-content');
-const tableData={academy_lessons:catalog.lessons,academy_requirements:catalog.requirements,academy_reading_pages:catalog.pages,academy_documents:catalog.documents,academy_slide_routes:catalog.slide_routes,academy_slide_sources:catalog.slide_sources,academy_work:[],academy_read_receipts:[]};
+const tableData={academy_lessons:catalog.lessons,academy_requirements:catalog.requirements,academy_reading_pages:catalog.pages,academy_documents:catalog.documents,academy_work:[],academy_read_receipts:[]};
 async function run(html,script,n,step=1,query=''){
  const dom=new JSDOM(fs.readFileSync(path.join(root,html),'utf8'),{url:`https://example.test/${html}?niveau=${n}&etape=${step}${query}`});const w=dom.window,calls=[];
  w.HTMLElement.prototype.scrollIntoView=()=>{};w.ACADEMY_CONFIG={tutorEnabled:false};
@@ -34,10 +34,5 @@ for(const l of catalog.lessons){
 }
 for(let n=1;n<=4;n++){
  const {w,calls}=await run('cours/sommaire.html','cours/sommaire.js',n);assert.deepEqual([...w.document.querySelectorAll('#document-page option')].map(o=>+o.value),[2,3]);assert.equal(calls.some(c=>c.name),false);assert.ok(w.document.getElementById('begin-course').href.includes('etape=1'));w.close();
- for(const route of catalog.slide_routes.filter(r=>r.level===n)){
-  const {w}=await run('cours/slides.html','cours/slides.js',n,route.step);const deck=JSON.parse(fs.readFileSync(path.join(source,`n${n}/course.json`))).deck;
-  assert.equal(w.document.getElementById('title').textContent,deck.slides[route.positions[0]-1].title);
-  assert.equal(w.document.querySelectorAll('#slide-picker option').length,route.positions.length);w.close();
- }
 }
-console.log('OK DOM : 41 étapes commencent sur le bon passage ; 98 liens de référence ; sommaires séparés ; 41 diaporamas alignés. Services simulés, sans vérification du rendu graphique.');
+console.log('OK DOM : 41 étapes commencent sur le bon passage ; 98 liens de référence ; sommaires séparés . Services simulés, sans vérification du rendu graphique.');

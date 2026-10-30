@@ -28,7 +28,7 @@ else:
 
 files = [(n, name, ROOT / 'private-content' / f'n{n}' / name)
          for n in range(1, 5)
-         for name in ('course.json', 'corpus.json', 'manuel.pdf', 'slides.pdf', 'slides.pptx')]
+         for name in ('course.json', 'corpus.json', 'manuel.pdf')]
 for n, name, path in files:
     if not path.is_file():
         raise SystemExit(f'Support manquant : n{n}/{name}. Utilisez le paquet complet.')

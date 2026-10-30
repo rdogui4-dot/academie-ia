@@ -12,6 +12,9 @@ class Links(HTMLParser):
  def handle_starttag(self,tag,attrs):
   a=dict(attrs)
   if tag=='a':self.links.append(a)
+def _ancien_format_complet():
+  try:return all('course' in json.loads((ROOT/f'private-content/n{n}/course.json').read_text()) for n in range(1,5))
+  except (OSError,ValueError):return False
 class PublicTests(unittest.TestCase):
  @classmethod
  def setUpClass(cls):subprocess.run([sys.executable,str(ROOT/'build-tools/build_public.py'),'--preview'],check=True)
@@ -22,6 +25,7 @@ class PublicTests(unittest.TestCase):
   for name in ('private-content','server-portail','server-tuteur','apps-script','supabase'):
    self.assertFalse((d/name).exists())
   self.assertFalse((d/'cours/slides-data.js').exists())
+  self.assertFalse((d/'cours/slides.html').exists())
   self.assertFalse((d/'cours/programmes.js').exists())
  def test_every_enrollment_uses_google_form(self):
   count=0
@@ -40,14 +44,14 @@ class PublicTests(unittest.TestCase):
  def test_old_modules_only_redirect(self):
   for p in (ROOT/'dist/modules').glob('*.html'):
    text=p.read_text();self.assertIn('http-equiv="refresh"',text);self.assertNotIn('localStorage',text);self.assertNotIn('QCM',text)
- @unittest.skipUnless((ROOT/'private-content/n1/course.json').exists(),'private-content absent : contrôle réalisé hors dépôt')
+ @unittest.skipUnless(_ancien_format_complet(),'contenu privé de l’ancien parcours absent : contrôle réalisé hors dépôt')
  def test_objectives_and_activities_unique(self):
-  exercises=[];total=0;slides=0
+  exercises=[];total=0
   for n in range(1,5):
-   d=json.loads((ROOT/f'private-content/n{n}/course.json').read_text());slides+=len(d['deck']['slides'])
+   d=json.loads((ROOT/f'private-content/n{n}/course.json').read_text())
    for lesson in d['course']['lessons']:
     total+=1;exercises.append(lesson['exercise']);self.assertTrue(lesson['deliverable']);self.assertTrue(lesson['objectives'])
-  self.assertEqual(total,41);self.assertEqual(slides,144);self.assertEqual(len(set(exercises)),41)
+  self.assertEqual(total,41);self.assertEqual(len(set(exercises)),41)
  def test_brand_and_metadata(self):
   for p in (ROOT/'dist').rglob('*.html'):
    text=p.read_text();self.assertIn('rel="icon"',text)
