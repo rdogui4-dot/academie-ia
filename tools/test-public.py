@@ -53,7 +53,7 @@ class PublicTests(unittest.TestCase):
    text=p.read_text();self.assertIn('rel="icon"',text)
    if 'content="noindex' in text:continue
    self.assertIn('rel="canonical"',text);self.assertIn('name="description"',text)
-  self.assertNotIn('fonts.googleapis.com',(ROOT/'dist/assets/brand.css').read_text())
+  for css in (ROOT/'dist').rglob('*.css'):self.assertNotIn('fonts.googleapis.com',css.read_text(encoding='utf-8'),css.name)
  def test_unconfigured_deployment_fails_closed(self):
   config=(ROOT/'assets/config.js').read_text()
   if "supabaseUrl: ''" in config:
