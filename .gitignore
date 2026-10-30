@@ -13,3 +13,6 @@ private-content/
 dist/
 *.bak
 tools/.edge-check/
+
+# Supports de cours : jamais versionnés (voir docs/ETAT-PRODUCTION-2026-10-17.md)
+ressources/
