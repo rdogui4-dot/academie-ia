@@ -21,3 +21,12 @@
 [hidden]{display:none!important}.legacy-notice{padding:1rem;background:#f3effa}.certificate-brand{display:block;background:#2D0A6E;width:280px;padding:1rem}.certificate-print{border:3px solid #2D0A6E;padding:2rem}.enrollment textarea{width:100%;min-height:8rem;font:inherit;padding:1rem} @media print{.academy-header,.academy-footer,button{display:none!important}}
 
 .certificate-print{position:relative;isolation:isolate}.certificate-print::before{content:'ACADÉMIE IA GÉNÉRATIVE';position:absolute;inset:40% 0 auto;z-index:-1;opacity:.04;transform:rotate(-20deg);font-size:3rem;font-weight:bold;text-align:center;pointer-events:none}#certificate-qr{margin:1.5rem 0}
+
+/* Menu « Plus » de l'en-tête public : élément natif, sans JavaScript (compatible CSP). */
+.academy-header .header-more{position:relative}
+.academy-header .header-more summary{list-style:none;cursor:pointer;color:#fff;font-family:Poppins,sans-serif;font-size:13px;font-weight:500;padding:8px 0}
+.academy-header .header-more summary::-webkit-details-marker{display:none}
+.academy-header .header-more summary:focus-visible{outline:2px solid #fff;outline-offset:4px}
+.academy-header .header-more-panel{position:absolute;right:0;top:calc(100% + 10px);z-index:20;display:flex;flex-direction:column;gap:4px;min-width:220px;padding:10px;background:var(--brand-purple);border:1px solid #ffffff33;border-radius:10px;box-shadow:0 12px 30px #0003}
+.academy-header .header-more-panel a{padding:10px 12px;border-radius:6px;white-space:nowrap}
+.academy-header .header-more-panel a:hover{background:#ffffff1a;text-decoration:none}
