@@ -29,3 +29,7 @@ Le registre historique (`apps-script/Code.js`) n'a plus besoin d'aucune proprié
 1. Le secret `ENROLLMENT_WEBHOOK_SECRET` est identique des deux côtés (ne pas le coller dans un document partagé).
 2. `SITE_ORIGIN` ne contient ni chemin, ni barre finale.
 3. `CERTIFICATE_SITE_URL` se termine par une barre oblique et commence par la même origine que `SITE_ORIGIN`.
+
+## Risques acceptés
+
+- **Protection des mots de passe compromis** (Supabase › Attack Protection) : réservée au plan Pro, non activée. Sans effet sur le parcours actuel, car la connexion se fait uniquement par code envoyé par e-mail, sans mot de passe. À réexaminer si un mot de passe est ajouté ou si le plan évolue.
