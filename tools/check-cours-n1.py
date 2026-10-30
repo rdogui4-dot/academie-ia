@@ -22,8 +22,8 @@ if len(course['lessons']) != len(etapes):
 for i, (lesson, e) in enumerate(zip(course['lessons'], etapes), 1):
     if lesson.get('step') != i or lesson.get('title') != e['titre']:
         erreurs.append(f"étape {i} : numéro ou titre différent du plan")
-    if not lesson.get('objectives') or not lesson.get('review') or not lesson.get('exercise'):
-        erreurs.append(f"étape {i} : objectifs, révisions ou consigne manquants")
+    if not lesson.get('objectives') or len(lesson.get('review', [])) < 2 or not lesson.get('exercise'):
+        erreurs.append(f"étape {i} : objectif, deux révisions ou consigne manquants")
 
 texte = json.dumps(course, ensure_ascii=False)
 if 'À RÉDIGER' in texte:
@@ -36,4 +36,7 @@ if sorted(pages) != list(range(4, 25)):
 if erreurs:
     print('ÉCHEC :'); [print(' -', e) for e in erreurs]
     sys.exit(1)
-print('OK : structure du cours N1 conforme. Textes « À RÉDIGER » à remplacer avant publication.')
+brouillons = [l['step'] for l in course['lessons'] if 'relire' in l.get('statut', '')]
+print('OK : structure du cours N1 conforme.')
+if brouillons:
+    print(f"À faire relire avant publication : étapes {brouillons}")
