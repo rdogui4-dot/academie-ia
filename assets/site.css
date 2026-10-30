@@ -245,6 +245,36 @@ h3{font-size:20px;font-weight:600;letter-spacing:-.01em;line-height:1.3}
 .offer-final .eyebrow{display:block}
 .offer-final a:not(.offer-button){color:#fff;text-decoration:underline;text-underline-offset:4px}
 
+/* Pages d'information et d'inscription */
+.enrollment{max-width:860px;margin:0 auto;padding:72px 24px 104px}
+.enrollment>h1{margin-bottom:20px}
+.enrollment>h1+p,.enrollment>p.eyebrow+h1+p{font-size:19px;color:var(--muted);margin-bottom:32px}
+.enrollment>p.eyebrow{margin-bottom:12px}
+.enrollment h2{font-size:26px;margin:52px 0 16px;padding-top:4px}
+.enrollment>p,.enrollment li{color:var(--ink)}
+.enrollment ul,.enrollment ol{padding-left:22px;margin:0 0 18px}
+.enrollment li{margin-bottom:8px}
+.enrollment a{color:var(--blue);font-weight:500}
+.public-panel{background:var(--soft);border-radius:var(--radius);padding:36px;margin:48px 0;border:1px solid var(--line)}
+.public-panel h2{margin-top:0}
+.public-panel>p:last-child{margin-bottom:0}
+.public-prices{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:28px 0 32px}
+.public-prices p{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;margin:0;box-shadow:var(--shadow);font-size:15px;color:var(--ink)}
+.public-prices strong{display:block;font-size:13px;letter-spacing:.12em;color:var(--blue);margin-bottom:6px}
+.enrollment .public-steps{list-style:none;padding:0;margin:28px 0 36px;counter-reset:step;display:flex;flex-direction:column;gap:14px}
+.public-steps li{counter-increment:step;position:relative;background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px 22px 84px;margin:0;box-shadow:var(--shadow)}
+.public-steps li::before{content:counter(step);position:absolute;left:22px;top:22px;width:44px;height:44px;border-radius:12px;background:var(--purple);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
+.public-steps strong{display:block;margin-bottom:4px;color:var(--ink)}
+.public-table-wrap{overflow-x:auto;margin:24px 0 28px;border-radius:var(--radius);border:1px solid var(--line)}
+.public-table-wrap table{width:100%;border-collapse:collapse;font-size:15px;background:#fff}
+.public-table-wrap caption{text-align:left;padding:16px 20px;font-weight:600;color:var(--purple);caption-side:top}
+.public-table-wrap th,.public-table-wrap td{padding:14px 20px;text-align:left;border-top:1px solid var(--line);vertical-align:top}
+.public-table-wrap thead th{background:var(--purple);color:#fff;font-size:14px;border-top:0}
+.public-table-wrap tbody th{font-weight:700;color:var(--purple);width:90px}
+.button,.button-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:15px 24px;border-radius:12px;background:var(--blue);color:#fff!important;font-weight:600;font-size:15px;text-decoration:none;margin:8px 0 20px}
+.button:hover,.button-primary:hover{background:var(--blue-dark)}
+.enrollment>p>a[href^="connexion"],.enrollment>p>a[href^="decouverte"],.enrollment>p>a[href^="informations"]{font-weight:600}
+
 /* Utilitaires */
 .mt-sm{margin-top:12px}.mt-md{margin-top:16px}.mt-lg{margin-top:32px}
 .lead--spaced{margin-top:20px}
@@ -254,6 +284,7 @@ h3{font-size:20px;font-weight:600;letter-spacing:-.01em;line-height:1.3}
 /* Adaptation */
 @media (max-width:980px){
   .offers-grid,.steps{grid-template-columns:1fr}
+  .public-prices{grid-template-columns:1fr 1fr}
   .journey li{grid-template-columns:44px 1fr}
   .journey li>span:last-child{grid-column:2;justify-self:start}
   .hero__grid,.about,.why,.try,.shop{grid-template-columns:1fr;gap:40px}
@@ -270,6 +301,9 @@ h3{font-size:20px;font-weight:600;letter-spacing:-.01em;line-height:1.3}
   .section{padding:72px 0}
   .hero{padding:64px 0 64px}
   .levels{grid-template-columns:1fr}
+  .public-panel{padding:24px}
+  .public-prices{grid-template-columns:1fr}
+  .public-steps li{padding-left:72px}
   .section-head{margin-bottom:40px}
   .site-nav a,.site-nav summary{font-size:13px;padding:8px 10px}
 }
