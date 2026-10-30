@@ -4,7 +4,7 @@ Date : 30 octobre 2026. Source analysée : archive `cours_academie.zip` (21 fich
 
 ## 1. Ce que contient l'archive
 
-**Manuels (11)** : N1 (26 chapitres), N2 (28), N3 (26), et N4 pour 8 spécialités : autre spécialité, éducation, finance, immobilier, industrie, juridique, marketing, santé.
+**Manuels (11)** : N1 (13 chapitres), N2 (14), N3 (13), et N4 (12 ou 13) pour 8 spécialités : autre spécialité, éducation, finance, immobilier, industrie, juridique, marketing, santé.
 
 **Exercices d'entraînement (10)** : N1, N2, N3, et N4 pour 7 spécialités : autre spécialité, finance, immobilier, industrie, marketing, ressources humaines, santé.
 
@@ -17,7 +17,7 @@ Date : 30 octobre 2026. Source analysée : archive `cours_academie.zip` (21 fich
 
 1. **Les exercices sont des corrigés.** Chaque fichier d'exercice contient l'énoncé et la correction (12 à 19 mentions de « corrigé »). Un corrigé ne doit jamais être visible d'un apprenant avant d'avoir répondu, ni publié sur le site.
 2. **Les manuels et les corrigés sont de contenu privé.** La règle du projet : ils vivent uniquement dans le stockage privé de Supabase, jamais dans le dépôt Git ni sur GitHub Pages. Le dépôt ne doit donc pas recevoir ce lot.
-3. **La structure ne correspond pas à la plateforme.** Les manuels comptent 24 à 28 chapitres. La plateforme actuelle compte 41 étapes (N1 : 8, N2 : 12, N3 : 11, N4 : 10), liées à des pages PDF précises. Il faut recalculer les étapes, les pages et les remises.
+3. **La structure ne correspond pas à la plateforme.** Les manuels comptent 12 à 14 chapitres chacun. La plateforme actuelle compte 41 étapes (N1 : 8, N2 : 12, N3 : 11, N4 : 10), liées à des pages PDF précises. Il faut recalculer les étapes, les pages et les remises.
 4. **Aucun outil ne transforme ces HTML en pages.** Le pipeline existant importe des pages WebP et des textes issus de manuels PDF. Il faut créer une étape de rendu HTML → PDF → pages.
 5. **Les anciens cours sont en production avec des données d'apprenants.** Il y a 41 leçons, 98 remises, 182 pages de lecture, 4 examens finaux (70 QCM). La progression des apprenants y est rattachée : supprimer sans précaution efface leur travail.
 6. **Les zones de contenu à vérifier** : les manuels contiennent aussi des mentions de « corrigé » (1 à 7 par fichier). Il faut voir si ce sont des corrigés cachés.
