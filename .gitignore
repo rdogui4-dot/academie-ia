@@ -20,3 +20,4 @@ tools/.edge-check/
 
 # Supports de cours : jamais versionnés (voir docs/ETAT-PRODUCTION-2026-10-17.md)
 ressources/
+supabase/functions/certificate-pdf/assets.ts

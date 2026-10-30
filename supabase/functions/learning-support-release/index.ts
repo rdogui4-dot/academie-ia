@@ -1,2 +1,2 @@
-// Release 2026-10-28.1 completed. No maintenance capability remains exposed.
+// Maintenance terminée : aucune lecture ni écriture de données.
 Deno.serve(()=>new Response('Release completed',{status:410}));
