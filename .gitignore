@@ -13,6 +13,10 @@ private-content/
 dist/
 *.bak
 tools/.edge-check/
+# Skipper — machine-local artifacts (hook scratch + derived index), never commit
+.claude/.skipper-*
+.skipper/*
+!.skipper/receipts/
 
 # Supports de cours : jamais versionnés (voir docs/ETAT-PRODUCTION-2026-10-17.md)
 ressources/
