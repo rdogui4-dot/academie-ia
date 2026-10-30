@@ -5,7 +5,7 @@ export const titles={1:'Fondamentaux de l’IA générative',2:'Prompts structur
 export function enrollmentLink(level){return config.formLinks?.[level]||config.formUrl;}
 export async function client(){
  if(!config.supabaseUrl||!config.supabasePublishableKey)throw Error('La connexion apprenant est en cours de configuration. Utilisez le formulaire Google pour vous inscrire.');
- if(!singleton){const {createClient}=await import('https://esm.sh/@supabase/supabase-js@2.117.2');singleton=createClient(config.supabaseUrl,config.supabasePublishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});}
+ if(!singleton){const {createClient}=await import('./vendor/supabase-js-2.117.2.esm.js');singleton=createClient(config.supabaseUrl,config.supabasePublishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});}
  return singleton;
 }
 export async function requireLevel(level){

@@ -54,6 +54,24 @@ class PublicTests(unittest.TestCase):
    if 'content="noindex' in text:continue
    self.assertIn('rel="canonical"',text);self.assertIn('name="description"',text)
   for css in (ROOT/'dist').rglob('*.css'):self.assertNotIn('fonts.googleapis.com',css.read_text(encoding='utf-8'),css.name)
+ def test_content_security_policy_on_every_page(self):
+  for p in (ROOT/'dist').rglob('*.html'):
+   text=p.read_text(encoding='utf-8')
+   self.assertIn('http-equiv="Content-Security-Policy"',text,p.name)
+   self.assertNotIn("'unsafe-inline'",text,p.name)
+   self.assertNotIn("'unsafe-eval'",text,p.name)
+ def test_no_inline_script_or_handler_published(self):
+  for p in (ROOT/'dist').rglob('*.html'):
+   text=p.read_text(encoding='utf-8')
+   self.assertIsNone(re.search(r'<script(?![^>]*\bsrc=)',text,re.I),p.name)
+   self.assertIsNone(re.search(r'\son[a-z]+="',text,re.I),p.name)
+ def test_no_third_party_script_loaded(self):
+  for p in list((ROOT/'dist').rglob('*.html'))+list((ROOT/'dist').rglob('*.js')):
+   text=p.read_text(encoding='utf-8')
+   self.assertNotIn('esm.sh',text,p.name);self.assertNotIn('cdnjs.cloudflare.com',text,p.name)
+ def test_vendored_libraries_present(self):
+  self.assertTrue((ROOT/'dist/assets/vendor/supabase-js-2.117.2.esm.js').is_file())
+  self.assertTrue((ROOT/'dist/assets/vendor/qrcodejs-1.0.0.min.js').is_file())
  def test_unconfigured_deployment_fails_closed(self):
   config=(ROOT/'assets/config.js').read_text()
   if "supabaseUrl: ''" in config:

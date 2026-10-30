@@ -4,3 +4,6 @@
 @media(max-width:700px){.learner-top{height:auto;flex-wrap:wrap;gap:12px}.learner-top nav{gap:18px;flex-wrap:wrap}.learner-brand{font-size:13px}.learner-page{padding:24px 18px}.learner-hero{display:block}.learner-hero h1{font-size:29px}.learning-layout{display:block;padding:16px}.learning-profile{margin-bottom:14px}.learning-profile #learner-profile{display:block}.learning-outline{position:static;max-height:none;padding:16px;margin-bottom:18px}.mobile-outline{display:block;width:100%;text-align:left}.learning-outline .outline-body[hidden]{display:none!important}.learning-outline h1{font-size:18px}.lesson-header h2{font-size:25px}.lesson-card{padding:18px}.learning-main iframe{height:430px}.resource-actions{gap:8px}.resource-actions button{font-size:12px}.learning-tabs button{font-size:12px;padding:10px}.lesson-navigation{flex-wrap:wrap}.enrollment{padding:0 16px}.evaluation-section{padding:18px}.learner-card{padding:22px}.reading-mode button{font-size:12px}}
 
 #document-image{display:block;max-width:100%;height:auto}#document-text{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit}.enrollment img{max-width:100%}
+
+/* Espacement de section (remplace un style en ligne, requis par la CSP) */
+.panel-spaced{margin-top:28px}

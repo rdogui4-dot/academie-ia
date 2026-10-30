@@ -44,6 +44,24 @@ for folder in ('cours','modules','formations'):
         if p.suffix in ('.html','.css','.js'):
             if p.name in ('programmes.js','slides-data.js','integration.js'):continue
             shutil.copy2(p,out/folder/p.name)
+# Politique de sécurité du contenu : aucun script ni style en ligne, aucune ressource tierce sauf l'API du projet.
+# GitHub Pages ne permet pas de poser d'en-têtes : la politique est posée par balise meta dans chaque page.
+API_HOST='https://feryogknkzewcaazeoax.supabase.co'
+CSP=("default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; "
+     f"connect-src 'self' {API_HOST} wss://feryogknkzewcaazeoax.supabase.co; "
+     "object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'")
+# Page de vérification : Apps Script répond en JSONP (balise script). Exception limitée à ces deux domaines Google.
+CSP_EXTRA={'verification-certificat.html':' https://script.google.com https://script.googleusercontent.com'}
+for page in list(out.rglob('*.html')):
+    html=page.read_text(encoding='utf-8')
+    policy=CSP+CSP_EXTRA.get(page.name,'')
+    meta=f'<meta http-equiv="Content-Security-Policy" content="{policy}">'
+    assert '<head>' in html, f'head absent : {page.name}'
+    html=html.replace('<head>','<head>'+meta,1)
+    # Interdire tout JavaScript ou gestionnaire en ligne dans le site publié.
+    assert not re.search(r'<script(?![^>]*\bsrc=)', html, re.I), f'script en ligne interdit : {page.relative_to(out)}'
+    assert not re.search(r'\son[a-z]+="', html, re.I), f'gestionnaire en ligne interdit : {page.relative_to(out)}'
+    page.write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('',encoding='utf-8')
 public_pages=['index.html','formations.html','inscription.html','informations.html','verification.html','decouverte.html']
 base='https://rdogui4-dot.github.io/academie-ia/'
