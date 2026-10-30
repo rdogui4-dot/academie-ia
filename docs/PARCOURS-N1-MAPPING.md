@@ -22,7 +22,13 @@ Le nouveau manuel est une réécriture : aucune étape n'est identique au mot pr
 
 **Règle proposée** : une étape est « identique » si son texte, ses objectifs et ses exigences n'ont pas changé. Dans ce cas, la progression est conservée. Sinon, seule cette étape est à refaire. Les étapes conservées restent validées ; les autres repassent à « non commencée » pour les apprenants concernés.
 
+## Décisions validées (30 octobre 2026)
+
+- **Progression conservée** : les apprenants gardent leur parcours. Seules les étapes modifiées sont à refaire.
+- **Certificat conservé** : les apprenants qui ont déjà validé le N1 gardent leur certificat.
+- **Épreuve finale** : l'exercice N1 du lot (partie QCM de 40 points et partie cas pratique et fil rouge de 60 points). Ce choix reprend le barème existant du N1 (seuil QCM 28/40, seuil cas et fil rouge 42/60, total minimum 70/100) : aucune règle d'évaluation n'est modifiée.
+- **Diapositives** : supprimées (site, base de données et outils de téléversement).
+
 ## Points à confirmer
 
-- L'épreuve finale remplace l'étape « Évaluation et projet » : les apprenants qui l'ont validée gardent-ils leur réussite ?
-- Les apprenants qui ont déjà validé des étapes modifiées gardent-ils leur certificat éventuel ? (Le certificat est invalidé par toute modification du carnet ou d'un travail, selon les règles actuelles.)
+- Le certificat est invalidé par toute modification du carnet ou d'un travail, selon les règles actuelles : à confirmer pour les étapes modifiées du nouveau parcours.
