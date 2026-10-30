@@ -24,7 +24,7 @@ window.addEventListener('beforeunload',e=>{if(state.dirty){e.preventDefault();e.
 function dossierCard(item){
  const card=node('article',undefined,'dossier-card'),identity=node('div');identity.append(node('h3',item.full_name||'Apprenant'),node('p',item.iuid||'IUID attribué à la connexion','muted'),node('p',item.specialty||`Parcours N${item.level}`));
  const progress=node('div',undefined,'progress-cell'),bar=document.createElement('progress');bar.max=Math.max(1,item.total_steps);bar.value=item.completed_steps;bar.setAttribute('aria-label',`Progression de ${item.full_name}`);progress.append(node('span',`N${item.level} · ${item.completed_steps}/${item.total_steps} étapes`),bar);
- const info=node('div',undefined,'dossier-state');info.append(node('span',item.certified?'Certifié':item.pending?`${item.pending} à corriger`:item.revision?'Révision demandée':'En progression',`badge ${item.pending?'amber':item.certified?'green':''}`),node('small',`Activité : ${date(item.updated_at)}`));card.append(identity,progress,info,button('Ouvrir le dossier →',()=>openDossier(item.user_id,item.level),'primary'));return card;
+ const info=node('div',undefined,'dossier-state');info.append(node('span',item.certified?'Certifié':item.pending?`${item.pending} à corriger`:item.revision?'Révision demandée':'En progression',`badge ${item.pending?'amber':item.certified?'green':''}`),node('small',`Activité : ${date(item.updated_at)}`));card.append(identity,progress,info,button('Ouvrir le dossier ',()=>openDossier(item.user_id,item.level),'primary'));return card;
 }
 async function loadWorkspace(){
  const request=++state.request,f=new FormData($('dossier-filters'));$('work-dossiers').setAttribute('aria-busy','true');
