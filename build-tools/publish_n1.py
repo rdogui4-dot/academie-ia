@@ -22,7 +22,7 @@ SOURCE_PREFIXE = 'brouillon-n1'
 CIBLE_PREFIXE = 'n1'
 
 
-def requete(url, entetes, methode, chemin, corps=None, type_contenu='application/json'):
+def requete(url, entetes, methode, chemin, corps=None, type_contenu='application/json', brut=False):
     donnees = None if corps is None else (corps if isinstance(corps, bytes) else json.dumps(corps).encode('utf-8'))
     entetes = dict(entetes)
     if donnees is not None:
@@ -31,6 +31,8 @@ def requete(url, entetes, methode, chemin, corps=None, type_contenu='application
     try:
         with urllib.request.urlopen(demande, timeout=60) as reponse:
             contenu = reponse.read()
+            if brut:
+                return contenu
             return json.loads(contenu) if contenu and contenu[:1] in b'[{' else contenu
     except urllib.error.HTTPError as erreur:
         detail = erreur.read(400).decode('utf-8', errors='replace')
@@ -67,7 +69,7 @@ def main():
     entetes = verifier_cle(getpass.getpass('Clé service_role (saisie masquée) : ').strip())
 
     for nom, chemin in fichiers:
-        contenu = requete(url, entetes, 'GET', f'/storage/v1/object/authenticated/{BUCKET}/{SOURCE_PREFIXE}/{nom}')
+        contenu = requete(url, entetes, 'GET', f'/storage/v1/object/authenticated/{BUCKET}/{SOURCE_PREFIXE}/{nom}', brut=True)
         if not isinstance(contenu, bytes) or not contenu:
             raise SystemExit(f'Lecture impossible dans {SOURCE_PREFIXE}/{nom}')
         envoyer_ecraser(url, entetes, f'{CIBLE_PREFIXE}/{nom}', contenu, nom)
