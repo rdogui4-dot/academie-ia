@@ -1,0 +1,61 @@
+/* Mise en forme de l'exercice d'entraînement N1 (cours/exercice-n1.html). */
+:root{
+  --ink:#1a1a2e; --quiet:#5b6472; --edge:#c7cdd6; --rule:#e7eaf0;
+  --purple:#3730a3; --blue:#2563eb; --green:#16a34a;
+  --bg-soft:#f5f7fb;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:'Georgia','Source Serif Pro',serif; color:var(--ink); font-size:11.5pt; line-height:1.55; background:#fff;}
+h1,h2,h3,h4{font-family:'Helvetica Neue','Arial',sans-serif; color:var(--purple); font-weight:700;}
+p{margin:0 0 0.8em 0; text-align:justify;}
+strong{color:var(--ink);}
+em{color:var(--quiet);}
+
+.cover{
+  height:261mm; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; position:relative; background:linear-gradient(180deg,#ffffff 0%, #f3f6fc 55%, #eef2fb 100%);
+  page-break-after:always; overflow:hidden;
+}
+.cover .logo-h{width:280px; margin-bottom:40px;}
+.cover .kicker{font-family:'Helvetica Neue',sans-serif; letter-spacing:3px; text-transform:uppercase; font-size:10.5pt; color:var(--green); font-weight:700; margin-bottom:14px;}
+.cover h1{font-family:'Helvetica Neue',sans-serif; font-size:26pt; line-height:1.25; margin:0 0 10px 0; max-width:560px; color:var(--purple);}
+.cover .subtitle{font-size:13pt; color:var(--quiet); font-family:'Helvetica Neue',sans-serif; max-width:460px; margin-bottom:34px;}
+.cover .badges{display:flex; gap:10px; margin-bottom:46px; flex-wrap:wrap; justify-content:center; max-width:540px;}
+.cover .badge{font-family:'Helvetica Neue',sans-serif; font-size:9.5pt; color:var(--purple); border:1px solid var(--edge); border-radius:20px; padding:6px 16px; background:#fff;}
+.cover .founder-block{border-top:1px solid var(--edge); padding-top:22px; width:380px; font-family:'Helvetica Neue',sans-serif;}
+.cover .founder-name{font-size:12.5pt; font-weight:700; color:var(--ink);}
+.cover .founder-role{font-size:9.3pt; color:var(--quiet); margin-top:4px;}
+.cover .date{position:absolute; bottom:26px; font-family:'Helvetica Neue',sans-serif; font-size:9pt; color:var(--quiet);}
+
+.toc-page{padding:4mm 20mm 10mm 20mm; page-break-after:always;}
+.toc-page h2{font-size:19pt; margin-bottom:20px; border-bottom:3px solid var(--blue); padding-bottom:10px;}
+.toc-list{list-style:none; margin:0; padding:0; counter-reset:toc;}
+.toc-list li{counter-increment:toc; margin-bottom:11px;}
+.toc-list a{display:flex; align-items:baseline; color:var(--ink); font-family:'Helvetica Neue',sans-serif; font-size:11pt; text-decoration:none;}
+.toc-list a::before{content: counter(toc) "."; color:var(--blue); font-weight:700; width:26px; flex:none;}
+.toc-dots{flex:1; border-bottom:1.5px dotted var(--edge); margin:0 6px 3px 6px;}
+
+.content{padding:4mm 20mm 10mm 20mm;}
+.content h2{font-size:17pt; margin:0 0 14px 0; padding-bottom:8px; border-bottom:3px solid var(--blue); page-break-after:avoid;}
+.content h3{font-size:12.5pt; color:var(--purple); margin:20px 0 8px 0; page-break-after:avoid;}
+.content ul,.content ol{margin:0 0 0.9em 0; padding-left:1.3em;}
+.content li{margin-bottom:6px; text-align:justify;}
+.content table{width:100%; border-collapse:collapse; margin:12px 0 18px 0; font-size:9.6pt;}
+.content table tr{page-break-inside:avoid;}
+.content thead{display:table-header-group;}
+.content th{background:var(--purple); color:#fff; font-family:'Helvetica Neue',sans-serif; font-weight:700; text-align:left; padding:6px 8px; font-size:8.8pt;}
+.content td{padding:6px 8px; border-bottom:1px solid var(--rule); vertical-align:top;}
+.content tr:nth-child(even) td{background:var(--bg-soft);}
+.pagebreak{page-break-before:always;}
+hr{border:none; border-top:1px solid var(--edge); margin:22px 0;}
+
+.content p strong:first-child{color:var(--blue);}
+
+.corrige-banner{
+  font-family:'Helvetica Neue',sans-serif; font-weight:800; font-size:13pt; letter-spacing:2px;
+  text-transform:uppercase; color:#fff; background:linear-gradient(90deg,var(--green),#0d8f4f);
+  display:inline-block; padding:8px 22px; border-radius:6px; margin:4mm 20mm 6mm 20mm;
+}
+
+@page{ size:A4; margin:0; }

@@ -21,7 +21,7 @@ try {
  const meta=lessons.find(l=>l.step===step),lesson=course.lessons[step-1];
  const go=i=>`apprendre.html?niveau=${level}&etape=${i}`;
  if(finalModule?.enabled)$('mandatory-work-description').textContent='Remettez les activités de cette étape. Les cas communs et le fil rouge seront remis dans le module final, après les étapes et quiz.';
- $('learning-content').hidden=false;$('access-message').hidden=true;
+ $('learning-content').hidden=false;if(level===1)$('exercise-link').hidden=false;$('access-message').hidden=true;
  $('course-title').textContent=course.title;$('course-label').textContent=`Niveau ${level}`;$('course-duration').textContent=course.duration;
  $('step-label').textContent=`Étape ${step} sur ${lessons.length}`;$('lesson-title').textContent=meta.title;$('page-range').textContent=`Lecture obligatoire : pages ${meta.first_page} à ${meta.last_page} du manuel. Présentation et sommaire consultables séparément.`;
  const list=(id,values)=>$(id).replaceChildren(...values.map(t=>{const li=document.createElement('li');li.textContent=t;return li;}));
