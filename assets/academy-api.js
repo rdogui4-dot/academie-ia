@@ -15,5 +15,5 @@ export async function requireLevel(level){
  if(accessError||!data)throw Error(`Votre inscription N${level} doit être validée par l’Académie avant l’ouverture du parcours.`);
  return {db,user};
 }
-export async function courseData(level){const {db,user}=await requireLevel(level);const {data,error}=await db.storage.from('academy-private').download(`n${level}/course.json`);if(error)throw Error('Support indisponible. Contactez l’Académie.');return {db,user,...JSON.parse(await data.text())};}
+export async function courseData(level){const {db,user}=await requireLevel(level);const {data,error}=await db.storage.from('academy-private').download(`n${level}/course.json`);if(error)throw Error('Support indisponible. Contactez l’Académie.');return {db,user,course:JSON.parse(await data.text())};}
 export function message(id,text){document.getElementById(id).textContent=text;}
