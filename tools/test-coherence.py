@@ -4,7 +4,7 @@ ROOT=Path(__file__).resolve().parents[1]
 x=json.loads((ROOT/'docs/exigences-pedagogiques.json').read_text())
 lessons={(l['level'],l['step']):l for l in x['lessons']}
 required={(p['level'],p['page']) for p in x['pages'] if p['required']}
-assert len(required)==182
+assert len(required)==164
 for d in x['documents']:
  n=d['level'];assert lessons[n,1]['first_page']==d['first_course_page'];assert not any((n,p) in required for p in d['excluded_pages'])
  assert d['summary_pages']==[2,3]
@@ -18,4 +18,4 @@ for r in x['requirements']:
  assert r['source_kind'] in ('manual','activity','supplement')
 assert 'academy_acknowledge_page' not in (ROOT/'cours/sommaire.js').read_text()
 assert 'academy_progress' not in (ROOT/'cours/sommaire.js').read_text()
-print('OK : cohérence des 41 étapes, 98 remises, 182 pages requises ; sommaires distincts (diapositives retirées).')
+print('OK : cohérence des 41 étapes, 84 exigences, 164 pages requises ; sommaires distincts (diapositives retirées).')

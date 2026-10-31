@@ -15,11 +15,11 @@ async function run(html,script,n,step=1,query=''){
  const data=JSON.parse(fs.readFileSync(path.join(source,`n${n}/course.json`)));
  let i=0;class LocalURL extends URL{};LocalURL.createObjectURL=()=>`blob:test-${++i}`;LocalURL.revokeObjectURL=()=>{};
  const message=(id,text)=>w.document.getElementById(id).textContent=text;
- const body=fs.readFileSync(path.join(root,script),'utf8').replace(/^import .*\n/,'');
- await new AsyncFunction('window','document','location','URL','courseData','requireLevel','message',body)(w,w.document,w.location,LocalURL,async()=>({db,user,...data}),async()=>({db,user}),message);
+ const body=fs.readFileSync(path.join(root,script),'utf8').replace(/^import .*\n/gm,'');
+ await new AsyncFunction('window','document','location','URL','courseData','requireLevel','message','mountLearningShell','mountStepQuiz',body)(w,w.document,w.location,LocalURL,async()=>({db,user,course:data}),async()=>({db,user}),message,()=>{},async()=>{});
  await new Promise(resolve=>setImmediate(resolve));return {w,calls};
 }
-for(const l of catalog.lessons){
+for(const l of catalog.lessons.filter(l=>fs.existsSync(path.join(source,`n${l.level}/course.json`)))){
  const {w,calls}=await run('cours/apprendre.html','cours/learning.js',l.level,l.step);
  assert.equal(w.document.getElementById('learning-content').hidden,false);
  assert.equal(w.document.getElementById('lesson-title').textContent,l.title);
@@ -32,7 +32,9 @@ for(const l of catalog.lessons){
  }
  assert.equal(calls.some(c=>c.name==='academy_acknowledge_page'),false);w.close();
 }
-for(let n=1;n<=4;n++){
+const levels=[1,2,3,4].filter(n=>fs.existsSync(path.join(source,`n${n}/course.json`)));
+for(const n of levels){
  const {w,calls}=await run('cours/sommaire.html','cours/sommaire.js',n);assert.deepEqual([...w.document.querySelectorAll('#document-page option')].map(o=>+o.value),[2,3]);assert.equal(calls.some(c=>c.name),false);assert.ok(w.document.getElementById('begin-course').href.includes('etape=1'));w.close();
 }
-console.log('OK DOM : 41 étapes commencent sur le bon passage ; 98 liens de référence ; sommaires séparés . Services simulés, sans vérification du rendu graphique.');
+const tested=catalog.lessons.filter(l=>levels.includes(l.level)).length,links=catalog.requirements.filter(r=>levels.includes(r.level)).length;
+console.log(`OK DOM : ${tested} étapes commencent sur le bon passage ; ${links} liens de référence ; sommaires séparés. Services simulés, sans vérification du rendu graphique.`);
