@@ -49,7 +49,9 @@ def connexion(url, cle, courriel, mot_de_passe):
         with urllib.request.urlopen(demande, timeout=60) as reponse:
             return json.loads(reponse.read())['access_token']
     except urllib.error.HTTPError as erreur:
-        raise SystemExit(f'Connexion refusée : HTTP {erreur.code}')
+        detail = erreur.read(300).decode('utf-8', errors='replace')
+        detail = re.sub(r'eyJ[A-Za-z0-9_.-]+|sb_[a-z]+_[A-Za-z0-9_-]+', '[CLE MASQUEE]', detail)
+        raise SystemExit(f'Connexion refusée : HTTP {erreur.code} {detail}')
 
 
 def publier(url, cle, jeton, etape, questions):
