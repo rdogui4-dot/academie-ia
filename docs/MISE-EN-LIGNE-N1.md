@@ -36,15 +36,21 @@ Date : 31 octobre 2026. Aucune modification de production n'a été faite. Ce do
 4. Vérification en lecture seule après bascule (nombre d'étapes, de pages obligatoires, de remises rattachées).
 5. Suppression des anciens fichiers `n1/` au-delà du nouveau manuel, après listing et validation.
 
-## 4. Points à décider
+## 4. Décisions
 
-- **Étapes modifiées** : le manuel est réécrit. Pour choisir, il faut comparer le texte de l'ancien et du nouveau manuel. Tant que ce n'est pas fait, aucune étape ne peut être dite « inchangée ».
-- **Apprenant concerné** : la remise `n1-s1-activite` est acceptée. Si l'étape 1 est modifiée, faut-il la repasser « à revoir » ?
-- **Page 1 (confirmation de lecture)** : page de couverture de l'ancien manuel, non obligatoire dans le nouveau. La supprimer avec sa ligne de confirmation, ou la conserver ?
+- **Référence de comparaison** : le PDF « module niveau 1 … version corrigée » (35 pages, version 1.0 du 27 août 2026). Il contient les solutions : il sert à la comparaison interne et n'est jamais publié.
+- **Étapes** : comparaison par contenu (recouvrement des mots, estimation). Toutes les 8 étapes sont en dessous du seuil : elles sont considérées **modifiées**. Conséquence : la règle « ne refaire que les étapes modifiées » ne conserve pratiquement aucune validation. Seule la remise de l'étape 1 est concernée (voir ci-dessous).
+- **Remise de l'étape 1 (`n1-s1-activite`, acceptée)** : elle est repassée « à revoir ». Le nouveau chapitre 1 remplace l'ancienne étape ; la remise doit être refaite sur le nouveau contenu. Le carnet reste conservé.
+- **Confirmation de lecture de la page 1** : supprimée (décision validée).
+- **Exigences** : à construire à partir du nouveau cours **et** des exercices (QCM de 20 questions, cas pratique, fil rouge), et non à partir de l'ancien manuel.
+
+## 5. Points à décider
+
+- **Étapes modifiées** : voir section 4. Confirmer que la règle « toutes les étapes modifiées » est bien celle voulue.
 - **Pas de sauvegarde** (votre choix) : le périmètre est faible (un apprenant, une remise acceptée), mais la suppression reste irréversible.
 
 ## 5. Ce qui n'est pas encore fait
 
-- Rédaction des exigences du nouveau N1.
+- Rédaction des exigences du nouveau N1, à partir du cours et des exercices.
 - Adaptation des tests.
 - Écriture du script SQL de bascule (à partir des décisions du point 4).
